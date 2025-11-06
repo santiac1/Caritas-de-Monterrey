@@ -1,49 +1,116 @@
+// TOMA 1: Mantenemos el import 'Combine' de CodeX
+import Combine
+import Foundation
 import SwiftUI
+import Supabase
 
-struct RootRouterView: View {
-    @EnvironmentObject private var appState: AppState
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+@MainActor
+final class AppState: ObservableObject {
+    @Published var session: Session?
+    @Published var profile: Profile?
+    @Published var isLoadingProfile = false
+    @Published var authError: String?
 
-    var body: some View {
-        Group {
-            if let role = appState.profile?.role, appState.session != nil {
-                switch role {
-                case "user":
-                    UserTabView()
-                case "company":
-                    CompanyTabView()
-                case "admin":
-                    AdminTabView()
-                default:
-                    LoginOrOnboardingView()
-                }
+    private let client: SupabaseClient
+    private var authTask: Task<Void, Never>?
+
+    init(client: SupabaseClient = SupabaseManager.shared.client) {
+        self.client = client
+        authTask = Task { [weak self] in
+            await self?.listenToAuthChanges()
+        }
+        Task { await refreshSession() }
+    }
+
+    deinit {
+        authTask?.cancel()
+    }
+
+    func refreshSession() async {
+        // TOMA 2: Usamos el 'authError = nil' de CodeX
+        authError = nil
+        
+        // TOMA 2: Y mantenemos el 'do-catch' de 'main' (es más seguro)
+        do {
+            if let currentSession = try await client.auth.session {
+                session = currentSession
+                await loadProfile(for: currentSession.user.id)
             } else {
-                LoginOrOnboardingView()
+                session = nil
+                profile = nil
+            }
+        } catch {
+            authError = error.localizedDescription
+            session = nil
+            profile = nil
+        }
+    }
+
+    func signIn(email: String, password: String) async throws {
+        authError = nil
+        
+        // TOMA 3: Usamos la función corregida 'signIn' de CodeX
+        let response = try await client.auth.signIn(email: email, password: password)
+        
+        session = response.session
+        if let user = response.user {
+            await loadProfile(for: user.id)
+        } else if let userId = response.session?.user.id {
+            await loadProfile(for: userId)
+        }
+    }
+
+    func signUp(email: String, password: String) async throws -> AuthResponse {
+        authError = nil
+        return try await client.auth.signUp(email: email, password: password)
+    }
+
+    func signOut() async {
+        do {
+            try await client.auth.signOut()
+        } catch {
+            authError = error.localizedDescription
+        }
+        session = nil
+        profile = nil
+    }
+
+    func loadProfile(for userId: UUID) async {
+        isLoadingProfile = true
+        defer { isLoadingProfile = false }
+        do {
+            let profile: Profile = try await client.database
+                .from("profiles")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+            self.profile = profile
+        } catch {
+            authError = error.localizedDescription
+            profile = nil
+        }
+    }
+
+    private func listenToAuthChanges() async {
+        for await event in client.auth.authStateChanges {
+            switch event.event {
+            case .signedIn, .initialSession, .tokenRefreshed:
+                if let session = event.session {
+                    await MainActor.run {
+                        self.session = session
+                    }
+                    await loadProfile(for: session.user.id)
+                }
+            case .signedOut:
+                await MainActor.run {
+                    self.session = nil
+                    self.profile = nil
+                }
+            default:
+                break
             }
         }
-        .task {
-            await appState.refreshSession()
-        }
-    }
-}
-
-private struct LoginOrOnboardingView: View {
-    @EnvironmentObject private var appState: AppState
-    @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding: Bool
-
-    var body: some View {
-        if hasCompletedOnboarding {
-            LoginView()
-                .environmentObject(appState)
-        } else {
-            OnboardingView()
-        }
-    }
-}
-
-struct RootRouterView_Previews: PreviewProvider {
-    static var previews: some View {
-        RootRouterView()
-            .environmentObject(AppState())
     }
 }
