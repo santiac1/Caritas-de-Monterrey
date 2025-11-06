@@ -12,47 +12,38 @@ import CoreLocation
 struct mapaView: View {
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var locationManager = CLLocationManager()
-    @StateObject var viewModel = MapaViewModel()
-    
-    @Environment(\.dismiss) private var dismiss
-    
+    @EnvironmentObject private var viewModel: MapaViewModel
+
     @State private var fullMap = true
 
     var body: some View {
-            //map
-            VStack {
-                Map(position: $position) {
-                    UserAnnotation()
+        VStack {
+            Map(position: $position) {
+                UserAnnotation()
 
-                    // Anotaciones dinámicas desde Supabase
-                    ForEach(viewModel.Locations) { Location in
-                        let coordinate = CLLocationCoordinate2D(
-                            latitude: CLLocationDegrees(Location.latitude),
-                            longitude: CLLocationDegrees(Location.longitude)
-                        )
-                        Annotation(Location.name, coordinate: coordinate) {
-                            BubbleAnnotationLabel(icon: "building.2.fill")
-                        }
-                    }
-                }
-
-                .mapStyle(.standard(elevation: .realistic))
-                .onAppear {
-                    locationManager.requestWhenInUseAuthorization()
-                    Task {
-                        await viewModel.fetchMapa()
-                    }
-                }
-                .mapControls {
-                    if fullMap {
-                        MapUserLocationButton()
+                ForEach(viewModel.Locations) { location in
+                    let coordinate = CLLocationCoordinate2D(
+                        latitude: CLLocationDegrees(location.latitude),
+                        longitude: CLLocationDegrees(location.longitude)
+                    )
+                    Annotation(location.name, coordinate: coordinate) {
+                        BubbleAnnotationLabel(icon: "building.2.fill")
                     }
                 }
             }
-
+            .mapStyle(.standard(elevation: .realistic))
+            .onAppear {
+                locationManager.requestWhenInUseAuthorization()
+                Task { await viewModel.fetchMapa() }
+            }
+            .mapControls {
+                if fullMap {
+                    MapUserLocationButton()
+                }
             }
         }
-
+    }
+}
 
 //diseño para los puntos
 struct BubbleAnnotationLabel: View {
@@ -89,4 +80,5 @@ struct BubbleAnnotationLabel: View {
 
 #Preview {
     mapaView()
+        .environmentObject(MapaViewModel())
 }

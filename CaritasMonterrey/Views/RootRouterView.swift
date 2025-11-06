@@ -1,12 +1,10 @@
 import SwiftUI
 
-// Este es tu "enrutador"
-struct ContentView: View {
+// 1. Usamos el nombre de struct correcto: RootRouterView
+struct RootRouterView: View {
     
-    // Pide el "cerebro"
+    // 2. Usamos la lógica interna correcta de tu rama "main"
     @EnvironmentObject var appState: AppState
-    
-    // Revisa si ya pasó el onboarding
     @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding = false
 
     var body: some View {

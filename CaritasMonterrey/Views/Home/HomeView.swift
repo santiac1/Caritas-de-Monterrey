@@ -9,7 +9,9 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var vm = HomeViewModel()
+    @EnvironmentObject private var vm: HomeViewModel
+    @EnvironmentObject private var donationsVM: DonationsViewModel
+    @EnvironmentObject private var mapaVM: MapaViewModel
     @State private var navPath = NavigationPath()
     @State private var showDonationSheet = false   // <-- nuevo
 
@@ -86,11 +88,13 @@ struct HomeView: View {
                 switch route {
                 case .mapV:
                     mapaView()
+                        .environmentObject(mapaVM)
                         .navigationTitle("Mapa")
                         .navigationBarTitleDisplayMode(.inline)
 
                 case .donationsV:
                     DonationsView()
+                        .environmentObject(donationsVM)
                         .navigationTitle("Mis donaciones")
                         .navigationBarTitleDisplayMode(.inline)
 
@@ -108,4 +112,9 @@ struct HomeView: View {
     }
 }
 
-#Preview { HomeView() }
+#Preview {
+    HomeView()
+        .environmentObject(HomeViewModel())
+        .environmentObject(DonationsViewModel())
+        .environmentObject(MapaViewModel())
+}

@@ -1,16 +1,20 @@
 import SwiftUI
-import Supabase
 
 struct AdminTabView: View {
+    @StateObject private var helpRequestsVM = AdminHelpRequestsViewModel()
+    @StateObject private var bazaarVM = BazaarManagementViewModel()
+
     var body: some View {
         TabView {
             NavigationStack {
                 AdminHelpRequestsView()
+                    .environmentObject(helpRequestsVM)
             }
             .tabItem { Label("Solicitudes", systemImage: "tray.full.fill") }
 
             NavigationStack {
                 BazaarManagementView()
+                    .environmentObject(bazaarVM)
             }
             .tabItem { Label("Bazares", systemImage: "building.2.fill") }
         }
@@ -18,17 +22,15 @@ struct AdminTabView: View {
 }
 
 private struct AdminHelpRequestsView: View {
-    @State private var donations: [Donation] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
+    @EnvironmentObject private var viewModel: AdminHelpRequestsViewModel
 
     var body: some View {
         List {
-            if isLoading {
+            if viewModel.isLoading {
                 ProgressView()
                     .frame(maxWidth: .infinity, alignment: .center)
             }
-            ForEach(donations) { donation in
+            ForEach(viewModel.donations) { donation in
                 NavigationLink(value: donation) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(donation.name)
@@ -51,66 +53,27 @@ private struct AdminHelpRequestsView: View {
         .navigationDestination(for: Donation.self) { donation in
             AdminSolicitudDetailView(donation: donation)
         }
-        .task { await loadDonations() }
-        .refreshable { await loadDonations() }
+        .task { await viewModel.loadHelpRequests() }
+        .refreshable { await viewModel.loadHelpRequests() }
         .alert("Error", isPresented: Binding(
-            get: { errorMessage != nil },
-            set: { _ in errorMessage = nil }
+            get: { viewModel.errorMessage != nil },
+            set: { _ in }
         )) {
             Button("Aceptar", role: .cancel) { }
         } message: {
-            Text(errorMessage ?? "")
+            Text(viewModel.errorMessage ?? "")
         }
-    }
-
-    private func loadDonations() async {
-        isLoading = true
-        errorMessage = nil
-        do {
-            let fetched: [Donation] = try await SupabaseManager.shared.client.database
-                .from("Donations")
-                .select()
-                .eq("status", value: "solicitud_ayuda")
-                .order(column: "created_at", ascending: false)
-                .execute()
-                .value
-
-            let userIds = Array(Set(fetched.map { $0.user_id }))
-            var profiles: [UUID: Profile] = [:]
-            if !userIds.isEmpty {
-                let profileList: [Profile] = try await SupabaseManager.shared.client.database
-                    .from("profiles")
-                    .select()
-                    .in("id", values: userIds)
-                    .execute()
-                    .value
-                profileList.forEach { profiles[$0.id] = $0 }
-            }
-
-            donations = fetched.map { donation in
-                var donation = donation
-                if let profile = profiles[donation.user_id] {
-                    let fullName = [profile.firstName, profile.lastName].compactMap { $0 }.joined(separator: " ")
-                    donation.donorName = !fullName.trimmingCharacters(in: .whitespaces).isEmpty ? fullName : profile.username
-                }
-                return donation
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        isLoading = false
     }
 }
 
 private struct BazaarManagementView: View {
-    @State private var locations: [Location] = []
+    @EnvironmentObject private var viewModel: BazaarManagementViewModel
     @State private var isPresentingForm = false
     @State private var editingLocation: Location?
-    @State private var errorMessage: String?
 
     var body: some View {
         List {
-            ForEach(locations) { location in
+            ForEach(viewModel.locations) { location in
                 Button {
                     editingLocation = location
                     isPresentingForm = true
@@ -126,7 +89,8 @@ private struct BazaarManagementView: View {
             }
             .onDelete { indexSet in
                 for index in indexSet {
-                    Task { await deleteLocation(locations[index]) }
+                    let location = viewModel.locations[index]
+                    Task { await viewModel.deleteLocation(location.id) }
                 }
             }
         }
@@ -141,88 +105,31 @@ private struct BazaarManagementView: View {
                 }
             }
         }
-        .task { await loadLocations() }
-        .sheet(isPresented: $isPresentingForm, onDismiss: { Task { await loadLocations() } }) {
+        .task { await viewModel.loadLocations() }
+        .sheet(isPresented: $isPresentingForm, onDismiss: { Task { await viewModel.loadLocations() } }) {
             NavigationStack {
                 LocationForm(location: editingLocation) { payload in
                     Task {
                         if let editingLocation {
-                            await updateLocation(editingLocation.id, with: payload)
+                            await viewModel.updateLocation(editingLocation.id, with: payload)
                         } else {
-                            await createLocation(payload)
+                            await viewModel.createLocation(payload)
                         }
                     }
                 }
             }
         }
         .alert("Error", isPresented: Binding(
-            get: { errorMessage != nil },
-            set: { _ in errorMessage = nil }
+            get: { viewModel.errorMessage != nil },
+            set: { _ in }
         )) {
             Button("Aceptar", role: .cancel) { }
         } message: {
-            Text(errorMessage ?? "")
-        }
-    }
-
-    private func loadLocations() async {
-        do {
-            locations = try await SupabaseManager.shared.client.database
-                .from("Locations")
-                .select()
-                .order(column: "name")
-                .execute()
-                .value
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    private func createLocation(_ payload: LocationPayload) async {
-        do {
-            try await SupabaseManager.shared.client.database
-                .from("Locations")
-                .insert(payload)
-                .execute()
-            await loadLocations()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    private func updateLocation(_ id: Int, with payload: LocationPayload) async {
-        do {
-            try await SupabaseManager.shared.client.database
-                .from("Locations")
-                .update(payload)
-                .eq("id", value: id)
-                .execute()
-            await loadLocations()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    private func deleteLocation(_ location: Location) async {
-        do {
-            try await SupabaseManager.shared.client.database
-                .from("Locations")
-                .delete()
-                .eq("id", value: location.id)
-                .execute()
-            await loadLocations()
-        } catch {
-            errorMessage = error.localizedDescription
+            Text(viewModel.errorMessage ?? "")
         }
     }
 }
 
-private struct LocationPayload: Encodable {
-    var name: String
-    var latitude: Double
-    var longitude: Double
-    var address: String
-}
 
 private struct LocationForm: View {
     var location: Location?
