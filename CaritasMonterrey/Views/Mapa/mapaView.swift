@@ -9,7 +9,6 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
-//puntos en el mapa
 extension CLLocationCoordinate2D {
     static let bazar1 = CLLocationCoordinate2D(latitude: 25.679263, longitude: -100.340499)
     static let bazar2 = CLLocationCoordinate2D(latitude: 25.682716, longitude: -100.310453)
@@ -19,78 +18,52 @@ extension CLLocationCoordinate2D {
     static let bazar6 = CLLocationCoordinate2D(latitude: 25.674526, longitude: -100.258442)
 }
 
-
 struct mapaView: View {
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var locationManager = CLLocationManager()
     @StateObject var viewModel = MapaViewModel()
-    
-    @Environment(\.dismiss) private var dismiss
-    
     @State private var fullMap = true
 
     var body: some View {
-        NavigationStack {
-            //map
-            VStack {
-                Map(position: $position) {
-                    UserAnnotation()
-                    
-                    // Anotaciones fijas
-                    Annotation("Bazar Cáritas, Monterrey", coordinate: .bazar1) {
-                        BubbleAnnotationLabel(icon: "building.2.fill")
-                    }
-                    Annotation("Bazar Cáritas, Centro", coordinate: .bazar2) {
-                        BubbleAnnotationLabel(icon: "building.2.fill")
-                    }
-                    Annotation("Bazar Cáritas, Col. Trazo Marco", coordinate: .bazar3) {
-                        BubbleAnnotationLabel(icon: "building.2.fill")
-                    }
-                    Annotation("Bazar Cáritas, San Gilberto", coordinate: .bazar4) {
-                        BubbleAnnotationLabel(icon: "building.2.fill")
-                    }
-                    Annotation("Bazar Cáritas, San Pedro", coordinate: .bazar5) {
-                        BubbleAnnotationLabel(icon: "building.2.fill")
-                    }
-                    Annotation("Bazar Cáritas, Centro Guadalupe ", coordinate: .bazar6) {
-                        BubbleAnnotationLabel(icon: "building.2.fill")
-                    }
+        VStack {
+            Map(position: $position) {
+                UserAnnotation()
 
-                    // Anotaciones dinámicas desde Supabase
-                    ForEach(viewModel.Locations) { Location in
-                        let coordinate = CLLocationCoordinate2D(
-                            latitude: CLLocationDegrees(Location.latitude),
-                            longitude: CLLocationDegrees(Location.longitude)
-                        )
-                        Annotation(Location.name, coordinate: coordinate) {
-                            BubbleAnnotationLabel(icon: "building.2.fill")
-                        }
-                    }
-                }
+                // fijas
+                Annotation("Bazar Cáritas, Monterrey", coordinate: .bazar1) { BubbleAnnotationLabel(icon: "building.2.fill") }
+                Annotation("Bazar Cáritas, Centro", coordinate: .bazar2) { BubbleAnnotationLabel(icon: "building.2.fill") }
+                Annotation("Bazar Cáritas, Col. Trazo Marco", coordinate: .bazar3) { BubbleAnnotationLabel(icon: "building.2.fill") }
+                Annotation("Bazar Cáritas, San Gilberto", coordinate: .bazar4) { BubbleAnnotationLabel(icon: "building.2.fill") }
+                Annotation("Bazar Cáritas, San Pedro", coordinate: .bazar5) { BubbleAnnotationLabel(icon: "building.2.fill") }
+                Annotation("Bazar Cáritas, Centro Guadalupe ", coordinate: .bazar6) { BubbleAnnotationLabel(icon: "building.2.fill") }
 
-                .mapStyle(.standard(elevation: .realistic))
-                .onAppear {
-                    locationManager.requestWhenInUseAuthorization()
-                    Task {
-                        await viewModel.fetchMapa()
-                    }
-                }
-                .mapControls {
-                    if fullMap {
-                        MapUserLocationButton()
+                // dinámicas
+                ForEach(viewModel.Locations) { loc in
+                    let coordinate = CLLocationCoordinate2D(latitude: CLLocationDegrees(loc.latitude),
+                                                            longitude: CLLocationDegrees(loc.longitude))
+                    Annotation(loc.name, coordinate: coordinate) {
+                        BubbleAnnotationLabel(icon: "building.2.fill")
                     }
                 }
             }
-
+            .mapStyle(.standard(elevation: .realistic))
+            .onAppear {
+                locationManager.requestWhenInUseAuthorization()
+                Task { await viewModel.fetchMapa() }
+            }
+            .mapControls {
+                if fullMap { MapUserLocationButton() }
             }
         }
+        .background(Color(.systemBackground)) // evita “pantalla negra”
+        .navigationTitle("Mapa")
+        .navigationBarTitleDisplayMode(.inline)
+        .padding(.horizontal, 0)
     }
+}
 
-
-//diseño para los puntos
 struct BubbleAnnotationLabel: View {
     let icon: String
-
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
@@ -101,16 +74,9 @@ struct BubbleAnnotationLabel: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 1.0, green: 0.40, blue: 0.60), // rosa
-                            Color(red: 1.0, green: 0.10, blue: 0.40)  // fucsia
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .fill(LinearGradient(colors: [Color(red: 1, green: 0.40, blue: 0.60),
+                                              Color(red: 1, green: 0.10, blue: 0.40)],
+                                     startPoint: .topLeading, endPoint: .bottomTrailing))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18)
@@ -120,6 +86,4 @@ struct BubbleAnnotationLabel: View {
     }
 }
 
-#Preview {
-    mapaView()
-}
+#Preview { mapaView() }

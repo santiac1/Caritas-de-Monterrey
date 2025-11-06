@@ -1,5 +1,0 @@
-import SwiftUI
-
-#Preview {
-    HomeView()
-}

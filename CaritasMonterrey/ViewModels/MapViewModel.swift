@@ -10,7 +10,8 @@ import SwiftUI
 import Supabase
 import Combine
 
-class MapaViewModel: ObservableObject {
+@MainActor
+final class MapaViewModel: ObservableObject {
     @Published var Locations: [Location] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
