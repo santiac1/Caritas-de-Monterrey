@@ -19,7 +19,6 @@ struct mapaView: View {
     @State private var fullMap = true
 
     var body: some View {
-        NavigationStack {
             //map
             VStack {
                 Map(position: $position) {
@@ -53,7 +52,6 @@ struct mapaView: View {
 
             }
         }
-    }
 
 
 //diseño para los puntos

@@ -4,25 +4,19 @@
 //
 //  Created by Alumno on 20/10/25.
 //
-//  Modificado por Gemini para adaptarse al diseño de la imagen.
+//  Modificado por Gemini para adaptarse al diseño de la imagen
+//  y refactorizado para usar un Modelo de Datos (UserProfile).
 //
 
 import SwiftUI
 
+// NOTA: El modelo 'UserProfile' y 'ProfileData'
+// ahora viven en el archivo "ProfileModel.swift"
+
 struct ProfileView: View {
-    
-    // Variables de Estado
-    @State private var nombrePublico: String = ""
-    @State private var nombre: String = ""
-    @State private var apellido: String = ""
-    @State private var telefono: String = ""
-    @State private var direccion: String = ""
-    @State private var fechaNacimiento: Date = Date()
-    // La variable 'rol' se ha eliminado
+    @State private var user: UserProfile = UserProfile()
 
     var body: some View {
-        // NOTA: Se eliminó el NavigationStack de esta vista
-        // para que funcione correctamente dentro del de HomeView.
         ScrollView {
             VStack(spacing: 24) {
                 
@@ -31,16 +25,15 @@ struct ProfileView: View {
                     
                     // --- Columna Izquierda: Campos Principales ---
                     VStack(spacing: 16) {
-                        ProfileTextField(label: "Nombre Publico", text: $nombrePublico)
-                        ProfileTextField(label: "Nombre", text: $nombre)
-                        ProfileTextField(label: "Apellido", text: $apellido)
-                        ProfileTextField(label: "Telefono", text: $telefono)
+
+                        ProfileTextField(label: "Nombre Publico", text: $user.nombrePublico)
+                        ProfileTextField(label: "Nombre", text: $user.nombre)
+                        ProfileTextField(label: "Apellido", text: $user.apellido)
+                        ProfileTextField(label: "Telefono", text: $user.telefono)
                             .keyboardType(.phonePad)
-                        ProfileTextField(label: "Dirección", text: $direccion)
-                        // El DatePicker se movió a la columna derecha
+                        ProfileTextField(label: "Dirección", text: $user.direccion)
                     }
                     
-                    // --- Columna Derecha: Imagen y Fecha de Nacimiento (MODIFICADO) ---
                     VStack(spacing: 16) {
                         Image(systemName: "person.circle.fill")
                             .resizable()
@@ -48,9 +41,8 @@ struct ProfileView: View {
                             .frame(width: 120, height: 120)
                             .foregroundColor(Color(.systemGray3))
                             .padding(.top, 5)
-                        
-                        // Campo 'Rol' reemplazado por 'Fecha de nacimiento'
-                        ProfileDatePicker(label: "Fecha de nacimiento", selection: $fechaNacimiento)
+
+                        ProfileDatePicker(label: "Fecha de nacimiento", selection: $user.fechaNacimiento)
                     }
                 }
                 
@@ -59,10 +51,10 @@ struct ProfileView: View {
                     Text("Guardar")
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(UIColor.systemBackground))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
-                        .background(Color(red: 0.05, green: 0.1, blue: 0.2))
+                        .background(Color(UIColor.label))
                         .cornerRadius(30)
                 }
                 .padding(.top, 10)
@@ -70,26 +62,29 @@ struct ProfileView: View {
             }
             .padding()
         }
-        .navigationTitle("Perfil") // El título se mostrará en la barra de HomeView
+        .navigationTitle("Perfil")
         .toolbarTitleDisplayMode(.large)
+        .onAppear {
+        }
     }
     
-    // Función para guardar (MODIFICADA)
     private func guardarPerfil() {
         print("Guardando perfil...")
         
-        // Datos a guardar (sin 'rol')
-        print("- Nombre Público: \(nombrePublico)")
-        print("- Nombre: \(nombre)")
-        print("- Apellido: \(apellido)")
-        print("- Teléfono: \(telefono)")
-        print("- Dirección: \(direccion)")
-        print("- Fecha de Nacimiento: \(fechaNacimiento)")
+        // --- CAMBIO: Se imprime el objeto 'user' completo ---
+        print("- Nombre Público: \(user.nombrePublico)")
+        print("- Nombre: \(user.nombre)")
+        print("- Apellido: \(user.apellido)")
+        print("- Teléfono: \(user.telefono)")
+        print("- Dirección: \(user.direccion)")
+        print("- Fecha de Nacimiento: \(user.fechaNacimiento)")
+        
     }
 }
 
 // -----------------------------------------------------------------------------
 // MARK: - Componentes de UI Reutilizables
+// (Estas vistas no necesitan cambios, ya que funcionan con Bindings)
 // -----------------------------------------------------------------------------
 
 struct ProfileTextField: View {
