@@ -6,26 +6,21 @@
 //
 
 import SwiftUI
-import Combine  
+import Combine
 
 @main
 struct CaritasMonterreyApp: App {
-    @StateObject private var onboardingVM = OnboardingViewModel()
+    @StateObject private var appState = AppState()
 
     var body: some Scene {
         WindowGroup {
-            if onboardingVM.shouldShowOnboarding {
-                OnboardingView(viewModel: onboardingVM)
-            } else {
-                MainTabView()
-                    .environmentObject(HomeViewModel())
-                    .environmentObject(DonationsViewModel())
-                    .environmentObject(NotificationsViewModel())
-                    .environmentObject(ProfileViewModel())
-                    .environmentObject(SupabaseManager.shared)
-            }
+            RootRouterView()
+                .environmentObject(appState)
+                .environmentObject(HomeViewModel())
+                .environmentObject(DonationsViewModel())
+                .environmentObject(NotificationsViewModel())
+                .environmentObject(ProfileViewModel())
+                .environmentObject(SupabaseManager.shared)
         }
     }
 }
-
-

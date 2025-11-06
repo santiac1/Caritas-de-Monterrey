@@ -1,52 +1,27 @@
-//
-//  ProfileModel.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 20/10/25.
-//
-//  Este archivo define el Modelo de Datos para el Perfil de Usuario.
-//
-
 import Foundation
 
-/// El modelo de datos principal para el perfil de un usuario.
-/// Esta estructura agrupa toda la información del usuario.
-/// En el futuro, se cargará y guardará en la base de datos.
-struct UserProfile {
-    var nombrePublico: String
-    var nombre: String
-    var apellido: String
-    var telefono: String
-    var direccion: String
-    var fechaNacimiento: Date
-    
-    /// Un inicializador vacío para crear un perfil nuevo
-    init(nombrePublico: String = "",
-         nombre: String = "",
-         apellido: String = "",
-         telefono: String = "",
-         direccion: String = "",
-         fechaNacimiento: Date = Date()) {
-        
-        self.nombrePublico = nombrePublico
-        self.nombre = nombre
-        self.apellido = apellido
-        self.telefono = telefono
-        self.direccion = direccion
-        self.fechaNacimiento = fechaNacimiento
+struct Profile: Identifiable, Codable {
+    let id: UUID
+    var role: String
+    var firstName: String?
+    var lastName: String?
+    var username: String?
+    var phone: String?
+    var birthdate: Date?
+    var companyName: String?
+    var rfc: String?
+    var address: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case role
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case username = "username"
+        case phone = "phone"
+        case birthdate = "birthdate"
+        case companyName = "company_name"
+        case rfc = "rfc"
+        case address = "address"
     }
-}
-
-// MARK: - Datos de Muestra (Mock Data)
-
-// (Opcional) Si quisieras un perfil de muestra para Previews
-// podrías añadirlo aquí:
-struct ProfileData {
-    static let mockProfile = UserProfile(
-        nombrePublico: "VicValero",
-        nombre: "Victor",
-        apellido: "Valero",
-        telefono: "8112345678",
-        direccion: "Av. Siempre Viva 123"
-    )
 }
