@@ -1,4 +1,5 @@
 import SwiftUI
+import Auth
 
 struct DonationSheet: View {
     @ObservedObject var viewModel: DonationSheetViewModel
