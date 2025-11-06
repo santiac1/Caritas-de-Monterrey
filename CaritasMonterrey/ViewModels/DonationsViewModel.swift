@@ -24,7 +24,7 @@ final class DonationsViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let result: [Donation] = try await SupabaseManager.shared.client.database
+            let result: [Donation] = try await SupabaseManager.shared.client
                 .from("Donations")
                 .select()
                 .eq("user_id", value: userId)

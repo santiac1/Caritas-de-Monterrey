@@ -58,7 +58,7 @@ struct AdminSolicitudDetailView: View {
         isUpdating = true
         errorMessage = nil
         do {
-            try await SupabaseManager.shared.client.database
+            try await SupabaseManager.shared.client
                 .from("Donations")
                 .update(["status": newStatus])
                 .eq("id", value: donation.id)

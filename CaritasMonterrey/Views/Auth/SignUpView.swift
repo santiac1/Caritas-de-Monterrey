@@ -117,7 +117,7 @@ struct SignUpView: View {
                 rfc: nil,
                 address: nil
             )
-            _ = try await SupabaseManager.shared.client.database
+            _ = try await SupabaseManager.shared.client
                 .from("profiles")
                 .insert(profile)
                 .select()

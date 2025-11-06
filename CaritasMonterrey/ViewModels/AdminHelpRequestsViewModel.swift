@@ -19,7 +19,7 @@ final class AdminHelpRequestsViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let fetched: [Donation] = try await SupabaseManager.shared.client.database
+            let fetched: [Donation] = try await SupabaseManager.shared.client
                 .from("Donations")
                 .select()
                 .eq("status", value: "solicitud_ayuda")
@@ -30,7 +30,7 @@ final class AdminHelpRequestsViewModel: ObservableObject {
             let userIds = Array(Set(fetched.map { $0.user_id }))
             var profiles: [UUID: Profile] = [:]
             if !userIds.isEmpty {
-                let profileList: [Profile] = try await SupabaseManager.shared.client.database
+                let profileList: [Profile] = try await SupabaseManager.shared.client
                     .from("profiles")
                     .select()
                     .in("id", values: userIds)

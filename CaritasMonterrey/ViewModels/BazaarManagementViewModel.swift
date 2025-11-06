@@ -19,7 +19,7 @@ final class BazaarManagementViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            locations = try await SupabaseManager.shared.client.database
+            locations = try await SupabaseManager.shared.client
                 .from("Locations")
                 .select()
                 .order("name")
@@ -33,7 +33,7 @@ final class BazaarManagementViewModel: ObservableObject {
 
     func createLocation(_ payload: LocationPayload) async {
         do {
-            try await SupabaseManager.shared.client.database
+            try await SupabaseManager.shared.client
                 .from("Locations")
                 .insert(payload)
                 .execute()
@@ -45,7 +45,7 @@ final class BazaarManagementViewModel: ObservableObject {
 
     func updateLocation(_ id: Int, with payload: LocationPayload) async {
         do {
-            try await SupabaseManager.shared.client.database
+            try await SupabaseManager.shared.client
                 .from("Locations")
                 .update(payload)
                 .eq("id", value: id)
@@ -58,7 +58,7 @@ final class BazaarManagementViewModel: ObservableObject {
 
     func deleteLocation(_ id: Int) async {
         do {
-            try await SupabaseManager.shared.client.database
+            try await SupabaseManager.shared.client
                 .from("Locations")
                 .delete()
                 .eq("id", value: id)

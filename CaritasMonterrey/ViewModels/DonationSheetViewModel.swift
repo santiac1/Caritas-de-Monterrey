@@ -69,7 +69,7 @@ final class DonationSheetViewModel: ObservableObject {
         )
 
         do {
-            try await client.database
+            try await client
                 .from("Donations")
                 .insert(donation)
                 .execute()

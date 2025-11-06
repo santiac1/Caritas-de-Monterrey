@@ -10,16 +10,19 @@ final class AppState: ObservableObject {
     @Published var isLoadingProfile = false
     @Published var authError: String?
 
-    private let client: SupabaseClient
     private var authTask: Task<Void, Never>?
-
-    init(client: SupabaseClient = SupabaseManager.shared.client) {
-        self.client = client
+    
+    // --- INICIO DE LA CORRECCIÓN ---
+    // 1. Se elimina la propiedad 'private let client: SupabaseClient'
+    // 2. Se reemplaza el 'init' complejo por uno simple.
+    
+    init() {
         authTask = Task { [weak self] in
             await self?.listenToAuthChanges()
         }
         Task { await refreshSession() }
     }
+    // --- FIN DE LA CORRECCIÓN ---
 
     deinit {
         authTask?.cancel()
@@ -28,9 +31,8 @@ final class AppState: ObservableObject {
     func refreshSession() async {
         authError = nil
         do {
-            // CORRECCIÓN: client.auth.session NO es opcional.
-            // Se quita el 'if let'. Si falla, el 'catch' lo atrapará.
-            let currentSession = try await client.auth.session
+            // 3. Se llama al 'shared' manager directamente
+            let currentSession = try await SupabaseManager.shared.client.auth.session
             session = currentSession
             await loadProfile(for: currentSession.user.id)
         } catch {
@@ -42,22 +44,22 @@ final class AppState: ObservableObject {
 
     func signIn(email: String, password: String) async throws {
         authError = nil
-        let response = try await client.auth.signIn(email: email, password: password)
+        // 3. Se llama al 'shared' manager directamente
+        let response = try await SupabaseManager.shared.client.auth.signIn(email: email, password: password)
         session = response
-        
-        // CORRECCIÓN: response.user NO es opcional.
-        // Se quita el 'if let' y el 'else if'. La lógica es directa.
         await loadProfile(for: response.user.id)
     }
 
     func signUp(email: String, password: String) async throws -> AuthResponse {
         authError = nil
-        return try await client.auth.signUp(email: email, password: password)
+        // 3. Se llama al 'shared' manager directamente
+        return try await SupabaseManager.shared.client.auth.signUp(email: email, password: password)
     }
 
     func signOut() async {
         do {
-            try await client.auth.signOut()
+            // 3. Se llama al 'shared' manager directamente
+            try await SupabaseManager.shared.client.auth.signOut()
         } catch {
             authError = error.localizedDescription
         }
@@ -69,22 +71,31 @@ final class AppState: ObservableObject {
         isLoadingProfile = true
         defer { isLoadingProfile = false }
         do {
-            let profile: Profile = try await client.database
+            // 3. Se llama al 'shared' manager directamente
+            let profile: Profile = try await SupabaseManager.shared.client
                 .from("profiles")
                 .select()
                 .eq("id", value: userId)
                 .single()
                 .execute()
                 .value
+            
+            print("--- ✅ PERFIL CARGADO CON ÉXITO ---")
+            print("Perfil decodificado: \(profile)")
+            print("Rol del perfil: \(profile.role)")
+            
             self.profile = profile
         } catch {
+            print("--- ‼️ ERROR CRÍTICO AL CARGAR PERFIL ‼️ ---")
+            print(error)
             authError = error.localizedDescription
             profile = nil
         }
     }
 
     private func listenToAuthChanges() async {
-        for await event in client.auth.authStateChanges {
+        // 3. Se llama al 'shared' manager directamente
+        for await event in SupabaseManager.shared.client.auth.authStateChanges {
             switch event.event {
             case .signedIn, .initialSession, .tokenRefreshed:
                 if let session = event.session {
