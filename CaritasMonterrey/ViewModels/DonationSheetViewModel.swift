@@ -17,8 +17,15 @@ final class DonationSheetViewModel: ObservableObject {
     @Published var selectedType: DonationType = .monetaria
     @Published var amount: String = ""
     @Published var notes: String = ""
-    @Published var preferPickupAtBazaar: Bool = true
-    @Published var selectedBazaarName: String = "Bazar Cáritas Centro"
+    @Published var preferPickupAtBazaar: Bool = true {
+        didSet {
+            if preferPickupAtBazaar && selectedBazaar == nil {
+                selectedBazaar = bazaars.first
+            }
+        }
+    }
+    @Published var bazaars: [Location] = []
+    @Published var selectedBazaar: Location?
     @Published var helpNeeded: Bool = false
     @Published var shippingWeight: String = ""
     @Published private(set) var isSubmitting = false
@@ -27,13 +34,8 @@ final class DonationSheetViewModel: ObservableObject {
 
     var currentUserId: UUID?
 
-    let bazaars = [
-        "Bazar Cáritas Centro",
-        "Bazar Cáritas San Pedro",
-        "Bazar Cáritas San Gilberto"
-    ]
-
     private let client = SupabaseManager.shared.client
+    private var hasLoadedBazaars = false
 
     var isValid: Bool {
         if selectedType == .monetaria {
@@ -42,7 +44,32 @@ final class DonationSheetViewModel: ObservableObject {
         if helpNeeded && shippingWeight.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return false
         }
+        if preferPickupAtBazaar && selectedBazaar == nil {
+            return false
+        }
         return currentUserId != nil
+    }
+
+    func loadBazaars() async {
+        guard !hasLoadedBazaars else { return }
+        hasLoadedBazaars = true
+        errorMessage = nil
+
+        do {
+            let response: [Location] = try await client
+                .from("Locations")
+                .select()
+                .order("name")
+                .execute()
+                .value
+            bazaars = response
+            if selectedBazaar == nil {
+                selectedBazaar = response.first
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            hasLoadedBazaars = false
+        }
     }
 
     func submit() async {
@@ -65,7 +92,7 @@ final class DonationSheetViewModel: ObservableObject {
             notes: notes.isEmpty ? nil : notes,
             amount: selectedType == .monetaria ? Double(amount.replacingOccurrences(of: ",", with: ".")) : nil,
             prefer_pickup_at_bazaar: preferPickupAtBazaar,
-            bazaar_name: preferPickupAtBazaar ? selectedBazaarName : nil
+            location_id: preferPickupAtBazaar ? selectedBazaar?.id : nil
         )
 
         do {
@@ -91,5 +118,5 @@ private struct NewDonation: Encodable {
     let notes: String?
     let amount: Double?
     let prefer_pickup_at_bazaar: Bool
-    let bazaar_name: String?
+    let location_id: Int?
 }
