@@ -1,7 +1,9 @@
 import SwiftUI
 
+// 1. Usamos el nombre de struct correcto: RootRouterView
 struct RootRouterView: View {
     
+    // 2. Usamos la lógica interna correcta de tu rama "main"
     @EnvironmentObject var appState: AppState
     @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding = false
 
@@ -9,9 +11,9 @@ struct RootRouterView: View {
         Group {
             // 1. Revisa si el perfil ya cargó
             if appState.isLoadingProfile {
-                ProgressView() // O tu pantalla de carga
+                ProgressView() // Muestra pantalla de carga
             } 
-            // 2. Si hay un perfil cargado, decide la vista por ROL
+            // 2. Si hay perfil, decide por ROL
             else if let profile = appState.profile {
                 switch profile.role {
                 case "user":
@@ -21,19 +23,20 @@ struct RootRouterView: View {
                 case "admin":
                     AdminTabView()
                 default:
-                    // Perfil cargado pero sin rol (raro, pero seguro)
+                    // Perfil sin rol (caso de seguridad)
                     LoginView() 
                 }
             } 
-            // 3. Si NO hay perfil, revisa si ya vio el onboarding
+            // 3. Si no hay perfil, revisa el onboarding
             else if !hasCompletedOnboarding {
                 OnboardingView()
             } 
-            // 4. Si no hay nada de lo anterior, muestra el Login
+            // 4. Si no, al Login
             else {
                 LoginView()
             }
         }
-        .environmentObject(appState) // Asegúrate de pasar el appState a las subvistas
+        // Pasa el "cerebro" a las vistas hijas (UserTabView, etc.)
+        .environmentObject(appState) 
     }
 }
