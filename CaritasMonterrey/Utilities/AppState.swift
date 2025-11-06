@@ -1,3 +1,5 @@
+// TOMA 1: Mantenemos el import 'Combine' de CodeX
+import Combine
 import Foundation
 import SwiftUI
 import Supabase
@@ -25,6 +27,10 @@ final class AppState: ObservableObject {
     }
 
     func refreshSession() async {
+        // TOMA 2: Usamos el 'authError = nil' de CodeX
+        authError = nil
+        
+        // TOMA 2: Y mantenemos el 'do-catch' de 'main' (es más seguro)
         do {
             if let currentSession = try await client.auth.session {
                 session = currentSession
@@ -42,7 +48,10 @@ final class AppState: ObservableObject {
 
     func signIn(email: String, password: String) async throws {
         authError = nil
-        let response = try await client.auth.signInWithPassword(email: email, password: password)
+        
+        // TOMA 3: Usamos la función corregida 'signIn' de CodeX
+        let response = try await client.auth.signIn(email: email, password: password)
+        
         session = response.session
         if let user = response.user {
             await loadProfile(for: user.id)
