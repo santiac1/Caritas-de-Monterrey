@@ -17,6 +17,11 @@ struct AdminTabView: View {
                     .environmentObject(bazaarVM)
             }
             .tabItem { Label("Bazares", systemImage: "building.2.fill") }
+
+            AdminSettingsView()
+                .tabItem {
+                    Label("Ajustes", systemImage: "gear")
+                }
         }
     }
 }

@@ -53,6 +53,9 @@ struct CompanyTabView: View {
                     .environmentObject(profileVM)
             }
             .tabItem { Label("Perfil", systemImage: "person.crop.square") }
+
+            CompanySettingsView()
+                .tabItem { Label("Ajustes", systemImage: "gear") }
         }
         .task {
             await donationsVM.loadDonations(for: appState.session?.user.id)
