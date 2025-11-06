@@ -102,7 +102,7 @@ struct HomeView: View {
 
             .sheet(isPresented: $showDonationSheet) {
                 DonationSheet(viewModel: DonationSheetViewModel())
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.large])
             }
         }
     }
