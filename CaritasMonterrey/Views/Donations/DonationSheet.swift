@@ -1,17 +1,11 @@
-//
-//  DonationSheet.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 05/11/25.
-//
-
-// Views/Donations/DonationSheet.swift
 import SwiftUI
 
 struct DonationSheet: View {
     @ObservedObject var viewModel: DonationSheetViewModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var scheme
+    @EnvironmentObject private var appState: AppState
+    @State private var showHelpAlert = false
 
     private var accent: Color { scheme == .dark ? Color(.white) : .primaryCyan }
 
@@ -19,22 +13,29 @@ struct DonationSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-
-                    // Tipo de donación
                     GroupBox {
-                        Picker("Tipo de donación", selection: $viewModel.kind) {
-                            ForEach(DonationSheetViewModel.Kind.allCases) { k in
-                                Text(k.rawValue).tag(k)
+                        Menu {
+                            ForEach(DonationSheetViewModel.DonationType.allCases) { type in
+                                Button(type.rawValue) { viewModel.selectedType = type }
                             }
+                        } label: {
+                            HStack {
+                                Text(viewModel.selectedType.rawValue)
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Image(systemName: "chevron.down")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2)))
                         }
-                        .pickerStyle(.segmented)
                     } label: {
                         Label("Tipo de donación", systemImage: "square.stack.3d.down.forward")
                             .foregroundStyle(.secondary)
                     }
 
-                    // Monto (solo si es monetaria)
-                    if viewModel.kind == .monetaria {
+                    if viewModel.selectedType == .monetaria {
                         GroupBox {
                             HStack {
                                 Text("$")
@@ -51,7 +52,21 @@ struct DonationSheet: View {
                         }
                     }
 
-                    // Entrega
+                    if viewModel.selectedType != .monetaria {
+                        GroupBox {
+                            Toggle("¿Necesitas ayuda con el envío?", isOn: $viewModel.helpNeeded)
+                                .tint(accent)
+                            if viewModel.helpNeeded {
+                                TextField("Peso o tamaño aproximado (ej: 10kg, 2 cajas)", text: $viewModel.shippingWeight)
+                                    .textInputAutocapitalization(.never)
+                                    .padding(.vertical, 4)
+                            }
+                        } label: {
+                            Label("Ayuda con el envío", systemImage: "shippingbox")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
                     GroupBox {
                         Toggle(isOn: $viewModel.preferPickupAtBazaar) {
                             Text("Entregar en bazar cercano")
@@ -59,12 +74,18 @@ struct DonationSheet: View {
                         .tint(accent)
 
                         if viewModel.preferPickupAtBazaar {
-                            Picker("Bazar", selection: $viewModel.selectedBazaarName) {
-                                ForEach(viewModel.bazaars, id: \.self) { b in
-                                    Text(b).tag(b)
+                            Menu {
+                                ForEach(viewModel.bazaars, id: \.self) { bazaar in
+                                    Button(bazaar) { viewModel.selectedBazaarName = bazaar }
                                 }
+                            } label: {
+                                HStack {
+                                    Text(viewModel.selectedBazaarName)
+                                    Spacer()
+                                    Image(systemName: "chevron.down")
+                                }
+                                .padding(.vertical, 4)
                             }
-                            .pickerStyle(.menu)
                         } else {
                             Text("Recolección a domicilio")
                                 .font(.subheadline)
@@ -75,7 +96,6 @@ struct DonationSheet: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    // Notas
                     GroupBox {
                         TextField("Notas para el equipo de Cáritas", text: $viewModel.notes, axis: .vertical)
                             .lineLimit(3...6)
@@ -84,7 +104,6 @@ struct DonationSheet: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    // Estado
                     if let err = viewModel.errorMessage {
                         Text(err)
                             .font(.footnote)
@@ -102,8 +121,15 @@ struct DonationSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         Task {
+                            viewModel.currentUserId = appState.session?.user.id
                             await viewModel.submit()
-                            if viewModel.submitOK { dismiss() }
+                            if viewModel.submitOK {
+                                if viewModel.helpNeeded {
+                                    showHelpAlert = true
+                                } else {
+                                    dismiss()
+                                }
+                            }
                         }
                     } label: {
                         if viewModel.isSubmitting {
@@ -115,10 +141,22 @@ struct DonationSheet: View {
                     .disabled(viewModel.isSubmitting || !viewModel.isValid)
                 }
             }
+            .onAppear {
+                viewModel.currentUserId = appState.session?.user.id
+            }
         }
+        .alert("Solicitud enviada", isPresented: $showHelpAlert, actions: {
+            Button("Entendido") {
+                viewModel.submitOK = false
+                dismiss()
+            }
+        }, message: {
+            Text("Solicitud enviada. Un administrador revisará tu donación.")
+        })
     }
 }
 
 #Preview {
     DonationSheet(viewModel: DonationSheetViewModel())
+        .environmentObject(AppState())
 }

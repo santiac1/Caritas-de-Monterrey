@@ -1,15 +1,6 @@
-//
-//  ContentView.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 20/10/25.
-//
-
 import SwiftUI
 
-import SwiftUI
-
-struct MainTabView: View {
+struct UserTabView: View {
     var body: some View {
         TabView {
             HomeView()
@@ -20,4 +11,8 @@ struct MainTabView: View {
                 .tabItem { Label("Donaciones", systemImage: "heart.fill") }
         }
     }
+}
+
+#Preview {
+    UserTabView()
 }
