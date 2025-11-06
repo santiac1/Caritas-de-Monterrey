@@ -16,11 +16,6 @@ struct CaritasMonterreyApp: App {
         WindowGroup {
             RootRouterView()
                 .environmentObject(appState)
-                .environmentObject(HomeViewModel())
-                .environmentObject(DonationsViewModel())
-                .environmentObject(NotificationsViewModel())
-                .environmentObject(ProfileViewModel())
-                .environmentObject(SupabaseManager.shared)
         }
     }
 }

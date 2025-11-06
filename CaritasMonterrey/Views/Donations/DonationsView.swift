@@ -8,18 +8,18 @@ struct DonationsView: View {
         case completadas = "Completadas"
     }
 
+    @EnvironmentObject private var viewModel: DonationsViewModel
     @State private var selectedFilter: FilterOption = .todas
     @Namespace private var animationNamespace
-    @State private var allDonations: [Donation] = Donation.sampleDonations
 
     private var filteredDonations: [Donation] {
         switch selectedFilter {
         case .todas:
-            return allDonations
+            return viewModel.donations
         case .enProceso:
-            return allDonations.filter { $0.statusDisplay == .enProceso || $0.statusDisplay == .solicitudAyuda }
+            return viewModel.donations.filter { $0.statusDisplay == .enProceso || $0.statusDisplay == .solicitudAyuda }
         case .completadas:
-            return allDonations.filter { $0.statusDisplay == .completada }
+            return viewModel.donations.filter { $0.statusDisplay == .completada }
         }
     }
 
@@ -48,6 +48,11 @@ struct DonationsView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Mis donaciones")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            if viewModel.donations.isEmpty {
+                viewModel.loadMockDonations()
+            }
+        }
     }
 }
 
@@ -163,5 +168,6 @@ private struct EmptyStateView: View {
 #Preview {
     NavigationStack {
         DonationsView()
+            .environmentObject(DonationsViewModel())
     }
 }

@@ -1,14 +1,17 @@
 import SwiftUI
-import Supabase
 
 struct CompanyTabView: View {
     @EnvironmentObject private var appState: AppState
+    @StateObject private var donationSheetVM = DonationSheetViewModel()
+    @StateObject private var donationsVM = DonationsViewModel()
+    @StateObject private var profileVM = ProfileViewModel()
     @State private var showNewDonation = false
 
     var body: some View {
         TabView {
             NavigationStack {
                 CompanyDashboardView()
+                    .environmentObject(donationsVM)
             }
             .tabItem { Label("Inicio", systemImage: "chart.bar.fill") }
 
@@ -30,33 +33,40 @@ struct CompanyTabView: View {
                 .padding()
                 .navigationTitle("Hacer donación")
             }
-            .sheet(isPresented: $showNewDonation) {
-                DonationSheet(viewModel: DonationSheetViewModel())
+            .sheet(isPresented: $showNewDonation, onDismiss: {
+                Task { await donationsVM.loadDonations(for: appState.session?.user.id) }
+            }) {
+                DonationSheet(viewModel: donationSheetVM)
                     .environmentObject(appState)
             }
             .tabItem { Label("Donar", systemImage: "gift.fill") }
 
             NavigationStack {
                 CompanyDonationsListView()
+                    .environmentObject(donationsVM)
             }
             .tabItem { Label("Mis donaciones", systemImage: "tray.fill") }
 
             NavigationStack {
                 CompanyProfileView()
+                    .environmentObject(profileVM)
             }
             .tabItem { Label("Perfil", systemImage: "person.crop.square") }
+        }
+        .task {
+            await donationsVM.loadDonations(for: appState.session?.user.id)
+            profileVM.load(from: appState.profile)
         }
     }
 }
 
 private struct CompanyDashboardView: View {
     @EnvironmentObject private var appState: AppState
-    @State private var donations: [Donation] = []
-    @State private var isLoading = false
+    @EnvironmentObject private var donationsVM: DonationsViewModel
 
-    var totalDonations: Int { donations.count }
-    var pendingDonations: Int { donations.filter { $0.statusDisplay == .enProceso || $0.statusDisplay == .solicitudAyuda }.count }
-    var completedDonations: Int { donations.filter { $0.statusDisplay == .completada || $0.statusDisplay == .ayudaAprobada }.count }
+    var totalDonations: Int { donationsVM.donations.count }
+    var pendingDonations: Int { donationsVM.donations.filter { $0.statusDisplay == .enProceso || $0.statusDisplay == .solicitudAyuda }.count }
+    var completedDonations: Int { donationsVM.donations.filter { $0.statusDisplay == .completada || $0.statusDisplay == .ayudaAprobada }.count }
 
     var body: some View {
         ScrollView {
@@ -66,32 +76,15 @@ private struct CompanyDashboardView: View {
                     StatCard(title: "Pendientes", value: pendingDonations)
                 }
                 StatCard(title: "Completadas", value: completedDonations)
-                if isLoading {
+                if donationsVM.isLoading {
                     ProgressView().padding()
                 }
             }
             .padding()
         }
         .navigationTitle("Panel de empresa")
-        .task { await loadDonations() }
-        .refreshable { await loadDonations() }
-    }
-
-    private func loadDonations() async {
-        guard let userId = appState.session?.user.id else { return }
-        isLoading = true
-        defer { isLoading = false }
-        do {
-            donations = try await SupabaseManager.shared.client.database
-                .from("Donations")
-                .select()
-                .eq("user_id", value: userId)
-                .order(column: "created_at", ascending: false)
-                .execute()
-                .value
-        } catch {
-            // Keep silent for now, could show toast
-        }
+        .task { await donationsVM.loadDonations(for: appState.session?.user.id) }
+        .refreshable { await donationsVM.loadDonations(for: appState.session?.user.id) }
     }
 }
 
@@ -116,15 +109,14 @@ private struct StatCard: View {
 
 private struct CompanyDonationsListView: View {
     @EnvironmentObject private var appState: AppState
-    @State private var donations: [Donation] = []
-    @State private var isLoading = false
+    @EnvironmentObject private var donationsVM: DonationsViewModel
 
     var body: some View {
         List {
-            if isLoading {
+            if donationsVM.isLoading {
                 ProgressView().frame(maxWidth: .infinity, alignment: .center)
             }
-            ForEach(donations) { donation in
+            ForEach(donationsVM.donations) { donation in
                 VStack(alignment: .leading, spacing: 4) {
                     Text(donation.name)
                         .font(.headline)
@@ -135,48 +127,27 @@ private struct CompanyDonationsListView: View {
             }
         }
         .navigationTitle("Mis donaciones")
-        .task { await loadDonations() }
-        .refreshable { await loadDonations() }
-    }
-
-    private func loadDonations() async {
-        guard let userId = appState.session?.user.id else { return }
-        isLoading = true
-        defer { isLoading = false }
-        do {
-            donations = try await SupabaseManager.shared.client.database
-                .from("Donations")
-                .select()
-                .eq("user_id", value: userId)
-                .order(column: "created_at", ascending: false)
-                .execute()
-                .value
-        } catch {
-            // handle silently for now
-        }
+        .task { await donationsVM.loadDonations(for: appState.session?.user.id) }
+        .refreshable { await donationsVM.loadDonations(for: appState.session?.user.id) }
     }
 }
 
 private struct CompanyProfileView: View {
     @EnvironmentObject private var appState: AppState
-    @State private var companyName: String = ""
-    @State private var rfc: String = ""
-    @State private var address: String = ""
-    @State private var isSaving = false
-    @State private var showConfirmation = false
+    @EnvironmentObject private var profileVM: ProfileViewModel
 
     var body: some View {
         Form {
             Section("Información de la empresa") {
-                TextField("Nombre de la empresa", text: $companyName)
-                TextField("RFC", text: $rfc)
-                TextField("Dirección", text: $address)
+                TextField("Nombre de la empresa", text: $profileVM.companyName)
+                TextField("RFC", text: $profileVM.rfc)
+                TextField("Dirección", text: $profileVM.address)
             }
 
             Button {
-                Task { await saveProfile() }
+                Task { await profileVM.saveProfile(for: appState.profile?.id, appState: appState) }
             } label: {
-                if isSaving {
+                if profileVM.isSaving {
                     ProgressView()
                 } else {
                     Text("Guardar cambios")
@@ -185,36 +156,21 @@ private struct CompanyProfileView: View {
             }
         }
         .navigationTitle("Perfil")
-        .onAppear { loadProfile() }
-        .alert("Perfil actualizado", isPresented: $showConfirmation) {
-            Button("Aceptar", role: .cancel) { }
+        .onAppear { profileVM.load(from: appState.profile) }
+        .alert("Perfil actualizado", isPresented: Binding(
+            get: { profileVM.showConfirmation },
+            set: { newValue in
+                if !newValue { profileVM.dismissConfirmation() }
+            }
+        )) {
+            Button("Aceptar", role: .cancel) { profileVM.dismissConfirmation() }
         }
-    }
-
-    private func loadProfile() {
-        companyName = appState.profile?.companyName ?? ""
-        rfc = appState.profile?.rfc ?? ""
-        address = appState.profile?.address ?? ""
-    }
-
-    private func saveProfile() async {
-        guard let userId = appState.profile?.id else { return }
-        isSaving = true
-        defer { isSaving = false }
-        do {
-            try await SupabaseManager.shared.client.database
-                .from("profiles")
-                .update([
-                    "company_name": companyName,
-                    "rfc": rfc,
-                    "address": address
-                ])
-                .eq("id", value: userId)
-                .execute()
-            await appState.loadProfile(for: userId)
-            showConfirmation = true
-        } catch {
-            // handle error silently or show alert
+        message: {
+            if let error = profileVM.errorMessage {
+                Text(error)
+            } else {
+                Text("La información se guardó correctamente.")
+            }
         }
     }
 }
