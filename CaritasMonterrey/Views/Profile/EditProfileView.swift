@@ -1,4 +1,5 @@
 import SwiftUI
+import Auth
 
 struct EditProfileView: View {
     @EnvironmentObject private var appState: AppState
