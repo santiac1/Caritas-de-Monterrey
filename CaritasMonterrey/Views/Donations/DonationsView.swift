@@ -1,18 +1,7 @@
-//
-//  DonationsView.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 20/10/25.
-//
-//  Modificado por Gemini con "matchedGeometryEffect" para slide-animation
-//
-
-// Views/Donations/DonationsView.swift
 import SwiftUI
 
 struct DonationsView: View {
 
-    // Filtros
     enum FilterOption: String, CaseIterable {
         case todas = "Todas"
         case enProceso = "En proceso"
@@ -21,29 +10,27 @@ struct DonationsView: View {
 
     @State private var selectedFilter: FilterOption = .todas
     @Namespace private var animationNamespace
-
-    // Mock data (conéctalo a tu store después)
     @State private var allDonations: [Donation] = Donation.sampleDonations
 
     private var filteredDonations: [Donation] {
         switch selectedFilter {
-        case .todas:        return allDonations
-        case .enProceso:    return allDonations.filter { $0.status == .enProceso }
-        case .completadas:  return allDonations.filter { $0.status == .completada }
+        case .todas:
+            return allDonations
+        case .enProceso:
+            return allDonations.filter { $0.statusDisplay == .enProceso || $0.statusDisplay == .solicitudAyuda }
+        case .completadas:
+            return allDonations.filter { $0.statusDisplay == .completada }
         }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-
-            // Filtros estilo "píldora"
             FilterPillView(
                 selection: $selectedFilter,
                 namespace: animationNamespace
             )
             .padding(.bottom, 12)
 
-            // Lista
             ScrollView {
                 if filteredDonations.isEmpty {
                     EmptyStateView(message: "No hay donaciones en esta categoría.")
@@ -63,8 +50,6 @@ struct DonationsView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-// MARK: - Subviews (mismo archivo)
 
 private struct FilterPillView: View {
     @Binding var selection: DonationsView.FilterOption
@@ -109,7 +94,6 @@ private struct DonationCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-
             HStack {
                 Image(systemName: "shippingbox.fill")
                     .font(.headline)
@@ -121,14 +105,14 @@ private struct DonationCardView: View {
                 Spacer()
 
                 HStack(spacing: 4) {
-                    Image(systemName: donation.status.iconName)
-                    Text(donation.status.rawValue)
+                    Image(systemName: donation.statusDisplay.iconName)
+                    Text(donation.statusDisplay.rawValue)
                 }
                 .font(.caption).fontWeight(.medium)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(donation.status.color.opacity(0.15))
-                .foregroundColor(donation.status.color)
+                .background(donation.statusDisplay.color.opacity(0.15))
+                .foregroundColor(donation.statusDisplay.color)
                 .clipShape(Capsule())
             }
 
@@ -176,7 +160,6 @@ private struct EmptyStateView: View {
     }
 }
 
-// Preview
 #Preview {
     NavigationStack {
         DonationsView()

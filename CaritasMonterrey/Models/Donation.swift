@@ -1,66 +1,113 @@
-//
-//  Donations.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 20/10/25.
-//
-
 import Foundation
 import SwiftUI
 
-/// Define los estados posibles de una donación, basados en tu mockup.
-/// Esto controlará el color y el texto de estado en las tarjetas.
-enum DonationStatus: String, CaseIterable {
+enum DonationStatusDisplay: String, CaseIterable {
     case enProceso = "En proceso"
     case completada = "Completada"
-    
-    /// El color asociado con cada estado (como en tu mockup)
+    case solicitudAyuda = "Solicitud de ayuda"
+    case ayudaAprobada = "Ayuda aprobada"
+    case ayudaRechazada = "Ayuda rechazada"
+
     var color: Color {
         switch self {
-        case .enProceso:
-            return Color(red: 0.4, green: 0.75, blue: 0.75) // Teal
-        case .completada:
-            return Color(red: 0.95, green: 0.5, blue: 0.3) // Naranja
+        case .enProceso: return Color(red: 0.4, green: 0.75, blue: 0.75)
+        case .completada: return Color(red: 0.95, green: 0.5, blue: 0.3)
+        case .solicitudAyuda: return .orange
+        case .ayudaAprobada: return .green
+        case .ayudaRechazada: return .red
         }
     }
-    
-    /// El icono SFSymbol asociado
+
     var iconName: String {
         switch self {
-        case .enProceso:
-            return "circle.dashed"
-        case .completada:
-            return "checkmark.circle.fill"
+        case .enProceso: return "circle.dashed"
+        case .completada: return "checkmark.circle.fill"
+        case .solicitudAyuda: return "paperplane.fill"
+        case .ayudaAprobada: return "hand.thumbsup.fill"
+        case .ayudaRechazada: return "xmark.octagon.fill"
         }
     }
 }
 
-/// El modelo de datos principal para una donación.
-/// Tu base de datos deberá devolver una lista de estos objetos.
-struct Donation: Identifiable {
+struct Donation: Identifiable, Codable, Hashable {
     let id: UUID
-    let title: String
-    let date: Date
-    let location: String
-    let status: DonationStatus
-    
-    /// Propiedad computada para formatear la fecha como en tu mockup
+    let user_id: UUID
+    var name: String
+    var type: String
+    var status: String
+    var help_needed: Bool
+    var shipping_weight: String?
+    var notes: String?
+    var amount: Double?
+    var created_at: Date?
+    var location_name: String?
+
+    var donorName: String? = nil
+
+    var title: String { name }
+    var location: String { location_name ?? "" }
+
     var formattedDate: String {
+        guard let created_at else { return "" }
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd'/' MMMM '/' yyyy" // "10/ Diciembre / 2025"
-        formatter.locale = Locale(identifier: "es_MX") // Para que "Diciembre" esté en español
-        return formatter.string(from: date)
+        formatter.dateFormat = "dd'/' MMMM '/' yyyy"
+        formatter.locale = Locale(identifier: "es_MX")
+        return formatter.string(from: created_at)
     }
-    
-    // -------------------------------------------------------------------------
-    // MARK: - Datos de Muestra (Mock Data)
-    // -------------------------------------------------------------------------
-    
-    /// Aquí están los datos de muestra, guardados como una propiedad estática
-    /// de la propia estructura Donation.
+
+    var statusDisplay: DonationStatusDisplay {
+        switch status {
+        case "en_proceso": return .enProceso
+        case "completada": return .completada
+        case "solicitud_ayuda": return .solicitudAyuda
+        case "ayuda_aprobada": return .ayudaAprobada
+        case "ayuda_rechazada": return .ayudaRechazada
+        default: return .enProceso
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case user_id
+        case name
+        case type
+        case status
+        case help_needed
+        case shipping_weight
+        case notes
+        case amount
+        case created_at
+        case location_name
+    }
+
     static let sampleDonations: [Donation] = [
-        Donation(id: UUID(), title: "Ropa de invierno", date: Date(), location: "Bazar Emilio Carranza", status: .enProceso),
-        Donation(id: UUID(), title: "Artículos personales", date: Date().addingTimeInterval(-1000000), location: "Bazar Cáritas Centro", status: .completada),
-        Donation(id: UUID(), title: "Juguetes", date: Date().addingTimeInterval(-2000000), location: "Bazar Emilio Carranza", status: .completada)
+        Donation(
+            id: UUID(),
+            user_id: UUID(),
+            name: "Ropa de invierno",
+            type: "Ropa",
+            status: "en_proceso",
+            help_needed: false,
+            shipping_weight: nil,
+            notes: "",
+            amount: nil,
+            created_at: Date(),
+            location_name: "Bazar Emilio Carranza",
+            donorName: "Carolina"
+        ),
+        Donation(
+            id: UUID(),
+            user_id: UUID(),
+            name: "Artículos personales",
+            type: "Útiles escolares",
+            status: "solicitud_ayuda",
+            help_needed: true,
+            shipping_weight: "10kg",
+            notes: "",
+            amount: nil,
+            created_at: Date().addingTimeInterval(-200000),
+            location_name: "Bazar Cáritas Centro",
+            donorName: "Luis"
+        )
     ]
 }
