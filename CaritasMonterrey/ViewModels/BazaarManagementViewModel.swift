@@ -7,6 +7,7 @@
 
 import Foundation
 import Supabase
+import Combine
 
 @MainActor
 final class BazaarManagementViewModel: ObservableObject {
@@ -21,7 +22,7 @@ final class BazaarManagementViewModel: ObservableObject {
             locations = try await SupabaseManager.shared.client.database
                 .from("Locations")
                 .select()
-                .order(column: "name")
+                .order("name")
                 .execute()
                 .value
         } catch {

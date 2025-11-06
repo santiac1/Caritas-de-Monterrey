@@ -75,16 +75,36 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Helpers
     private func recomputeStats() {
         let total = allDonations.count
-        let inProcess = allDonations.filter { $0.status == .enProceso }.count
+        let inProcess = allDonations.filter { $0.status == "en_proceso" }.count
 
         totalText = "\(total) \(total == 1 ? "donación" : "donaciones")"
-        inProgressText = "\(inProcess) \(inProcess == 1 ? "en proceso" : "en proceso")"
+        inProgressText = "\(inProcess) \(inProcess == 1 ? "en proceso" : "en procesos")"
 
-        if let last = allDonations.sorted(by: { $0.date > $1.date }).first {
-            lastDonationText = formatted(date: last.date)   // solo fecha
+        // --- INICIO DE LA CORRECCIÓN ---
+
+        // 1. Corregimos el sort:
+        // Si 'created_at' es nil, usamos 'Date.distantPast' (una fecha muy antigua)
+        // para que se vaya al final de la lista.
+        let sortedDonations = allDonations.sorted(by: {
+            $0.created_at ?? Date.distantPast > $1.created_at ?? Date.distantPast
+        })
+        
+        // 2. Obtenemos la donación más reciente
+        if let lastDonation = sortedDonations.first {
+            
+            // 3. Corregimos el formateo:
+            // Nos aseguramos de que la fecha (lastDate) no sea nil antes de usarla.
+            if let lastDate = lastDonation.created_at {
+                lastDonationText = formatted(date: lastDate) // solo fecha
+            } else {
+                // Si la fecha es nil, muestra un guion
+                lastDonationText = "-"
+            }
         } else {
-            lastDonationText = "—"
+            // Si no hay donaciones, muestra un guion
+            lastDonationText = "-"
         }
+        // --- FIN DE LA CORRECCIÓN ---
     }
 
     private func formatted(date: Date) -> String {

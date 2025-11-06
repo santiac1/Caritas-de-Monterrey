@@ -1,4 +1,5 @@
 import SwiftUI
+import Auth
 
 struct CompanyTabView: View {
     @EnvironmentObject private var appState: AppState

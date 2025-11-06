@@ -1,4 +1,3 @@
-// TOMA 1: Mantenemos el import 'Combine' de CodeX
 import Combine
 import Foundation
 import SwiftUI
@@ -27,18 +26,13 @@ final class AppState: ObservableObject {
     }
 
     func refreshSession() async {
-        // TOMA 2: Usamos el 'authError = nil' de CodeX
         authError = nil
-        
-        // TOMA 2: Y mantenemos el 'do-catch' de 'main' (es más seguro)
         do {
-            if let currentSession = try await client.auth.session {
-                session = currentSession
-                await loadProfile(for: currentSession.user.id)
-            } else {
-                session = nil
-                profile = nil
-            }
+            // CORRECCIÓN: client.auth.session NO es opcional.
+            // Se quita el 'if let'. Si falla, el 'catch' lo atrapará.
+            let currentSession = try await client.auth.session
+            session = currentSession
+            await loadProfile(for: currentSession.user.id)
         } catch {
             authError = error.localizedDescription
             session = nil
@@ -48,16 +42,12 @@ final class AppState: ObservableObject {
 
     func signIn(email: String, password: String) async throws {
         authError = nil
-        
-        // TOMA 3: Usamos la función corregida 'signIn' de CodeX
         let response = try await client.auth.signIn(email: email, password: password)
+        session = response
         
-        session = response.session
-        if let user = response.user {
-            await loadProfile(for: user.id)
-        } else if let userId = response.session?.user.id {
-            await loadProfile(for: userId)
-        }
+        // CORRECCIÓN: response.user NO es opcional.
+        // Se quita el 'if let' y el 'else if'. La lógica es directa.
+        await loadProfile(for: response.user.id)
     }
 
     func signUp(email: String, password: String) async throws -> AuthResponse {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 enum FontsHelper {
     static func appFont(size: CGFloat, weight: Font.Weight = .regular) -> Font {

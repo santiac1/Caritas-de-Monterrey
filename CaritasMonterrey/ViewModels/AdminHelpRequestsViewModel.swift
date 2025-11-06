@@ -7,6 +7,7 @@
 
 import Foundation
 import Supabase
+import Combine
 
 @MainActor
 final class AdminHelpRequestsViewModel: ObservableObject {
@@ -22,7 +23,7 @@ final class AdminHelpRequestsViewModel: ObservableObject {
                 .from("Donations")
                 .select()
                 .eq("status", value: "solicitud_ayuda")
-                .order(column: "created_at", ascending: false)
+                .order("created_at", ascending: false)
                 .execute()
                 .value
 

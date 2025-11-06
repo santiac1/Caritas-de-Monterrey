@@ -7,6 +7,7 @@
 
 import Foundation
 import Supabase
+import Combine
 
 @MainActor
 final class DonationsViewModel: ObservableObject {
@@ -27,7 +28,7 @@ final class DonationsViewModel: ObservableObject {
                 .from("Donations")
                 .select()
                 .eq("user_id", value: userId)
-                .order(column: "created_at", ascending: false)
+                .order("created_at", ascending: false)
                 .execute()
                 .value
             donations = result

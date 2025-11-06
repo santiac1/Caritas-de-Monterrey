@@ -7,6 +7,7 @@
 
 import Foundation
 import Supabase
+import Combine
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
