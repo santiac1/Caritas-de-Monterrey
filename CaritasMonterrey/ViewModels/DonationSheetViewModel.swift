@@ -22,7 +22,7 @@ final class DonationSheetViewModel: ObservableObject {
     @Published var helpNeeded: Bool = false
     @Published var shippingWeight: String = ""
     @Published private(set) var isSubmitting = false
-    @Published private(set) var submitOK = false
+    @Published var submitOK = false
     @Published var errorMessage: String?
 
     var currentUserId: UUID?

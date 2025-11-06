@@ -73,10 +73,10 @@ private struct CompanyDashboardView: View {
         ScrollView {
             VStack(spacing: 20) {
                 HStack(spacing: 16) {
-                    StatCard(title: "Totales", value: totalDonations)
-                    StatCard(title: "Pendientes", value: pendingDonations)
+                    StatCard(title: "Totales", value: String(totalDonations), systemIcon: "archivebox.fill")
+                    StatCard(title: "Pendientes", value: String(pendingDonations), systemIcon: "clock.badge.exclamationmark")
                 }
-                StatCard(title: "Completadas", value: completedDonations)
+                StatCard(title: "Completadas", value: String(completedDonations), systemIcon: "checkmark.circle.fill")
                 if donationsVM.isLoading {
                     ProgressView().padding()
                 }
@@ -86,25 +86,6 @@ private struct CompanyDashboardView: View {
         .navigationTitle("Panel de empresa")
         .task { await donationsVM.loadDonations(for: appState.session?.user.id) }
         .refreshable { await donationsVM.loadDonations(for: appState.session?.user.id) }
-    }
-}
-
-private struct StatCard: View {
-    let title: String
-    let value: Int
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Text("\(value)")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
     }
 }
 

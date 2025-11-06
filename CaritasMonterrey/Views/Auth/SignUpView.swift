@@ -104,9 +104,7 @@ struct SignUpView: View {
         errorMessage = nil
         do {
             let response = try await appState.signUp(email: email, password: password)
-            guard let user = response.user else {
-                throw AuthError.userCreationFailed
-            }
+            let user = response.user
             let profile = Profile(
                 id: user.id,
                 role: "user",
@@ -130,17 +128,6 @@ struct SignUpView: View {
             errorMessage = error.localizedDescription
         }
         isLoading = false
-    }
-}
-
-private enum AuthError: LocalizedError {
-    case userCreationFailed
-
-    var errorDescription: String? {
-        switch self {
-        case .userCreationFailed:
-            return "No se pudo obtener el usuario creado."
-        }
     }
 }
 
