@@ -76,12 +76,13 @@ struct DonationSheet: View {
 
                         if viewModel.preferPickupAtBazaar {
                             Menu {
-                                ForEach(viewModel.bazaars, id: \.self) { bazaar in
-                                    Button(bazaar) { viewModel.selectedBazaarName = bazaar }
+                                ForEach(viewModel.bazaars) { bazaar in
+                                    Button(bazaar.name) { viewModel.selectedBazaar = bazaar }
                                 }
                             } label: {
                                 HStack {
-                                    Text(viewModel.selectedBazaarName)
+                                    Text(viewModel.selectedBazaar?.name ?? "Selecciona un bazar")
+                                        .foregroundStyle(viewModel.selectedBazaar == nil ? .secondary : .primary)
                                     Spacer()
                                     Image(systemName: "chevron.down")
                                 }
@@ -141,6 +142,9 @@ struct DonationSheet: View {
                     }
                     .disabled(viewModel.isSubmitting || !viewModel.isValid)
                 }
+            }
+            .task {
+                await viewModel.loadBazaars()
             }
             .onAppear {
                 viewModel.currentUserId = appState.session?.user.id
