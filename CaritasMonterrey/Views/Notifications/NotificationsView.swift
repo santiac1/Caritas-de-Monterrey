@@ -67,8 +67,14 @@ struct NotificationRowView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
-                Text(notification.date, style: .relative)
-                    .font(.caption)
+                if let createdAt = notification.created_at {
+                    Text(createdAt, style: .relative)
+                        .font(.caption)
+                } else {
+                    Text("Hace un momento")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             Spacer()
             if !notification.isRead {

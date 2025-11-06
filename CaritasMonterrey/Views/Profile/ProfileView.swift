@@ -1,39 +1,27 @@
-//
-//  ProfileView.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 20/10/25.
-//
-//  Modificado por Gemini para adaptarse al diseño de la imagen
-//  y refactorizado para usar un Modelo de Datos (UserProfile).
-//
-
 import SwiftUI
 
-// NOTA: El modelo 'UserProfile' y 'ProfileData'
-// ahora viven en el archivo "ProfileModel.swift"
-
 struct ProfileView: View {
-    @State private var user: UserProfile = UserProfile()
+    @EnvironmentObject private var appState: AppState
+
+    private var profile: Profile? { appState.profile }
+    private var placeholder: String { appState.isLoadingProfile ? "Cargando..." : "Sin información" }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                
-                // --- Sección Superior: Campos e Imagen ---
-                HStack(alignment: .top, spacing: 16) {
-                    
-                    // --- Columna Izquierda: Campos Principales ---
-                    VStack(spacing: 16) {
+                if profile == nil {
+                    ProfilePlaceholderView(isLoading: appState.isLoadingProfile)
+                }
 
-                        ProfileTextField(label: "Nombre Publico", text: $user.nombrePublico)
-                        ProfileTextField(label: "Nombre", text: $user.nombre)
-                        ProfileTextField(label: "Apellido", text: $user.apellido)
-                        ProfileTextField(label: "Telefono", text: $user.telefono)
-                            .keyboardType(.phonePad)
-                        ProfileTextField(label: "Dirección", text: $user.direccion)
+                HStack(alignment: .top, spacing: 16) {
+                    VStack(spacing: 16) {
+                        ProfileTextField(label: "Nombre público", text: profile?.username ?? placeholder)
+                        ProfileTextField(label: "Nombre", text: profile?.firstName ?? placeholder)
+                        ProfileTextField(label: "Apellido", text: profile?.lastName ?? placeholder)
+                        ProfileTextField(label: "Teléfono", text: profile?.phone ?? placeholder)
+                        ProfileTextField(label: "Dirección", text: profile?.address ?? placeholder)
                     }
-                    
+
                     VStack(spacing: 16) {
                         Image(systemName: "person.circle.fill")
                             .resizable()
@@ -42,86 +30,45 @@ struct ProfileView: View {
                             .foregroundColor(Color(.systemGray3))
                             .padding(.top, 5)
 
-                        ProfileDatePicker(label: "Fecha de nacimiento", selection: $user.fechaNacimiento)
+                        ProfileTextField(label: "Fecha de nacimiento", text: formattedBirthdate)
                     }
                 }
-                
-                // --- Botón de Guardar ---
-                Button(action: guardarPerfil) {
-                    Text("Guardar")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(UIColor.systemBackground))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(Color(UIColor.label))
-                        .cornerRadius(30)
+
+                if let companyName = profile?.companyName, !companyName.isEmpty {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Información de la empresa")
+                            .font(.headline)
+                        ProfileTextField(label: "Empresa", text: companyName)
+                        ProfileTextField(label: "RFC", text: profile?.rfc ?? placeholder)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.top, 10)
-                
             }
             .padding()
         }
         .navigationTitle("Perfil")
         .toolbarTitleDisplayMode(.large)
-        .onAppear {
-        }
     }
-    
-    private func guardarPerfil() {
-        print("Guardando perfil...")
-        
-        // --- CAMBIO: Se imprime el objeto 'user' completo ---
-        print("- Nombre Público: \(user.nombrePublico)")
-        print("- Nombre: \(user.nombre)")
-        print("- Apellido: \(user.apellido)")
-        print("- Teléfono: \(user.telefono)")
-        print("- Dirección: \(user.direccion)")
-        print("- Fecha de Nacimiento: \(user.fechaNacimiento)")
-        
+
+    private var formattedBirthdate: String {
+        guard let date = profile?.birthdate else { return placeholder }
+        return date.formatted(date: .abbreviated, time: .omitted)
     }
 }
 
-// -----------------------------------------------------------------------------
-// MARK: - Componentes de UI Reutilizables
-// (Estas vistas no necesitan cambios, ya que funcionan con Bindings)
-// -----------------------------------------------------------------------------
-
-struct ProfileTextField: View {
+private struct ProfileTextField: View {
     var label: String
-    @Binding var text: String
-    
+    var text: String
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(label)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-            
-            TextField("", text: $text)
-                .padding(12)
-                .frame(height: 48)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(.systemGray3), lineWidth: 1)
-                )
-        }
-    }
-}
 
-struct ProfileDatePicker: View {
-    var label: String
-    @Binding var selection: Date
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(label)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            DatePicker("", selection: $selection, displayedComponents: .date)
-                .labelsHidden()
-                .padding(12)
+            Text(text)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
                 .frame(height: 48)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
@@ -131,14 +78,30 @@ struct ProfileDatePicker: View {
     }
 }
 
+private struct ProfilePlaceholderView: View {
+    let isLoading: Bool
 
-// -----------------------------------------------------------------------------
-// MARK: - Vista Previa (Preview)
-// -----------------------------------------------------------------------------
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: isLoading ? "hourglass" : "exclamationmark.circle")
+                .foregroundColor(.secondary)
+                .font(.title3)
+            Text(isLoading ? "Cargando perfil..." : "No encontramos la información de tu perfil.")
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color(.systemGray3), lineWidth: 1)
+        )
+    }
+}
 
 #Preview {
-    // Para que el Preview funcione solo, lo envolvemos en un NavigationStack
     NavigationStack {
         ProfileView()
+            .environmentObject(AppState())
     }
 }
