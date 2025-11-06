@@ -28,7 +28,7 @@ final class ProfileStatsViewModel: ObservableObject {
             let donations: [Donation] = try await SupabaseManager.shared.client
                 .from("Donations")
                 .select()
-                .eq("user_id", value: userId)
+                .eq("user_id", value: userId.uuidString)
                 .execute()
                 .value
 

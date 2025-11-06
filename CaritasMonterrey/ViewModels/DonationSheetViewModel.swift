@@ -91,7 +91,6 @@ final class DonationSheetViewModel: ObservableObject {
             shipping_weight: helpNeeded ? shippingWeight : nil,
             notes: notes.isEmpty ? nil : notes,
             amount: selectedType == .monetaria ? Double(amount.replacingOccurrences(of: ",", with: ".")) : nil,
-            prefer_pickup_at_bazaar: preferPickupAtBazaar,
             location_id: preferPickupAtBazaar ? selectedBazaar?.id : nil
         )
 
@@ -117,6 +116,5 @@ private struct NewDonation: Encodable {
     let shipping_weight: String?
     let notes: String?
     let amount: Double?
-    let prefer_pickup_at_bazaar: Bool
     let location_id: Int?
 }

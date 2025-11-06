@@ -27,7 +27,7 @@ final class DonationsViewModel: ObservableObject {
             let result: [Donation] = try await SupabaseManager.shared.client
                 .from("Donations")
                 .select()
-                .eq("user_id", value: userId)
+                .eq("user_id", value: userId.uuidString)
                 .order("created_at", ascending: false)
                 .execute()
                 .value
