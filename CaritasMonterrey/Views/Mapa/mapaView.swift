@@ -29,15 +29,7 @@ struct mapaView: View {
             Map(position: $position) {
                 UserAnnotation()
 
-                // fijas
-                Annotation("Bazar Cáritas, Monterrey", coordinate: .bazar1) { BubbleAnnotationLabel(icon: "building.2.fill") }
-                Annotation("Bazar Cáritas, Centro", coordinate: .bazar2) { BubbleAnnotationLabel(icon: "building.2.fill") }
-                Annotation("Bazar Cáritas, Col. Trazo Marco", coordinate: .bazar3) { BubbleAnnotationLabel(icon: "building.2.fill") }
-                Annotation("Bazar Cáritas, San Gilberto", coordinate: .bazar4) { BubbleAnnotationLabel(icon: "building.2.fill") }
-                Annotation("Bazar Cáritas, San Pedro", coordinate: .bazar5) { BubbleAnnotationLabel(icon: "building.2.fill") }
-                Annotation("Bazar Cáritas, Centro Guadalupe ", coordinate: .bazar6) { BubbleAnnotationLabel(icon: "building.2.fill") }
-
-                // dinámicas
+            
                 ForEach(viewModel.Locations) { loc in
                     let coordinate = CLLocationCoordinate2D(latitude: CLLocationDegrees(loc.latitude),
                                                             longitude: CLLocationDegrees(loc.longitude))
