@@ -1,1 +1,7 @@
-Secrets.plist
+.DS_Store
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+Pods/
+
