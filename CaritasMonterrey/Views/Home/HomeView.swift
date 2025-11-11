@@ -13,7 +13,7 @@ struct HomeView: View {
     @EnvironmentObject private var donationsVM: DonationsViewModel
     @EnvironmentObject private var mapaVM: MapaViewModel
     @State private var navPath = NavigationPath()
-    @State private var showDonationSheet = false   // <-- nuevo
+    @State private var showDonationSheet = false   
 
     var body: some View {
         NavigationStack(path: $navPath) {

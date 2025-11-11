@@ -203,7 +203,7 @@ extension DonationSheet {
             Toggle(isOn: $viewModel.preferPickupAtBazaar) {
                 Text("Entregar en bazar cercano")
             }
-            .tint(accent)
+            .tint(Color("AccentColor"))
 
             if viewModel.preferPickupAtBazaar {
                 Menu {
