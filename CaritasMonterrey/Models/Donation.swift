@@ -30,7 +30,7 @@ enum DonationStatusDisplay: String, CaseIterable {
 }
 
 struct Donation: Identifiable, Codable, Hashable {
-    let id: UUID
+    let id: Int
     let user_id: UUID
     var name: String
     var type: String
@@ -82,11 +82,11 @@ struct Donation: Identifiable, Codable, Hashable {
 
     static let sampleDonations: [Donation] = [
         Donation(
-            id: UUID(),
+            id: 1,
             user_id: UUID(),
             name: "Ropa de invierno",
             type: "Ropa",
-            status: "en_proceso",
+            status: "in_process",
             help_needed: false,
             shipping_weight: nil,
             notes: "",
@@ -96,11 +96,11 @@ struct Donation: Identifiable, Codable, Hashable {
             donorName: "Carolina"
         ),
         Donation(
-            id: UUID(),
+            id: 2,
             user_id: UUID(),
             name: "Artículos personales",
             type: "Útiles escolares",
-            status: "solicitud_ayuda",
+            status: "in_process",
             help_needed: true,
             shipping_weight: "10kg",
             notes: "",

@@ -22,7 +22,7 @@ final class AdminHelpRequestsViewModel: ObservableObject {
             let fetched: [Donation] = try await SupabaseManager.shared.client
                 .from("Donations")
                 .select()
-                .eq("status", value: "solicitud_ayuda")
+                .eq("status", value: "in_process")
                 .order("created_at", ascending: false)
                 .execute()
                 .value

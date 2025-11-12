@@ -88,3 +88,4 @@ private struct DetailRow: View {
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
     }
 }
+

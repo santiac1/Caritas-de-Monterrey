@@ -75,4 +75,27 @@ struct LocationPayload: Encodable {
     var latitude: Double
     var longitude: Double
     var address: String
+    var isActive: Bool
+    var food: Bool
+    var clothes: Bool
+    var equipment: Bool
+    var furniture: Bool
+    var appliances: Bool
+    var cleaning: Bool
+    var medicine: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case latitude
+        case longitude
+        case address
+        case isActive = "is_active"
+        case food
+        case clothes
+        case equipment
+        case furniture
+        case appliances
+        case cleaning
+        case medicine
+    }
 }

@@ -15,26 +15,48 @@ final class SupabaseManager: ObservableObject {
     let client: SupabaseClient
 
     private init() {
-        // Formateador compatible con fechas "YYYY-MM-DD"
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-
-        // Decodificador personalizado que utiliza el formateador anterior
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateString = try container.decode(String.self)
 
-        // Opciones del cliente con el decodificador personalizado para la base de datos
+            if let date = SupabaseManager.iso8601WithFractional.date(from: dateString) {
+                return date
+            }
+            if let date = SupabaseManager.iso8601.date(from: dateString) {
+                return date
+            }
+
+            throw DecodingError.dataCorrupted(
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Formato de fecha no soportado: \(dateString)"
+                )
+            )
+        }
+
         let options = SupabaseClientOptions(
             db: .init(decoder: decoder)
         )
 
-        // Inicialización del cliente compartido
         client = SupabaseClient(
             supabaseURL: AppEnvironment.supabaseURL,
             supabaseKey: AppEnvironment.supabaseAnonKey,
             options: options
         )
     }
+
+    private static let iso8601WithFractional: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let iso8601: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
 }
 
 
