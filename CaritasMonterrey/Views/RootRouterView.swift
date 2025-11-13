@@ -17,7 +17,7 @@ struct RootRouterView: View {
                 case "user":
                     UserTabView()
                 case "company":
-                    CompanyTabView()
+                    UserTabView()
                 case "admin":
                     AdminTabView()
                 default:

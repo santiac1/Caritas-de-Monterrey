@@ -20,12 +20,6 @@ struct DonationSheet: View {
                     donationImageSection // Sección de imagen
                     
                     donationTypeSection
-                    if viewModel.selectedType == .monetaria {
-                        donationAmountSection
-                    }
-                    if viewModel.selectedType != .monetaria {
-                        donationShippingSection
-                    }
                     donationDeliverySection
                     donationNotesSection
                     donationErrorSection
@@ -133,18 +127,24 @@ extension DonationSheet {
 // MARK: - Tipo de donación
 extension DonationSheet {
     private var donationTypeSection: some View {
+        // Dentro de DonationSheet
         GroupBox {
             Menu {
-                ForEach(DonationSheetViewModel.DonationType.allCases) { type in
-                    Button(type.rawValue) { viewModel.selectedType = type }
+                ForEach(viewModel.availableTypes) { opt in
+                    Button {
+                        viewModel.selectedType = opt
+                    } label: {
+                        Label(opt.displayName, systemImage: opt.systemImage)
+                    }
                 }
             } label: {
                 HStack {
-                    Text(viewModel.selectedType.rawValue)
-                        .fontWeight(.semibold)
+                    Label(viewModel.selectedType?.displayName ?? "Selecciona un tipo",
+                          systemImage: viewModel.selectedType?.systemImage ?? "square.stack.3d.down.forward")
+                        .labelStyle(.titleAndIcon)
+                        .foregroundStyle(viewModel.selectedType == nil ? .secondary : .primary)
                     Spacer()
-                    Image(systemName: "chevron.down")
-                        .foregroundStyle(.secondary)
+                    Image(systemName: "chevron.down").foregroundStyle(.secondary)
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -154,6 +154,7 @@ extension DonationSheet {
             Label("Tipo de donación", systemImage: "square.stack.3d.down.forward")
                 .foregroundStyle(.secondary)
         }
+
     }
 }
 
@@ -263,7 +264,7 @@ extension DonationSheet {
     private var toolbarContent: some ToolbarContent {
         Group {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cerrar") { dismiss() }
+                Button("Cerrar", systemImage:"xmark") { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button {
@@ -282,7 +283,9 @@ extension DonationSheet {
                     if viewModel.isSubmitting {
                         ProgressView()
                     } else {
-                        Text("Confirmar")
+                        Button("Confirmar",systemImage:"checkmark") {
+                            dismiss()
+                        }
                     }
                 }
                 // El botón se desactivará automáticamente si `isValid` es falso

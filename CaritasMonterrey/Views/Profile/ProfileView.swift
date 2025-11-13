@@ -67,7 +67,7 @@ struct ProfileView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image(systemName: "person.circle.fill")
+            Image(systemName: "person.crop.circle")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)

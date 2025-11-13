@@ -6,6 +6,8 @@ struct BazaarManagementView: View {
     @State private var editingLocation: Location?
     @State private var deletingLocation: Location?
     @State private var isDeleteAlertPresented = false
+    
+    
 
     var body: some View {
         List {
@@ -21,40 +23,40 @@ struct BazaarManagementView: View {
                         isDeleteAlertPresented = true
                     }
                 )
-                    .listRowInsets(EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            deletingLocation = location
-                            isDeleteAlertPresented = true
-                        } label: {
-                            Label("Eliminar bazar", systemImage: "trash")
-                        }
-                        Button {
-                            editingLocation = location
-                            isPresentingForm = true
-                        } label: {
-                            Label("Editar bazar", systemImage: "pencil")
-                        }
+                .listRowInsets(EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .contextMenu {
+                    Button(role: .destructive) {
+                        deletingLocation = location
+                        isDeleteAlertPresented = true
+                    } label: {
+                        Label("Eliminar bazar", systemImage: "trash")
                     }
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            deletingLocation = location
-                            isDeleteAlertPresented = true
-                        } label: {
-                            Label("Eliminar", systemImage: "trash")
-                        }
+                    Button {
+                        editingLocation = location
+                        isPresentingForm = true
+                    } label: {
+                        Label("Editar bazar", systemImage: "pencil")
                     }
-                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                        Button {
-                            editingLocation = location
-                            isPresentingForm = true
-                        } label: {
-                            Label("Editar", systemImage: "pencil")
-                        }
-                        .tint(Color("AccentColor"))
+                }
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        deletingLocation = location
+                        isDeleteAlertPresented = true
+                    } label: {
+                        Label("Eliminar", systemImage: "trash")
                     }
+                }
+                .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                    Button {
+                        editingLocation = location
+                        isPresentingForm = true
+                    } label: {
+                        Label("Editar", systemImage: "pencil")
+                    }
+                    .tint(Color("AccentColor"))
+                }
             }
             .listSectionSeparator(.hidden)
         }
@@ -111,35 +113,48 @@ struct BazaarManagementView: View {
 }
 
 private struct BazaarCard: View {
+    @Environment(\.colorScheme) private var scheme
+
     let location: Location
     var onEdit: () -> Void
     var onDelete: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(location.name)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
+                    HStack(spacing: 8) {
+                        Text(location.name)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
 
+                        Group {
+                            if location.isActive {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .symbolRenderingMode(.monochrome)
+                                    .foregroundStyle(scheme == .dark ? .white : Color.secondaryBlue)
+                            } else {
+                                Image(systemName: "xmark.circle.fill")
+                                    .symbolRenderingMode(.monochrome)
+                                    .foregroundStyle(Color(.systemGray3))
+                            }
+                        }
+                        .font(.headline)
+
+                    }
+                    
                     Text(location.address)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                 }
+
                 Spacer()
+
                 Menu {
-                    Button {
-                        onEdit()
-                    } label: {
-                        Label("Editar bazar", systemImage: "pencil")
-                    }
-                    Button(role: .destructive) {
-                        onDelete()
-                    } label: {
-                        Label("Eliminar bazar", systemImage: "trash")
-                    }
+                    Button { onEdit() } label: { Label("Editar bazar", systemImage: "pencil") }
+                    Button(role: .destructive) { onDelete() } label: { Label("Eliminar bazar", systemImage: "trash") }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                         .font(.title2)
@@ -148,7 +163,26 @@ private struct BazaarCard: View {
             }
 
 
-            StatusBadge(isActive: location.isActive)
+            let models = acceptingTagModels(from: location)
+            if !models.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Aceptando:")
+                        .font(.footnote).bold()
+                        .foregroundStyle(.secondary)
+
+                    // filas de hasta 3 tags
+                    let rows = chunk(models, by: 3)
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                            HStack(spacing: 8) {
+                                ForEach(row, id: \.title) { m in
+                                    AcceptTag(title: m.title, systemName: m.systemName)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -172,6 +206,68 @@ private struct BazaarCard: View {
         }
     }
 }
+
+// MARK: - Helpers para tags
+
+private struct AcceptTagModel {
+    let title: String
+    let systemName: String
+}
+
+private func acceptingTagModels(from l: Location) -> [AcceptTagModel] {
+    var result: [AcceptTagModel] = []
+
+    if l.food       { result.append(.init(title: "Alimentos",         systemName: "fork.knife")) }
+    if l.clothes    { result.append(.init(title: "Ropa",              systemName: "tshirt.fill")) }
+    if l.equipment  { result.append(.init(title: "Equipo",            systemName: "wrench.and.screwdriver")) }
+    if l.furniture  { result.append(.init(title: "Muebles",           systemName: "sofa.fill")) }
+    if l.appliances { result.append(.init(title: "Electrodomésticos", systemName: "powerplug")) }
+    if l.cleaning   { result.append(.init(title: "Limpieza",          systemName: "sparkles")) }
+    if l.medicine   { result.append(.init(title: "Medicinas",         systemName: "cross.case.fill")) }
+
+    return result
+}
+
+private func chunk<T>(_ array: [T], by size: Int) -> [[T]] {
+    guard size > 0 else { return [array] }
+    var result: [[T]] = []
+    var current: [T] = []
+    current.reserveCapacity(size)
+
+    for item in array {
+        current.append(item)
+        if current.count == size {
+            result.append(current)
+            current.removeAll(keepingCapacity: true)
+        }
+    }
+    if !current.isEmpty { result.append(current) }
+    return result
+}
+
+private struct AcceptTag: View {
+    let title: String
+    let systemName: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: systemName)
+                .font(.caption)
+            Text(title)
+                .font(.caption).bold()
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .foregroundStyle(.primary)
+        .background(
+            Capsule()
+                .fill(Color.primary.opacity(0.08)) // gris translúcido adaptado a Light/Dark
+        )
+    }
+}
+
+// MARK: - Form
 
 private struct LocationForm: View {
     var location: Location?
@@ -260,30 +356,3 @@ private struct LocationForm: View {
         }
     }
 }
-
-private struct StatusBadge: View {
-    let isActive: Bool
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: isActive ? "checkmark.circle.fill" : "xmark.octagon.fill")
-                .foregroundStyle(.white)
-            Text(isActive ? "Abierto" : "Cerrado")
-                .font(.footnote).bold()
-                .foregroundStyle(.white)
-                .textCase(.uppercase)
-                .kerning(0.3)
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(isActive ? Color.green.opacity(0.9) : Color.red.opacity(0.9), in: Capsule())
-    }
-}
-
-#Preview {
-    NavigationStack {
-        BazaarManagementView()
-            .environmentObject(BazaarManagementViewModel())
-    }
-}
-

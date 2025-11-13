@@ -1,33 +1,23 @@
-//
-//  HomeView.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 20/10/25.
-//
-
-// Views/Home/HomeView.swift
 import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var donationsVM: DonationsViewModel
     @EnvironmentObject private var mapaVM: MapaViewModel
+
     @State private var navPath = NavigationPath()
-    @State private var showDonationSheet = false   
+    @State private var showDonationSheet = false
 
     var body: some View {
         NavigationStack(path: $navPath) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
-                    // Banner CTA abre el sheet
                     BannerCard(
                         title: vm.banner.title,
                         assetName: vm.banner.assetName,
                         systemFallback: vm.banner.systemFallback
-                    ) {
-                        showDonationSheet = true
-                    }
+                    ) { showDonationSheet = true }
 
                     Text("Acciones rápidas")
                         .font(.title3).bold()
@@ -72,22 +62,30 @@ struct HomeView: View {
             }
             .navigationTitle(vm.screenTitle)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .primaryAction) {
                     NavigationLink(destination: NotificationsView()) {
-                        Image(systemName: "bell.fill").font(.title2)
+                        Image(systemName: "bell.fill")
+                            .font(.title3)
+                            .foregroundStyle(.primary)
                     }
+                    .buttonStyle(.plain)
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarSpacer(.fixed, placement: .primaryAction)
+                ToolbarItem(placement: .primaryAction) {
                     NavigationLink(destination: ProfileView()) {
-                        Image(systemName: "person.fill").font(.title2)
+                        Image(systemName: "person.crop.circle")
+                            .font(.title3)
+                            .foregroundStyle(.primary)
                     }
+                    .buttonStyle(.plain)
                 }
             }
+
             .onAppear { vm.onAppear() }
             .navigationDestination(for: HomeViewModel.Route.self) { route in
                 switch route {
                 case .mapV:
-                    mapaView()
+                    MapView()
                         .environmentObject(mapaVM)
                         .navigationTitle("Mapa")
                         .navigationBarTitleDisplayMode(.inline)
@@ -99,11 +97,9 @@ struct HomeView: View {
                         .navigationBarTitleDisplayMode(.inline)
 
                 case .donateV:
-                    EmptyView() // el banner abre el sheet
+                    EmptyView()
                 }
             }
-
-
             .sheet(isPresented: $showDonationSheet) {
                 DonationSheet(viewModel: DonationSheetViewModel())
                     .presentationDetents([.large])

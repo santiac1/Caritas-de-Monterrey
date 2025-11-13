@@ -18,9 +18,8 @@ struct SignUpView: View {
     @State private var showSuccessAlert = false
 
     private var isAdult: Bool {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year], from: birthdate, to: Date())
-        return (components.year ?? 0) >= 18
+        let years = Calendar.current.dateComponents([.year], from: birthdate, to: Date()).year ?? 0
+        return years >= 18
     }
 
     var body: some View {
@@ -28,11 +27,11 @@ struct SignUpView: View {
             VStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Crea una cuenta")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+                        .font(.largeTitle).bold()
                     Text("Únete a la comunidad de Cáritas Monterrey")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
+
                 VStack(spacing: 16) {
                     Group {
                         TextField("Nombre", text: $firstName)
@@ -43,7 +42,7 @@ struct SignUpView: View {
                         TextField("Correo electrónico", text: $email)
                             .keyboardType(.emailAddress)
                             .textInputAutocapitalization(.never)
-                            .disableAutocorrection(true)
+                            .autocorrectionDisabled(true)
                         SecureField("Contraseña (mínimo 8 caracteres)", text: $password)
                     }
                     .padding()
@@ -55,7 +54,11 @@ struct SignUpView: View {
                         .background(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2)))
                 }
 
-                if let errorMessage { Text(errorMessage).foregroundColor(.red).font(.footnote) }
+                if let errorMessage {
+                    Text(errorMessage)
+                        .foregroundStyle(.red)
+                        .font(.footnote)
+                }
 
                 Button {
                     Task { await register() }
@@ -69,7 +72,7 @@ struct SignUpView: View {
                     } else {
                         Text("Registrarse")
                             .font(.headline)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
                     }
@@ -91,45 +94,78 @@ struct SignUpView: View {
     }
 
     private var formIsValid: Bool {
-        !firstName.isEmpty && !lastName.isEmpty && !publicName.isEmpty &&
-        !phone.isEmpty && !email.isEmpty && password.count >= 8 && isAdult
+        !firstName.isEmpty &&
+        !lastName.isEmpty &&
+        !publicName.isEmpty &&
+        !phone.isEmpty &&
+        !email.isEmpty &&
+        password.count >= 8 &&
+        isAdult
     }
 
+    // MARK: - Registro
+    @MainActor
     private func register() async {
         guard formIsValid else {
-            errorMessage = isAdult ? "Completa todos los campos y verifica tu contraseña." : "Debes ser mayor de 18 años."
+            errorMessage = isAdult
+            ? "Completa todos los campos y verifica tu contraseña."
+            : "Debes ser mayor de 18 años."
             return
         }
+
         isLoading = true
         errorMessage = nil
+
         do {
+            // 1) Crear usuario en Auth
             let response = try await appState.signUp(email: email, password: password)
             let user = response.user
-            let profile = Profile(
+
+            // 2) Insertar perfil en tabla `profiles` con birthdate "yyyy-MM-dd"
+            let payload = ProfileInsert(
                 id: user.id,
                 role: "user",
-                firstName: firstName,
-                lastName: lastName,
+                first_name: firstName,
+                last_name: lastName,
                 username: publicName,
                 phone: phone,
-                birthdate: birthdate,
-                companyName: nil,
+                birthdate: DateFormatter.yyyyMMdd.string(from: birthdate), // <- clave
+                company_name: nil,
                 rfc: nil,
                 address: nil
             )
+
             _ = try await SupabaseManager.shared.client
                 .from("profiles")
-                .insert(profile)
+                .insert(payload)
                 .select()
                 .single()
                 .execute()
+
             showSuccessAlert = true
         } catch {
             errorMessage = error.localizedDescription
         }
+
         isLoading = false
     }
 }
+
+// MARK: - Payload para escribir en Supabase
+private struct ProfileInsert: Encodable {
+    let id: UUID
+    let role: String
+    let first_name: String?
+    let last_name: String?
+    let username: String?
+    let phone: String?
+    let birthdate: String?         // "yyyy-MM-dd"
+    let company_name: String?
+    let rfc: String?
+    let address: String?
+}
+
+
 
 #Preview {
     NavigationStack {

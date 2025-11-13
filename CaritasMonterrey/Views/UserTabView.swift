@@ -16,7 +16,7 @@ struct UserTabView: View {
                 .environmentObject(mapaVM)
                 .tabItem { Label("Inicio", systemImage: "house.fill") }
 
-            mapaView()
+            MapView()
                 .environmentObject(mapaVM)
                 .tabItem { Label("Mapa", systemImage: "map.fill") }
 

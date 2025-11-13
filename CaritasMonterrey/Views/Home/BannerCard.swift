@@ -52,7 +52,7 @@ struct BannerCard: View {
 #Preview {
     BannerCard(
         title: "¡Haz una donación ahora!",
-        assetName: "home_heart",
+        assetName: "polla_dona.png",
         systemFallback: "heart.circle.fill",
         onTap: {}
     )
