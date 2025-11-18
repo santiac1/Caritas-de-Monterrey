@@ -158,20 +158,6 @@ struct OnboardingView: View {
                 }
                 .hidden()
             }
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        // Saltarse el onboarding y ir directo a MainRegistro
-                        hasCompletedOnboarding = true
-                        navigateToMainRegistro = true
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .foregroundStyle(Color("SecondaryBlue"))
-                            .font(.headline)
-                    }
-                }
-            }
             .sheet(isPresented: $showTermsAndPrivacy) {
                 TermsAndPrivacyView()
             }
@@ -179,35 +165,19 @@ struct OnboardingView: View {
     }
 }
 
-// MARK: - Vista de Términos y Privacidad
+// MARK: - Vista de Aviso de Privacidad
 struct TermsAndPrivacyView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTab = 0
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Picker para cambiar entre Términos y Privacidad
-                Picker("", selection: $selectedTab) {
-                    Text("Términos de Servicio").tag(0)
-                    Text("Aviso de Privacidad").tag(1)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    privacyContent
                 }
-                .pickerStyle(.segmented)
                 .padding()
-                
-                // Contenido según la pestaña seleccionada
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        if selectedTab == 0 {
-                            termsContent
-                        } else {
-                            privacyContent
-                        }
-                    }
-                    .padding()
-                }
             }
-            .navigationTitle("Términos y Privacidad")
+            .navigationTitle("Aviso de Privacidad")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -216,40 +186,6 @@ struct TermsAndPrivacyView: View {
                     }
                 }
             }
-        }
-    }
-    
-    private var termsContent: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Términos de Servicio")
-                .font(.title2)
-                .bold()
-            
-            Text("CÁRITAS DE MONTERREY, A.B.P.")
-                .font(.headline)
-            
-            Text("""
-            Al utilizar esta aplicación, aceptas los siguientes términos y condiciones:
-            
-            1. Uso de la Aplicación
-            La aplicación está destinada a facilitar las donaciones y la participación en programas de Cáritas de Monterrey.
-            
-            2. Registro de Usuario
-            Al crear una cuenta, te comprometes a proporcionar información veraz y actualizada.
-            
-            3. Donaciones
-            Las donaciones realizadas a través de la aplicación son finales y no reembolsables, salvo en casos excepcionales.
-            
-            4. Responsabilidad
-            Cáritas de Monterrey se compromete a utilizar los recursos donados de manera transparente y eficiente.
-            
-            5. Modificaciones
-            Nos reservamos el derecho de modificar estos términos en cualquier momento.
-            
-            6. Contacto
-            Para cualquier duda sobre estos términos, puedes contactarnos en caritas@caritas.org.mx
-            """)
-            .font(.body)
         }
     }
     

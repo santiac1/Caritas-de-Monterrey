@@ -143,6 +143,17 @@ struct SignUpView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(Color("SecondaryBlue"))
+                        .font(.headline)
+                }
+            }
+        }
         .alert("Cuenta creada", isPresented: $showSuccessAlert) {
             Button("Aceptar") { dismiss() }
         } message: {
