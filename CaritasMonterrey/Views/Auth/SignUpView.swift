@@ -5,6 +5,7 @@ struct SignUpView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.dismiss) private var dismiss
 
+    // MARK: - Lógica Original (INTACTA)
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var publicName: String = ""
@@ -16,83 +17,15 @@ struct SignUpView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showSuccessAlert = false
+    
+    // Estado UI extra solo para el toggle de ver contraseña (necesario para el diseño)
+    @State private var showPassword = false
 
     private var isAdult: Bool {
         let years = Calendar.current.dateComponents([.year], from: birthdate, to: Date()).year ?? 0
         return years >= 18
     }
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Crea una cuenta")
-                        .font(.largeTitle).bold()
-                    Text("Únete a la comunidad de Cáritas Monterrey")
-                        .foregroundStyle(.secondary)
-                }
-
-                VStack(spacing: 16) {
-                    Group {
-                        TextField("Nombre", text: $firstName)
-                        TextField("Apellido", text: $lastName)
-                        TextField("Nombre público", text: $publicName)
-                        TextField("Teléfono", text: $phone)
-                            .keyboardType(.phonePad)
-                        TextField("Correo electrónico", text: $email)
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled(true)
-                        SecureField("Contraseña (mínimo 8 caracteres)", text: $password)
-                    }
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2)))
-
-                    DatePicker("Fecha de nacimiento", selection: $birthdate, displayedComponents: .date)
-                        .datePickerStyle(.compact)
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2)))
-                }
-
-                if let errorMessage {
-                    Text(errorMessage)
-                        .foregroundStyle(.red)
-                        .font(.footnote)
-                }
-
-                Button {
-                    Task { await register() }
-                } label: {
-                    if isLoading {
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .tint(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    } else {
-                        Text("Registrarse")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                }
-                .background(Color("AccentColor"))
-                .clipShape(Capsule())
-                .disabled(!formIsValid || isLoading)
-
-                Spacer(minLength: 24)
-            }
-            .padding(24)
-        }
-        .navigationTitle("Registro")
-        .alert("Cuenta creada", isPresented: $showSuccessAlert) {
-            Button("Aceptar") { dismiss() }
-        } message: {
-            Text("Cuenta creada. Revisa tu email para confirmar tu cuenta.")
-        }
-    }
-
+    
     private var formIsValid: Bool {
         !firstName.isEmpty &&
         !lastName.isEmpty &&
@@ -103,7 +36,129 @@ struct SignUpView: View {
         isAdult
     }
 
-    // MARK: - Registro
+    // MARK: - Frontend Modificado
+    var body: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+            
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    
+                    // 1. Header igual a la imagen
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Crea una cuenta")
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black)
+                        
+                        HStack(spacing: 4) {
+                            Text("¿Ya tienes una cuenta?")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            
+                            NavigationLink(destination: LoginView()) {
+                                Text("Inicia sesión")
+                                    .font(.subheadline.weight(.bold))
+                                    .foregroundStyle(Color.black)
+                                    .underline()
+                            }
+                        }
+                    }
+                    .padding(.top, 10)
+
+                    // 2. Campos con estilo "Cut Border"
+                    VStack(spacing: 24) {
+                        CustomStyledField(title: "Nombre", text: $firstName, isSecure: false)
+                        CustomStyledField(title: "Apellido", text: $lastName, isSecure: false)
+                        CustomStyledField(title: "Nombre público", text: $publicName, isSecure: false)
+                        
+                        CustomStyledField(title: "Teléfono", text: $phone, isSecure: false)
+                            .keyboardType(.phonePad)
+                        
+                        // Wrapper visual para el DatePicker
+                        CustomDatePickerField(title: "Fecha de nacimiento", date: $birthdate)
+                        
+                        CustomStyledField(title: "E-mail", text: $email, isSecure: false)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                        
+                        CustomStyledField(title: "Contraseña", text: $password, isSecure: true, showPassword: $showPassword)
+                    }
+                    .padding(.top, 10)
+
+                    // 3. Requisitos de contraseña (Bullet points)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Tu contraseña debe de contener:")
+                            .font(.caption)
+                            .foregroundStyle(Color("SecondaryBlue"))
+                        
+                        Group {
+                            bulletPoint("Mínimo 8 caracteres.")
+                            bulletPoint("1 letra en mayúsculas.")
+                            bulletPoint("1 número")
+                            bulletPoint("1 símbolo")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(Color("SecondaryBlue"))
+                    }
+                    .padding(.leading, 5)
+
+                    // Mensaje de Error
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .foregroundStyle(.red)
+                            .font(.footnote)
+                    }
+
+                    // 4. Texto Legal
+                    Text("Al hacer clic en el botón de Registrarse debajo, accedes a los [Términos de Servicio](#) de Caritas de Monterrey y reconoces el [Aviso de Privacidad](#).")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .tint(Color("AccentColor"))
+                        .padding(.vertical, 10)
+
+                    // 5. Botón Registrarse
+                    Button {
+                        Task { await register() }
+                    } label: {
+                        ZStack {
+                            if isLoading {
+                                ProgressView().tint(.white)
+                            } else {
+                                Text("Registrarse")
+                                    .font(.headline.weight(.bold))
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 18)
+                        .background(Color("SecondaryBlue"))
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 30))
+                    }
+                    .disabled(!formIsValid || isLoading)
+                    .opacity(!formIsValid || isLoading ? 0.7 : 1)
+
+                    Spacer(minLength: 40)
+                }
+                .padding(24)
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .alert("Cuenta creada", isPresented: $showSuccessAlert) {
+            Button("Aceptar") { dismiss() }
+        } message: {
+            Text("Cuenta creada. Revisa tu email para confirmar tu cuenta.")
+        }
+    }
+    
+    // Helper UI
+    private func bulletPoint(_ text: String) -> some View {
+        HStack(alignment: .top, spacing: 6) {
+            Text("•").bold()
+            Text(text)
+        }
+    }
+
+    // MARK: - Registro (Lógica Original INTACTA)
     @MainActor
     private func register() async {
         guard formIsValid else {
@@ -151,7 +206,7 @@ struct SignUpView: View {
     }
 }
 
-// MARK: - Payload para escribir en Supabase
+// MARK: - Estructuras Auxiliares (INTACTAS)
 private struct ProfileInsert: Encodable {
     let id: UUID
     let role: String
@@ -159,13 +214,41 @@ private struct ProfileInsert: Encodable {
     let last_name: String?
     let username: String?
     let phone: String?
-    let birthdate: String?         // "yyyy-MM-dd"
+    let birthdate: String?        // "yyyy-MM-dd"
     let company_name: String?
     let rfc: String?
     let address: String?
 }
 
+// MARK: - Componentes Visuales Personalizados (Frontend)
 
+struct CustomDatePickerField: View {
+    let title: String
+    @Binding var date: Date
+    
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            HStack {
+                DatePicker("", selection: $date, displayedComponents: .date)
+                    .datePickerStyle(.compact)
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .frame(height: 56)
+            .background(RoundedRectangle(cornerRadius: 28).fill(Color(.systemBackground)))
+            .overlay(RoundedRectangle(cornerRadius: 28).stroke(Color("SecondaryBlue"), lineWidth: 1.5))
+            
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(Color("SecondaryBlue"))
+                .padding(.horizontal, 5)
+                .background(Color(.systemBackground))
+                .offset(x: 20, y: -10)
+        }
+    }
+}
 
 #Preview {
     NavigationStack {

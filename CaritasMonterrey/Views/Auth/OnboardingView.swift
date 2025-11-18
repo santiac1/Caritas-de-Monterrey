@@ -8,79 +8,330 @@ struct OnboardingView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var currentPage = 0
     @State private var navigateToLogin = false
+    @State private var navigateToMainRegistro = false
+    @State private var showTermsAndPrivacy = false
+
+    private var currentPageData: OnboardingPage {
+        let clampedIndex = min(max(currentPage, 0), OnboardingPage.pages.count - 1)
+        return OnboardingPage.pages[clampedIndex]
+    }
+
+    private func advancePage() {
+        if currentPageData.isLast {
+            hasCompletedOnboarding = true
+            navigateToLogin = true
+        } else {
+            withAnimation {
+                currentPage = min(currentPage + 1, OnboardingPage.pages.count - 1)
+            }
+        }
+    }
+
+    private func goBackPage() {
+        withAnimation {
+            currentPage = max(currentPage - 1, 0)
+        }
+    }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                TabView(selection: $currentPage) {
-                    ForEach(Array(OnboardingPage.pages.enumerated()), id: \.offset) { index, page in
-                        VStack(spacing: 20) {
-                            Spacer().frame(height: 80)
+                VStack(spacing: 0) {
+                    Spacer().frame(height: 40)
 
-                            // Imagen principal
-                            Image(page.imageName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 220, height: 220)
+                    TabView(selection: $currentPage) {
+                        ForEach(Array(OnboardingPage.pages.enumerated()), id: \.offset) { index, page in
+                            VStack(spacing: 20) {
+                                // Imagen principal
+                                Image(page.imageName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 220, height: 220)
 
-                            // Título
-                            Text(page.title)
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 30)
+                                // Título
+                                Text(page.title)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 30)
 
-                            // Descripción
-                            Text(page.description)
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 30)
-
-                            Spacer()
-
-                            // Botón principal
-                            Button(action: {
-                                if page.isLast {
-                                    hasCompletedOnboarding = true
-                                    navigateToLogin = true
-                                } else {
-                                    withAnimation {
-                                        currentPage = min(index + 1, OnboardingPage.pages.count - 1)
+                                // Descripción
+                                VStack(spacing: 8) {
+                                    Text(page.description)
+                                        .font(.body)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.horizontal, 30)
+                                    
+                                    // Texto "ver más" solo en la última página
+                                    if page.isLast {
+                                        Button {
+                                            showTermsAndPrivacy = true
+                                        } label: {
+                                            Text("ver más")
+                                                .font(.caption)
+                                                .foregroundStyle(Color("SecondaryBlue"))
+                                                .underline()
+                                        }
+                                        .padding(.top, 4)
                                     }
                                 }
-                            }) {
-                                Text(page.buttonTitle)
+
+                                Spacer()
+                            }
+                            .tag(index)
+                        }
+                    }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+
+                    // Indicadores de página (dots)
+                    HStack(spacing: 8) {
+                        ForEach(0..<OnboardingPage.pages.count, id: \.self) { dot in
+                            Circle()
+                                .fill(dot == currentPage ? Color("AccentColor") : Color.gray.opacity(0.3))
+                                .frame(width: 10, height: 10)
+                        }
+                    }
+                    .padding(.top, 32)
+
+                    Spacer().frame(height: 48)
+
+                    // Botones de navegación
+                    Group {
+                        if currentPage == 0 {
+                            Button(action: advancePage) {
+                                Text(currentPageData.buttonTitle)
                                     .font(.headline)
                                     .frame(maxWidth: .infinity)
                                     .padding()
                                     .background(Color("SecondaryBlue"))
                                     .foregroundColor(.white)
                                     .cornerRadius(30)
-                                    .padding(.horizontal, 40)
                             }
+                        } else if currentPageData.isLast {
+                            Button(action: advancePage) {
+                                Text(currentPageData.buttonTitle)
+                                    .font(.headline)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color("SecondaryBlue"))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(30)
+                            }
+                        } else {
+                            HStack(spacing: 16) {
+                                Button(action: goBackPage) {
+                                    Text("Regresar")
+                                        .font(.headline)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Color.gray.opacity(0.2))
+                                        .foregroundColor(.primary)
+                                        .cornerRadius(30)
+                                }
 
-                            // Indicadores de página (dots)
-                            HStack(spacing: 8) {
-                                ForEach(0..<OnboardingPage.pages.count, id: \.self) { dot in
-                                    Circle()
-                                        .fill(dot == currentPage ? Color("AccentColor") : Color.gray.opacity(0.3))
-                                        .frame(width: 10, height: 10)
+                                Button(action: advancePage) {
+                                    Text(currentPageData.buttonTitle)
+                                        .font(.headline)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Color("SecondaryBlue"))
+                                        .foregroundColor(.white)
+                                        .cornerRadius(30)
                                 }
                             }
-                            .padding(.bottom, 50)
                         }
-                        .tag(index)
                     }
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 50)
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
 
                 // 🔁 Navegación automática al login
                 NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
                     EmptyView()
                 }
                 .hidden()
+                
+                // 🔁 Navegación automática a MainRegistro
+                NavigationLink(destination: MainRegistroView(), isActive: $navigateToMainRegistro) {
+                    EmptyView()
+                }
+                .hidden()
             }
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        // Saltarse el onboarding y ir directo a MainRegistro
+                        hasCompletedOnboarding = true
+                        navigateToMainRegistro = true
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .foregroundStyle(Color("SecondaryBlue"))
+                            .font(.headline)
+                    }
+                }
+            }
+            .sheet(isPresented: $showTermsAndPrivacy) {
+                TermsAndPrivacyView()
+            }
+        }
+    }
+}
+
+// MARK: - Vista de Términos y Privacidad
+struct TermsAndPrivacyView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                // Picker para cambiar entre Términos y Privacidad
+                Picker("", selection: $selectedTab) {
+                    Text("Términos de Servicio").tag(0)
+                    Text("Aviso de Privacidad").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding()
+                
+                // Contenido según la pestaña seleccionada
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        if selectedTab == 0 {
+                            termsContent
+                        } else {
+                            privacyContent
+                        }
+                    }
+                    .padding()
+                }
+            }
+            .navigationTitle("Términos y Privacidad")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Cerrar") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+    
+    private var termsContent: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Términos de Servicio")
+                .font(.title2)
+                .bold()
+            
+            Text("CÁRITAS DE MONTERREY, A.B.P.")
+                .font(.headline)
+            
+            Text("""
+            Al utilizar esta aplicación, aceptas los siguientes términos y condiciones:
+            
+            1. Uso de la Aplicación
+            La aplicación está destinada a facilitar las donaciones y la participación en programas de Cáritas de Monterrey.
+            
+            2. Registro de Usuario
+            Al crear una cuenta, te comprometes a proporcionar información veraz y actualizada.
+            
+            3. Donaciones
+            Las donaciones realizadas a través de la aplicación son finales y no reembolsables, salvo en casos excepcionales.
+            
+            4. Responsabilidad
+            Cáritas de Monterrey se compromete a utilizar los recursos donados de manera transparente y eficiente.
+            
+            5. Modificaciones
+            Nos reservamos el derecho de modificar estos términos en cualquier momento.
+            
+            6. Contacto
+            Para cualquier duda sobre estos términos, puedes contactarnos en caritas@caritas.org.mx
+            """)
+            .font(.body)
+        }
+    }
+    
+    private var privacyContent: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Aviso de Privacidad")
+                .font(.title2)
+                .bold()
+            
+            Text("CÁRITAS DE MONTERREY, A.B.P.")
+                .font(.headline)
+            
+            Group {
+                Text("Introducción")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                Text("CÁRITAS DE MONTERREY, A.B.P. informa sobre la recopilación, propósito y protección de datos personales de acuerdo con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).")
+                
+                Text("Sujetos de Datos")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                Text("Se protegen los datos personales de beneficiarios, donantes, voluntarios, prestadores de servicio social y personal.")
+                
+                Text("Responsable")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                Text("CÁRITAS DE MONTERREY, A.B.P., ubicada en FRANCISCO G. SADA PTE 2810 OBISPADO MONTERREY, NUEVO LEON, MEXICO 64040, es responsable del tratamiento de datos.")
+                
+                Text("Finalidades Primarias")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("1. Recaudación de donaciones.")
+                    Text("2. Registro de donantes y pagos en línea.")
+                    Text("3. Procesamiento de recibos deducibles.")
+                    Text("4. Difusión de información (áreas de servicio, campañas).")
+                    Text("5. Donaciones directas (únicas/recurrentes).")
+                    Text("6. Invitaciones para campañas y nuevos programas.")
+                    Text("7. Programas de patrocinio.")
+                    Text("8. Voluntariado.")
+                    Text("9. Generación de bases de datos.")
+                }
+                
+                Text("Finalidades Secundarias")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("1. Evaluación de calidad de servicio.")
+                    Text("2. Envío de Boletines Electrónicos.")
+                    Text("3. Mercadotecnia o publicidad.")
+                    Text("4. Desarrollo de estudios y programas para determinar hábitos de consumo.")
+                }
+                
+                Text("Limitación de Uso de Datos")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                Text("Los usuarios pueden enviar un correo electrónico a caritas@caritas.org.mx para optar por no recibir comunicaciones relacionadas con las finalidades secundarias.")
+                
+                Text("Cambios al Aviso de Privacidad")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                Text("Las actualizaciones se notificarán a través del sitio web de la institución.")
+                
+                Text("Derechos ARCO")
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                Text("Los titulares de datos pueden ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición mediante aviso escrito en las oficinas de la institución.")
+                
+                Text("Última actualización: 08/01/2025")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 8)
+            }
+            .font(.body)
         }
     }
 }
@@ -120,7 +371,7 @@ private struct OnboardingPage: Identifiable {
             imageName: "polla4",
             title: "Misión, Visión y Valores",
             description: "Fundamentados en el amor, servimos sin distinción y optimizamos recursos para apoyar a los más vulnerables.",
-            buttonTitle: "¡Comienza a donar!",
+            buttonTitle: "¡Dona ahora!",
             isLast: true
         )
     ]
@@ -129,3 +380,4 @@ private struct OnboardingPage: Identifiable {
 #Preview {
     OnboardingView()
 }
+

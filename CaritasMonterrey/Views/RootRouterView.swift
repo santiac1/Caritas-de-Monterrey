@@ -30,9 +30,9 @@ struct RootRouterView: View {
                 OnboardingView()
             }
 
-            // 4️⃣ Si ya completó onboarding pero no tiene sesión → ir al login
+            // 4️⃣ Si ya completó onboarding pero no tiene sesión → ir a MainRegistro
             else {
-                LoginView()
+                MainRegistroView()
             }
         }
         .environmentObject(appState)
