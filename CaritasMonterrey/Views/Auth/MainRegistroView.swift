@@ -37,9 +37,9 @@ struct MainRegistroView: View {
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 18)
-                                .background(Color("SecondaryBlue"))
+                                .background(Color("AccentColor"))
                                 .clipShape(RoundedRectangle(cornerRadius: 30))
-                                .shadow(color: Color("SecondaryBlue").opacity(0.3), radius: 10, x: 0, y: 5)
+                                .shadow(color: Color("AccentColor").opacity(0.3), radius: 10, x: 0, y: 5)
                         }
                         
                         // Botón "Create account"
