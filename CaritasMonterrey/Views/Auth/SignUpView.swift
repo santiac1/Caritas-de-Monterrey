@@ -4,6 +4,7 @@ import Supabase
 struct SignUpView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     // MARK: - Lógica Original (INTACTA)
     @State private var firstName: String = ""
@@ -20,6 +21,15 @@ struct SignUpView: View {
     
     // Estado UI extra solo para el toggle de ver contraseña (necesario para el diseño)
     @State private var showPassword = false
+    @FocusState private var focusedField: Field?
+    
+    private enum Field {
+        case firstName, lastName, publicName, phone, email, password
+    }
+    
+    private var titleColor: Color {
+        colorScheme == .dark ? Color("AccentColor") : Color("SecondaryBlue")
+    }
 
     private var isAdult: Bool {
         let years = Calendar.current.dateComponents([.year], from: birthdate, to: Date()).year ?? 0
@@ -39,7 +49,7 @@ struct SignUpView: View {
     // MARK: - Frontend Modificado
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color(.systemBackground).ignoresSafeArea()
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
@@ -48,7 +58,7 @@ struct SignUpView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Crea una cuenta")
                             .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(titleColor)
                         
                         HStack(spacing: 4) {
                             Text("¿Ya tienes una cuenta?")
@@ -58,7 +68,7 @@ struct SignUpView: View {
                             NavigationLink(destination: LoginView()) {
                                 Text("Inicia sesión")
                                     .font(.subheadline.weight(.bold))
-                                    .foregroundStyle(Color.black)
+                                    .foregroundStyle(titleColor)
                                     .underline()
                             }
                         }
@@ -67,40 +77,57 @@ struct SignUpView: View {
 
                     // 2. Campos con estilo "Cut Border"
                     VStack(spacing: 24) {
-                        CustomStyledField(title: "Nombre", text: $firstName, isSecure: false)
-                        CustomStyledField(title: "Apellido", text: $lastName, isSecure: false)
-                        CustomStyledField(title: "Nombre público", text: $publicName, isSecure: false)
+                        CustomStyledField<Field>(title: "Nombre", text: $firstName, isSecure: false, focusedField: $focusedField, fieldValue: .firstName)
+                        CustomStyledField<Field>(title: "Apellido", text: $lastName, isSecure: false, focusedField: $focusedField, fieldValue: .lastName)
+                        CustomStyledField<Field>(title: "Nombre público", text: $publicName, isSecure: false, focusedField: $focusedField, fieldValue: .publicName)
                         
-                        CustomStyledField(title: "Teléfono", text: $phone, isSecure: false)
+                        CustomStyledField<Field>(title: "Teléfono", text: $phone, isSecure: false, focusedField: $focusedField, fieldValue: .phone)
                             .keyboardType(.phonePad)
                         
                         // Wrapper visual para el DatePicker
                         CustomDatePickerField(title: "Fecha de nacimiento", date: $birthdate)
                         
-                        CustomStyledField(title: "E-mail", text: $email, isSecure: false)
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
+                        CustomStyledField<Field>(
+                            title: "E-mail",
+                            text: $email,
+                            isSecure: false,
+                            focusedField: $focusedField,
+                            fieldValue: .email
+                        )
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
                         
-                        CustomStyledField(title: "Contraseña", text: $password, isSecure: true, showPassword: $showPassword)
+                        CustomStyledField<Field>(
+                            title: "Contraseña",
+                            text: $password,
+                            isSecure: true,
+                            showPassword: $showPassword,
+                            focusedField: $focusedField,
+                            fieldValue: .password
+                        )
                     }
                     .padding(.top, 10)
 
-                    // 3. Requisitos de contraseña (Bullet points)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Tu contraseña debe de contener:")
+                    // 3. Requisitos de contraseña (Bullet points) - Solo se muestra cuando el campo de contraseña está enfocado
+                    if focusedField == .password {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Tu contraseña debe de contener:")
+                                .font(.caption)
+                                .foregroundStyle(titleColor)
+                            
+                            Group {
+                                bulletPoint("Mínimo 8 caracteres.")
+                                bulletPoint("1 letra en mayúsculas.")
+                                bulletPoint("1 número")
+                                bulletPoint("1 símbolo")
+                            }
                             .font(.caption)
-                            .foregroundStyle(Color("SecondaryBlue"))
-                        
-                        Group {
-                            bulletPoint("Mínimo 8 caracteres.")
-                            bulletPoint("1 letra en mayúsculas.")
-                            bulletPoint("1 número")
-                            bulletPoint("1 símbolo")
+                            .foregroundStyle(titleColor)
                         }
-                        .font(.caption)
-                        .foregroundStyle(Color("SecondaryBlue"))
+                        .padding(.leading, 5)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                        .animation(.easeInOut(duration: 0.3), value: focusedField)
                     }
-                    .padding(.leading, 5)
 
                     // Mensaje de Error
                     if let errorMessage {
@@ -236,6 +263,19 @@ private struct ProfileInsert: Encodable {
 struct CustomDatePickerField: View {
     let title: String
     @Binding var date: Date
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var borderColor: Color {
+        colorScheme == .dark ? Color("AccentColor") : Color("SecondaryBlue")
+    }
+    
+    private var backgroundColor: Color {
+        colorScheme == .dark ? Color.black : Color.white
+    }
+    
+    private var labelBackgroundColor: Color {
+        colorScheme == .dark ? Color.black : Color.white
+    }
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -248,15 +288,15 @@ struct CustomDatePickerField: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .frame(height: 56)
-            .background(RoundedRectangle(cornerRadius: 28).fill(Color(.systemBackground)))
-            .overlay(RoundedRectangle(cornerRadius: 28).stroke(Color("SecondaryBlue"), lineWidth: 1.5))
+            .background(RoundedRectangle(cornerRadius: 28).fill(backgroundColor))
+            .overlay(RoundedRectangle(cornerRadius: 28).stroke(borderColor, lineWidth: 1.5))
             
             Text(title)
                 .font(.caption)
-                .foregroundStyle(Color("SecondaryBlue"))
-                .padding(.horizontal, 5)
-                .background(Color(.systemBackground))
-                .offset(x: 20, y: -10)
+                .foregroundStyle(borderColor)
+                .background(labelBackgroundColor)
+                .padding(.horizontal, 1)
+                .offset(x: 20, y: -7)
         }
     }
 }

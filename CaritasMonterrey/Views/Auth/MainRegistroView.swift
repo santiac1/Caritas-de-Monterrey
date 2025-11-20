@@ -1,11 +1,25 @@
 import SwiftUI
+import AVKit
+import AVFoundation
 
 struct MainRegistroView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.white
-                    .ignoresSafeArea()
+                // Video de fondo (si no existe, mostrará el color de fondo)
+                if let _ = Bundle.main.path(forResource: "background-video", ofType: "mp4") {
+                    LoopingVideoPlayer(videoName: "background-video", videoType: "mp4")
+                        .ignoresSafeArea()
+                        .overlay(
+                            // Capa semitransparente opcional para mejorar legibilidad
+                            Color.black.opacity(0.3)
+                                .ignoresSafeArea()
+                        )
+                } else {
+                    // Fallback al color de fondo original
+                    Color(.systemBackground)
+                        .ignoresSafeArea()
+                }
                 
                 VStack {
                     // Logo
@@ -18,7 +32,7 @@ struct MainRegistroView: View {
                     VStack(spacing: 16) {
                         // Botón "Log in"
                         NavigationLink(destination: LoginView()) {
-                            Text("Log in")
+                            Text("Iniciar Sesión")
                                 .font(.headline.weight(.bold))
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
@@ -30,7 +44,7 @@ struct MainRegistroView: View {
                         
                         // Botón "Create account"
                         NavigationLink(destination: SignUpView()) {
-                            Text("Create account")
+                            Text("Crear Cuenta")
                                 .font(.headline.weight(.bold))
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
@@ -66,6 +80,98 @@ struct MainRegistroView: View {
             Spacer()
         }
         .padding(.bottom, 30) // Ajuste de padding inferior para el logo
+    }
+}
+// MARK: - Video de Fondo
+struct LoopingVideoPlayer: UIViewRepresentable {
+    let videoName: String
+    let videoType: String
+    
+    func makeUIView(context: Context) -> UIView {
+        let view = PlayerUIView(frame: .zero, videoName: videoName, videoType: videoType)
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // Este método se llama cuando la vista se actualiza
+        // No necesitamos hacer nada aquí ya que el video se maneja automáticamente
+    }
+}
+
+class PlayerUIView: UIView {
+    private let playerLayer = AVPlayerLayer()
+    private var playerLooper: AVPlayerLooper?
+    private var player: AVQueuePlayer?
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(frame: CGRect, videoName: String, videoType: String) {
+        super.init(frame: frame)
+        setupVideo(videoName: videoName, videoType: videoType)
+        
+        // Observar notificaciones del ciclo de vida de la app
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(pauseVideo),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(resumeVideo),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+    
+    private func setupVideo(videoName: String, videoType: String) {
+        guard let path = Bundle.main.path(forResource: videoName, ofType: videoType) else {
+            print("⚠️ No se encontró el video: \(videoName).\(videoType)")
+            return
+        }
+        
+        let url = URL(fileURLWithPath: path)
+        let asset = AVAsset(url: url)
+        let item = AVPlayerItem(asset: asset)
+        let queuePlayer = AVQueuePlayer(playerItem: item)
+        
+        player = queuePlayer
+        playerLayer.player = queuePlayer
+        playerLayer.videoGravity = .resizeAspectFill
+        layer.addSublayer(playerLayer)
+        
+        // Mutar el audio del video
+        queuePlayer.isMuted = true
+        
+        // Crear el looper para reproducir infinitamente
+        playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: item)
+        queuePlayer.play()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer.frame = bounds
+    }
+    
+    @objc private func pauseVideo() {
+        player?.pause()
+    }
+    
+    @objc private func resumeVideo() {
+        player?.isMuted = true
+        player?.play()
+    }
+    
+    deinit {
+        // Limpiar recursos
+        NotificationCenter.default.removeObserver(self)
+        playerLooper?.disableLooping()
+        player?.pause()
+        player = nil
+        playerLayer.player = nil
     }
 }
 

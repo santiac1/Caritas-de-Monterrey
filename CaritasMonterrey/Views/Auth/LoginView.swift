@@ -3,6 +3,7 @@ import SwiftUI
 struct LoginView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     
     // MARK: - Variables de Estado
     @State private var email: String = ""
@@ -15,6 +16,10 @@ struct LoginView: View {
     
     // Estado para animación de error
     @State private var shakeAttempts: Int = 0
+    
+    private var titleColor: Color {
+        colorScheme == .dark ? Color("AccentColor") : Color("SecondaryBlue")
+    }
 
     private enum Field {
         case email
@@ -24,7 +29,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.white // Fondo blanco sólido
+                Color(.systemBackground) // Fondo que se adapta al dark mode
                     .ignoresSafeArea()
                     .onTapGesture {
                         focusedField = nil
@@ -39,27 +44,29 @@ struct LoginView: View {
                         
                         Text("Iniciar sesión")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color("SecondaryBlue"))
+                            .foregroundStyle(titleColor)
                             .padding(.bottom, 10)
                         
                         // Formulario
                         VStack(spacing: 28) {
-                            CustomStyledField(
+                            CustomStyledField<Field>(
                                 title: "E-mail",
                                 text: $email,
-                                isSecure: false
+                                isSecure: false,
+                                focusedField: $focusedField,
+                                fieldValue: .email
                             )
-                            .focused($focusedField, equals: .email)
                             .submitLabel(.next)
                             .onSubmit { focusedField = .password }
                             
-                            CustomStyledField(
+                            CustomStyledField<Field>(
                                 title: "Contraseña",
                                 text: $password,
                                 isSecure: true,
-                                showPassword: $showPassword
+                                showPassword: $showPassword,
+                                focusedField: $focusedField,
+                                fieldValue: .password
                             )
-                            .focused($focusedField, equals: .password)
                             .submitLabel(.go)
                             .onSubmit { Task { await signIn() } }
                         }
@@ -198,19 +205,48 @@ struct ShakeEffect: GeometryEffect {
 }
 
 // MARK: - Campo Personalizado (Estilo borde cortado) - Compartido
-struct CustomStyledField: View {
+struct CustomStyledField<Field: Hashable>: View {
     let title: String
     @Binding var text: String
     var isSecure: Bool
     var showPassword: Binding<Bool>? = nil
+    var focusedField: FocusState<Field?>.Binding? = nil
+    var fieldValue: Field? = nil
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var borderColor: Color {
+        colorScheme == .dark ? Color("AccentColor") : Color("SecondaryBlue")
+    }
+    
+    private var backgroundColor: Color {
+        colorScheme == .dark ? Color.black : Color.white
+    }
+    
+    private var labelBackgroundColor: Color {
+        colorScheme == .dark ? Color.black : Color.white
+    }
     
     var body: some View {
         ZStack(alignment: .topLeading) {
             HStack {
                 if isSecure && !(showPassword?.wrappedValue ?? false) {
-                    SecureField("", text: $text)
+                    Group {
+                        if let focusedField = focusedField, let fieldValue = fieldValue {
+                            SecureField("", text: $text)
+                                .focused(focusedField, equals: fieldValue)
+                        } else {
+                            SecureField("", text: $text)
+                        }
+                    }
                 } else {
-                    TextField("", text: $text)
+                    Group {
+                        if let focusedField = focusedField, let fieldValue = fieldValue {
+                            TextField("", text: $text)
+                                .focused(focusedField, equals: fieldValue)
+                        } else {
+                            TextField("", text: $text)
+                        }
+                    }
                 }
                 
                 if isSecure, let showPass = showPassword {
@@ -218,7 +254,7 @@ struct CustomStyledField: View {
                         showPass.wrappedValue.toggle()
                     } label: {
                         Image(systemName: showPass.wrappedValue ? "eye.slash" : "eye")
-                            .foregroundStyle(Color("SecondaryBlue"))
+                            .foregroundStyle(borderColor)
                     }
                 }
             }
@@ -226,19 +262,19 @@ struct CustomStyledField: View {
             .frame(height: 56)
             .background(
                 RoundedRectangle(cornerRadius: 28)
-                    .fill(Color(.systemBackground))
+                    .fill(backgroundColor)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 28)
-                    .stroke(Color("SecondaryBlue"), lineWidth: 1.5)
+                    .stroke(borderColor, lineWidth: 1.5)
             )
             
             Text(title)
                 .font(.caption)
-                .foregroundStyle(Color("SecondaryBlue"))
-                .padding(.horizontal, 5)
-                .background(Color(.systemBackground))
-                .offset(x: 20, y: -10)
+                .foregroundStyle(borderColor)
+                .background(labelBackgroundColor)
+                .padding(.horizontal, 1)
+                .offset(x: 20, y: -8)
         }
     }
 }

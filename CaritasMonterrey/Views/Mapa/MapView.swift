@@ -1,7 +1,7 @@
 import SwiftUI
 import MapKit
 import CoreLocation
-import Auth // <-- Importar para pasar el appState
+import Auth
 
 struct MapView: View {
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -284,3 +284,4 @@ struct BubbleAnnotationLabel: View {
         .environmentObject(MapaViewModel())
         .environmentObject(AppState()) // <-- Añadir
 }
+
