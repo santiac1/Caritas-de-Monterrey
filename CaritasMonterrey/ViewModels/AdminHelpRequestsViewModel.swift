@@ -29,7 +29,7 @@ final class AdminHelpRequestsViewModel: ObservableObject {
                 query = query.eq("status", value: status)
             }
 
-            query = query.order("created_at", ascending: currentSort == .oldest)
+            query = query.order("created_at", ascending: currentSort == .oldest) as! PostgrestFilterBuilder
 
             let fetched: [Donation] = try await query
                 .execute()
