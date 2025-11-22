@@ -14,16 +14,24 @@ final class AdminHelpRequestsViewModel: ObservableObject {
     @Published private(set) var donations: [Donation] = []
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
+    @Published var currentFilter: DonationFilter = .inProcess
+    @Published var currentSort: SortOrder = .newest
 
     func loadHelpRequests() async {
         isLoading = true
         errorMessage = nil
         do {
-            let fetched: [Donation] = try await SupabaseManager.shared.client
+            var query = SupabaseManager.shared.client
                 .from("Donations")
                 .select()
-                .eq("status", value: "in_process")
-                .order("created_at", ascending: false)
+
+            if let status = currentFilter.dbValue {
+                query = query.eq("status", value: status)
+            }
+
+            query = query.order("created_at", ascending: currentSort == .oldest)
+
+            let fetched: [Donation] = try await query
                 .execute()
                 .value
 

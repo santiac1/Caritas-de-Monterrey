@@ -73,10 +73,10 @@ struct DonationsView: View {
 // MARK: - Filter Bar (píldoras deslizables)
 // ¡Esta es tu struct original, pero MÁS LIMPIA!
 private struct FilterBar: View {
-    @Binding var selection: DonationsViewModel.DBFilter
+    @Binding var selection: DonationFilter
     var namespace: Namespace.ID
 
-    private let items = DonationsViewModel.DBFilter.allCases
+    private let items = DonationFilter.allCases
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
