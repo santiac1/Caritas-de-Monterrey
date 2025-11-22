@@ -4,6 +4,7 @@ struct AdminHelpRequestsView: View {
     @EnvironmentObject private var viewModel: AdminHelpRequestsViewModel
     @EnvironmentObject private var appState: AppState
     @State private var isSigningOut = false
+    @State private var isShowingFilters = false
 
     var body: some View {
         ScrollView {
@@ -33,7 +34,27 @@ struct AdminHelpRequestsView: View {
         }
         .task { await viewModel.loadHelpRequests() }
         .refreshable { await viewModel.loadHelpRequests() }
+        .onChange(of: viewModel.currentFilter) { _ in
+            Task { await viewModel.loadHelpRequests() }
+        }
+        .onChange(of: viewModel.currentSort) { _ in
+            Task { await viewModel.loadHelpRequests() }
+        }
+        .sheet(isPresented: $isShowingFilters) {
+            DonationsFilterView(
+                selectedFilter: $viewModel.currentFilter,
+                sortOrder: $viewModel.currentSort
+            )
+            .presentationDetents([.medium, .large])
+        }
         .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    isShowingFilters = true
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     Button {
