@@ -135,7 +135,8 @@ private struct DonationCard: View {
         case .accepted:   return ("Aceptada",   .green,  "checkmark.seal.fill")
         case .rejected:   return ("Rechazada",  .red,    "xmark.octagon.fill")
         case .returned:   return ("Devuelta",   .orange, "arrow.uturn.backward.circle.fill")
-        }
+        case .received:
+            <#code#>
     }
     
     var body: some View {
