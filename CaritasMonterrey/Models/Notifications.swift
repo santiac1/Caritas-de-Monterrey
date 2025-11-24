@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 enum NotificationCategory: String, Codable {
     case donation
     case event
@@ -32,7 +31,7 @@ enum NotificationCategory: String, Codable {
 }
 
 // MARK: - Modelo de Notificación
-struct NotificationItem: Identifiable, Codable {
+struct AppNotification: Identifiable, Codable {
     let id: UUID
     let user_id: UUID
     var title: String
@@ -40,55 +39,14 @@ struct NotificationItem: Identifiable, Codable {
     var type: NotificationCategory
     var created_at: Date?
     var isRead: Bool
-}
-
-// MARK: - Datos de muestra (mock)
-struct NotificationData {
-    static let mockNotifications: [NotificationItem] = [
-        NotificationItem(
-            id: UUID(),
-            user_id: UUID(),
-            title: "Donación Completada",
-            message: "Tu donación de 'Ropa de invierno' fue recibida. ¡Muchas gracias!",
-            type: .donation,
-            created_at: Date().addingTimeInterval(-300), // Hace 5 minutos
-            isRead: false
-        ),
-        NotificationItem(
-            id: UUID(),
-            user_id: UUID(),
-            title: "Evento Próximo",
-            message: "No olvides la colecta en el Bazar Emilio Carranza mañana a las 10:00 a.m.",
-            type: .event,
-            created_at: Date().addingTimeInterval(-3600 * 4), // Hace 4 horas
-            isRead: false
-        ),
-        NotificationItem(
-            id: UUID(),
-            user_id: UUID(),
-            title: "Actualización de Perfil",
-            message: "Tu número de teléfono ha sido actualizado exitosamente.",
-            type: .alert,
-            created_at: Date().addingTimeInterval(-3600 * 24), // Ayer
-            isRead: true
-        ),
-        NotificationItem(
-            id: UUID(),
-            user_id: UUID(),
-            title: "Donación en Camino",
-            message: "Tu donación de 'Artículos personales' ha sido recolectada.",
-            type: .donation,
-            created_at: Date().addingTimeInterval(-3600 * 48), // Hace 2 días
-            isRead: true
-        ),
-        NotificationItem(
-            id: UUID(),
-            user_id: UUID(),
-            title: "Donación No Aceptada",
-            message: "Tu donación de 'Ropa' no ha pasado los filtros de calidad.",
-            type: .alert,
-            created_at: Date().addingTimeInterval(-3600 * 57), // Hace 2 días
-            isRead: false
-        )
-    ]
+    
+    enum CodingKeys: String, CodingKey {
+            case id
+            case user_id
+            case title
+            case message
+            case type
+            case created_at
+            case isRead = "is_read"
+        }
 }

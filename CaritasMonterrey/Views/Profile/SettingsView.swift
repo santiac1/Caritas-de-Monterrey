@@ -1,11 +1,15 @@
 import SwiftUI
 import Auth
 
+
+
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
     @StateObject private var viewModel = ProfileSettingsViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var showSuccessAlert = false
+    @AppStorage("notificationsEnable") private var notificationsEnable = true
+    
 
     var body: some View {
         Form {

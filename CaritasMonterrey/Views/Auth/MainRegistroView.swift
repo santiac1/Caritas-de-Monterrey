@@ -12,7 +12,7 @@ struct MainRegistroView: View {
                         .ignoresSafeArea()
                         .overlay(
                             // Capa semitransparente opcional para mejorar legibilidad
-                            Color.black.opacity(0.3)
+                            Color.black.opacity(0.1)
                                 .ignoresSafeArea()
                         )
                 } else {
