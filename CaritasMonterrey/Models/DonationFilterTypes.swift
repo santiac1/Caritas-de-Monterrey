@@ -6,6 +6,7 @@ public enum DonationFilter: CaseIterable, Hashable {
     case accepted
     case rejected
     case returned
+    case received
 
     /// Valor que espera la columna `status` en la base de datos.
     public var dbValue: String? {
@@ -20,6 +21,8 @@ public enum DonationFilter: CaseIterable, Hashable {
             return DonationDBStatus.rejected.rawValue
         case .returned:
             return DonationDBStatus.returned.rawValue
+        case .received:
+            return DonationDBStatus.received.rawValue
         }
     }
 
@@ -36,6 +39,8 @@ public enum DonationFilter: CaseIterable, Hashable {
             return "Rechazadas"
         case .returned:
             return "Devueltas"
+        case .received:
+            return "Recibidas"
         }
     }
 }

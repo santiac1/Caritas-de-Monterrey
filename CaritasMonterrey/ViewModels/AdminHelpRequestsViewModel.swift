@@ -63,4 +63,52 @@ final class AdminHelpRequestsViewModel: ObservableObject {
         }
         isLoading = false
     }
+
+    @discardableResult
+    func approveDonation(_ donation: Donation, pickupDate: Date?) async -> Bool {
+        errorMessage = nil
+        struct UpdatePayload: Encodable {
+            let status: String
+            let pickup_date: Date?
+        }
+        let payload = UpdatePayload(
+            status: DonationDBStatus.accepted.rawValue,
+            pickup_date: pickupDate
+        )
+
+        do {
+            try await SupabaseManager.shared.client
+                .from("Donations")
+                .update(payload)
+                .eq("id", value: donation.id)
+                .execute()
+            await loadHelpRequests()
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    @discardableResult
+    func markAsReceived(_ donation: Donation) async -> Bool {
+        errorMessage = nil
+        struct UpdatePayload: Encodable {
+            let status: String
+        }
+        let payload = UpdatePayload(status: DonationDBStatus.received.rawValue)
+
+        do {
+            try await SupabaseManager.shared.client
+                .from("Donations")
+                .update(payload)
+                .eq("id", value: donation.id)
+                .execute()
+            await loadHelpRequests()
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
 }
