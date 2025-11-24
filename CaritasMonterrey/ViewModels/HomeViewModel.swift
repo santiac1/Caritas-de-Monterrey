@@ -1,11 +1,50 @@
 // ViewModels/HomeViewModel.swift
 import Foundation
+import Supabase
 import Combine
 
 @MainActor
 final class HomeViewModel: ObservableObject {
+    
+    @Published private(set) var donations: [Donation] = []
+    @Published private(set) var errorMessage: String?
+    @Published private(set) var isLoading = false
+    
+    func loadStats(for userId: UUID?) async {
+        guard let userId else {
+            return
+        }
+        isLoading = true
+        errorMessage = nil
+        do {
+            let fetched: [Donation] = try await SupabaseManager.shared.client
+                .from("Donations")
+                .select("*")
+                .eq("user_id", value: userId.uuidString)
+                .order("created_at", ascending: false)
+                .execute()
+                .value
+            donations = fetched
+            recompute()
+        } catch {
+            errorMessage = "Stats error: \(error.localizedDescription)"
+        }
+        isLoading = false
+    }
+    
+    private func recompute() {
+        let total = donations.count
+        let inProcess = donations.filter { $0.status == .in_process }.count
+        totalText = "\(total) donaciones"
+        inProgressText = "\(inProcess) en proceso"
+        if let last = donations.compactMap({ $0.created_at }).max() {
+            lastDonationText = format(date: last)
+        } else {
+            lastDonationText = "—"
+        }
+    }
 
-    // Navegación (coincide con tu HomeView actual)
+    
     enum Route: Hashable {
         case donateV
         case mapV
@@ -27,7 +66,7 @@ final class HomeViewModel: ObservableObject {
     // Banner principal
     @Published private(set) var banner: Promo = .init(
         title: "Se parte del cambio, ¡Haz una donación ahora!",
-        assetName: "polla_dona",               // cambia si tu asset tiene otro nombre
+        assetName: "polla_dona",
         systemFallback: "heart.circle.fill",
         route: .donateV
     )
@@ -43,30 +82,10 @@ final class HomeViewModel: ObservableObject {
     @Published private(set) var inProgressText = "0 en proceso"
     @Published private(set) var lastDonationText = "—"
 
-    // Fuente temporal (mock). Luego la jalas de tu capa de datos.
-    private var allDonations: [Donation] = Donation.sampleDonations
-
     // Permite inyectar desde fuera (por ejemplo, desde DonationsViewModel)
     func setDonations(_ donations: [Donation]) {
-        self.allDonations = donations
-    }
-
-    func onAppear() {
-        // Totales
-        let total = allDonations.count
-        let inProcess = allDonations.filter { $0.status == .in_process }.count
-
-        totalText = "\(total) "
-        inProgressText = "\(inProcess)"
-
-        if let last = allDonations
-            .compactMap({ $0.created_at })
-            .max() // encuentra la fecha más reciente
-        {
-            lastDonationText = format(date: last)
-        } else {
-            lastDonationText = "—"
-        }
+        self.donations = donations
+        recompute()
     }
 
     private func format(date: Date) -> String {

@@ -25,6 +25,7 @@ final class DonationSheetViewModel: ObservableObject {
     @Published var amount: String = ""            // ya no se usa (no hay monetaria)
     @Published var helpNeeded: Bool = false
     @Published var shippingWeight: String = ""
+    @Published var pickupAddress: String = ""
 
     // Entrega
     @Published var preferPickupAtBazaar: Bool = true {
@@ -57,7 +58,7 @@ final class DonationSheetViewModel: ObservableObject {
     
     // --- INIT POR DEFECTO (SIN CAMBIOS) ---
     init() { }
-    
+
     // --- ¡NUEVO INIT! ---
     /// Permite crear el VM con un bazar preseleccionado desde el mapa.
     convenience init(preselectedBazaar: Location) {
@@ -65,6 +66,13 @@ final class DonationSheetViewModel: ObservableObject {
         self.preselectedBazaar = preselectedBazaar
         self.preferPickupAtBazaar = true
         self.selectedBazaar = preselectedBazaar
+    }
+
+    func prefillPickupAddress(_ address: String?) {
+        guard pickupAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let address,
+              !address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        pickupAddress = address
     }
 
     // MARK: - Validaciones
@@ -75,6 +83,7 @@ final class DonationSheetViewModel: ObservableObject {
         guard selectedType != nil else { return false }
         if preferPickupAtBazaar && selectedBazaar == nil { return false }
         if helpNeeded && shippingWeight.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return false }
+        if helpNeeded && pickupAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return false }
         return currentUserId != nil
     }
 
@@ -200,6 +209,7 @@ final class DonationSheetViewModel: ObservableObject {
         let status: String
         let help_needed: Bool
         let shipping_weight: String?
+        let pickup_address: String?
         let notes: String?
         let amount: Double?
         let prefer_pickup_at_bazaar: Bool
@@ -233,6 +243,7 @@ final class DonationSheetViewModel: ObservableObject {
                 status: initialDBStatus(),
                 help_needed: helpNeeded,
                 shipping_weight: helpNeeded ? shippingWeight : nil,
+                pickup_address: helpNeeded ? pickupAddress.trimmingCharacters(in: .whitespacesAndNewlines) : nil,
                 notes: notes.isEmpty ? nil : notes,
                 amount: nil,
                 prefer_pickup_at_bazaar: preferPickupAtBazaar,

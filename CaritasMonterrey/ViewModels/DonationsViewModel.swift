@@ -5,43 +5,18 @@ import Combine
 @MainActor
 final class DonationsViewModel: ObservableObject {
 
-    // Enum de filtros basado en tu enum de BD
-    enum DBFilter: CaseIterable, Hashable {
-        case all
-        case inProcess
-        case accepted
-        case rejected
-        case returned
-
-        var title: String {
-            switch self {
-            case .all:       return "Todas"
-            case .inProcess: return "En proceso"
-            case .accepted:  return "Aceptadas"
-            case .rejected:  return "Rechazadas"
-            case .returned:  return "Devueltas"
-            }
-        }
-
-        var status: DonationDBStatus? {
-            switch self {
-            case .all:       return nil
-            case .inProcess: return .in_process
-            case .accepted:  return .accepted
-            case .rejected:  return .rejected
-            case .returned:  return .returned
-            }
-        }
-    }
-
     @Published private(set) var donations: [Donation] = []
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
-    @Published var selectedFilter: DBFilter = .all
+    @Published var selectedFilter: DonationFilter = .all
 
     var filteredDonations: [Donation] {
-        guard let s = selectedFilter.status else { return donations }
-        return donations.filter { $0.status == s }
+        guard
+            let rawStatus = selectedFilter.dbValue,
+            let status = DonationDBStatus(rawValue: rawStatus)
+        else { return donations }
+
+        return donations.filter { $0.status == status }
     }
 
     func load(for userId: UUID?) async {

@@ -14,16 +14,24 @@ final class AdminHelpRequestsViewModel: ObservableObject {
     @Published private(set) var donations: [Donation] = []
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
+    @Published var currentFilter: DonationFilter = .inProcess
+    @Published var currentSort: SortOrder = .newest
 
     func loadHelpRequests() async {
         isLoading = true
         errorMessage = nil
         do {
-            let fetched: [Donation] = try await SupabaseManager.shared.client
+            var query = SupabaseManager.shared.client
                 .from("Donations")
                 .select()
-                .eq("status", value: "in_process")
-                .order("created_at", ascending: false)
+
+            if let status = currentFilter.dbValue {
+                query = query.eq("status", value: status)
+            }
+
+            query = query.order("created_at", ascending: currentSort == .oldest) as! PostgrestFilterBuilder
+
+            let fetched: [Donation] = try await query
                 .execute()
                 .value
 
@@ -54,5 +62,53 @@ final class AdminHelpRequestsViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
         isLoading = false
+    }
+
+    @discardableResult
+    func approveDonation(_ donation: Donation, pickupDate: Date?) async -> Bool {
+        errorMessage = nil
+        struct UpdatePayload: Encodable {
+            let status: String
+            let pickup_date: Date?
+        }
+        let payload = UpdatePayload(
+            status: DonationDBStatus.accepted.rawValue,
+            pickup_date: pickupDate
+        )
+
+        do {
+            try await SupabaseManager.shared.client
+                .from("Donations")
+                .update(payload)
+                .eq("id", value: donation.id)
+                .execute()
+            await loadHelpRequests()
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    @discardableResult
+    func markAsReceived(_ donation: Donation) async -> Bool {
+        errorMessage = nil
+        struct UpdatePayload: Encodable {
+            let status: String
+        }
+        let payload = UpdatePayload(status: DonationDBStatus.received.rawValue)
+
+        do {
+            try await SupabaseManager.shared.client
+                .from("Donations")
+                .update(payload)
+                .eq("id", value: donation.id)
+                .execute()
+            await loadHelpRequests()
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 }

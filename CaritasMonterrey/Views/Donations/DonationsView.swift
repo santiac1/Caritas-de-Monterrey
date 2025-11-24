@@ -1,5 +1,5 @@
 import SwiftUI
-import Auth   // ← REQUIRED to access appState.session?.user.id
+import Auth    // ← REQUIRED to access appState.session?.user.id
 
 struct DonationsView: View {
     @EnvironmentObject private var appState: AppState
@@ -73,10 +73,10 @@ struct DonationsView: View {
 // MARK: - Filter Bar (píldoras deslizables)
 // ¡Esta es tu struct original, pero MÁS LIMPIA!
 private struct FilterBar: View {
-    @Binding var selection: DonationsViewModel.DBFilter
+    @Binding var selection: DonationFilter
     var namespace: Namespace.ID
 
-    private let items = DonationsViewModel.DBFilter.allCases
+    private let items = DonationFilter.allCases
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -111,14 +111,6 @@ private struct FilterBar: View {
             }
             .padding(.horizontal, 16) // <-- Padding para el HStack
             
-            //
-            // --- ¡EL CAMBIO IMPORTANTE ESTÁ AQUÍ! ---
-            // He eliminado los modificadores .background(), .clipShape()
-            // y .padding() exteriores que estaban aplicados al HStack.
-            // Esto quita el "contenedor" gigante y deja que
-            // las píldoras floten, como en la app de GitHub.
-            //
-            
         }
     }
 }
@@ -128,16 +120,16 @@ private struct FilterBar: View {
 private struct DonationCard: View {
     let donation: Donation
     
-    // ... (Tu código de DonationCard va aquí, sin cambios)
     private var badge: (text: String, color: Color, icon: String) {
         switch donation.status {
         case .in_process: return ("En proceso", Color(red: 0.40, green: 0.75, blue: 0.75), "circle.dashed")
-        case .accepted:   return ("Aceptada",   .green,  "checkmark.seal.fill")
-        case .rejected:   return ("Rechazada",  .red,    "xmark.octagon.fill")
-        case .returned:   return ("Devuelta",   .orange, "arrow.uturn.backward.circle.fill")
+        case .accepted:   return ("Aceptada",    .green,  "checkmark.seal.fill")
+        case .rejected:   return ("Rechazada",   .red,    "xmark.octagon.fill")
+        case .returned:   return ("Devuelta",    .orange, "arrow.uturn.backward.circle.fill")
+        case .received:   return ("Recibida", .purple, "shippingbox.fill")
         }
     }
-    
+        
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center) {
@@ -162,17 +154,19 @@ private struct DonationCard: View {
                 .foregroundStyle(badge.color)
             }
             
-            InfoRow(iconName: "calendar", text: donation.formattedDate.isEmpty ? "—" : donation.formattedDate)
-            
-            if let loc = donation.location_name, !loc.isEmpty {
-                InfoRow(iconName: "mappin.circle.fill", text: loc)
-            }
-            
-            HStack(spacing: 8) {
+            HStack {
+                Image(systemName: "calendar")
+                    .foregroundStyle(.secondary)
+                Text(donation.formattedDate.isEmpty ? "—" : donation.formattedDate)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                
+                Spacer()
+                
                 if let w = donation.shipping_weight, !w.isEmpty {
                     Pill(icon: "scalemass", text: w)
                 }
-                Pill(icon: "square.stack.3d.up.fill", text: donation.type.capitalized)
+                Pill(icon: "tag.fill", text: donation.type.capitalized)
             }
         }
         .padding(16)
@@ -187,24 +181,8 @@ private struct DonationCard: View {
         .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
     }
 }
-
-// MARK: - Vistas Auxiliares (Sin Cambios)
-
-private struct InfoRow: View {
-    let iconName: String
-    let text: String
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: iconName)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .frame(width: 20)
-            Text(text)
-                .font(.subheadline)
-                .foregroundStyle(.primary)
-        }
-    }
-}
+    
+// MARK: - Vistas Auxiliares
 
 private struct Pill: View {
     let icon: String
@@ -223,7 +201,7 @@ private struct Pill: View {
         .background(Capsule().fill(Color.primary.opacity(0.08)))
     }
 }
-
+    
 private struct EmptyStateView: View {
     let message: String
     var body: some View {
@@ -241,9 +219,9 @@ private struct EmptyStateView: View {
         .padding(.horizontal, 40)
     }
 }
-
+    
 // MARK: - Preview
-
+    
 #Preview {
     NavigationStack {
         DonationsView()

@@ -29,7 +29,10 @@ struct DonationSheet: View {
             .navigationTitle("Nueva donación")
             .toolbar { toolbarContent }
             .task { await viewModel.loadBazaars() }
-            .onAppear { viewModel.currentUserId = appState.session?.user.id }
+            .onAppear {
+                viewModel.currentUserId = appState.session?.user.id
+                viewModel.prefillPickupAddress(appState.profile?.address)
+            }
             .alert("Solicitud enviada", isPresented: $showHelpAlert) {
                 Button("Entendido") {
                     viewModel.submitOK = false
@@ -188,6 +191,10 @@ extension DonationSheet {
             if viewModel.helpNeeded {
                 TextField("Peso o tamaño aproximado (ej: 10kg, 2 cajas)", text: $viewModel.shippingWeight)
                     .textInputAutocapitalization(.never)
+                    .padding(.vertical, 4)
+
+                TextField("Dirección de recolección", text: $viewModel.pickupAddress)
+                    .textInputAutocapitalization(.sentences)
                     .padding(.vertical, 4)
             }
         } label: {

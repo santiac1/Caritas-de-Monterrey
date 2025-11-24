@@ -1,9 +1,11 @@
 import SwiftUI
+import Auth
 
 struct HomeView: View {
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var donationsVM: DonationsViewModel
     @EnvironmentObject private var mapaVM: MapaViewModel
+    @EnvironmentObject private var appState: AppState
 
     @State private var navPath = NavigationPath()
     @State private var showDonationSheet = false
@@ -81,7 +83,9 @@ struct HomeView: View {
                 }
             }
 
-            .onAppear { vm.onAppear() }
+            .task {
+                await vm.loadStats(for: appState.session?.user.id)
+            }
             .navigationDestination(for: HomeViewModel.Route.self) { route in
                 switch route {
                 case .mapV:
