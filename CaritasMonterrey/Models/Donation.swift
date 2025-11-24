@@ -8,6 +8,7 @@ enum DonationDBStatus: String, Codable, CaseIterable, Hashable {
     case accepted   = "accepted"
     case rejected   = "rejected"
     case returned   = "returned"
+    case received   = "received"
 }
 
 /// Estados de **presentación** para la UI en español
@@ -17,6 +18,7 @@ enum DonationStatusDisplay: String, CaseIterable {
     case solicitudAyuda = "Solicitud de ayuda"
     case ayudaAprobada = "Ayuda aprobada"
     case ayudaRechazada = "Ayuda rechazada"
+    case recibida = "Recibida"
 
     var color: Color {
         switch self {
@@ -25,6 +27,7 @@ enum DonationStatusDisplay: String, CaseIterable {
         case .solicitudAyuda:   return .orange
         case .ayudaAprobada:    return .green
         case .ayudaRechazada:   return .red
+        case .recibida:         return Color(red: 0.40, green: 0.30, blue: 0.75)
         }
     }
 
@@ -35,6 +38,7 @@ enum DonationStatusDisplay: String, CaseIterable {
         case .solicitudAyuda:   return "paperplane.fill"
         case .ayudaAprobada:    return "hand.thumbsup.fill"
         case .ayudaRechazada:   return "xmark.octagon.fill"
+        case .recibida:         return "shippingbox.circle.fill"
         }
     }
 }
@@ -52,6 +56,8 @@ struct Donation: Identifiable, Codable, Hashable {
     var status: DonationDBStatus // <- ahora es el enum alineado a la BD
     var help_needed: Bool
     var shipping_weight: String?
+    var pickup_address: String?
+    var pickup_date: Date?
     var notes: String?
     var amount: Double?
     var created_at: Date?
@@ -86,12 +92,14 @@ struct Donation: Identifiable, Codable, Hashable {
         case .returned:
             // puedes personalizarlo; por ahora lo mostramos como "En proceso"
             return .enProceso
+        case .received:
+            return .recibida
         }
     }
 
     enum CodingKeys: String, CodingKey {
             case id, user_id, name, type, status, help_needed, shipping_weight, notes,
-                 amount, created_at, location_name, admin_note,
+                 pickup_address, pickup_date, amount, created_at, location_name, admin_note,
                  image_urls
         }
 }
@@ -107,6 +115,8 @@ extension Donation {
             status: .in_process,
             help_needed: false,
             shipping_weight: nil,
+            pickup_address: nil,
+            pickup_date: nil,
             notes: nil,
             amount: nil,
             created_at: Date(),
@@ -122,6 +132,8 @@ extension Donation {
             status: .in_process,
             help_needed: true,
             shipping_weight: "10kg",
+            pickup_address: "Av. Siempre Viva 123",
+            pickup_date: nil,
             notes: nil,
             amount: nil,
             created_at: Date().addingTimeInterval(-200000),
