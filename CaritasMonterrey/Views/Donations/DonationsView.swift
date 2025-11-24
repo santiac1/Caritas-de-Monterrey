@@ -111,14 +111,6 @@ private struct FilterBar: View {
             }
             .padding(.horizontal, 16) // <-- Padding para el HStack
             
-            //
-            // --- ¡EL CAMBIO IMPORTANTE ESTÁ AQUÍ! ---
-            // He eliminado los modificadores .background(), .clipShape()
-            // y .padding() exteriores que estaban aplicados al HStack.
-            // Esto quita el "contenedor" gigante y deja que
-            // las píldoras floten, como en la app de GitHub.
-            //
-            
         }
     }
 }
@@ -135,8 +127,7 @@ private struct DonationCard: View {
         case .accepted:   return ("Aceptada",   .green,  "checkmark.seal.fill")
         case .rejected:   return ("Rechazada",  .red,    "xmark.octagon.fill")
         case .returned:   return ("Devuelta",   .orange, "arrow.uturn.backward.circle.fill")
-        case .received:
-            <#code#>
+        case .received:   return ("Recibida", .purple, "shippingbox.fill")
     }
     
     var body: some View {
