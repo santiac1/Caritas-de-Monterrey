@@ -12,22 +12,31 @@ import Combine
 
 @MainActor
 final class MapaViewModel: ObservableObject {
-    @Published var Locations: [Location] = []
+    @Published var locations: [Location] = [] // Cambié mayúscula Locations -> locations (convención Swift)
     @Published var isLoading = false
     @Published var errorMessage: String?
+    
+    // Helper: Si alguna vista necesita solo los abiertos
+    var activeLocations: [Location] {
+        locations.filter { $0.isActive }
+    }
     
     func fetchMapa() async {
         isLoading = true
         errorMessage = nil
         
         do {
-            let response = try await SupabaseManager.shared.client.from("Locations").select().execute()
+            // Traemos todos para mostrarlos en el mapa (abiertos y cerrados)
+            let response = try await SupabaseManager.shared.client
+                .from("Locations")
+                .select()
+                .execute()
+            
             let datosDecodificados = try JSONDecoder().decode([Location].self, from: response.data)
-            self.Locations = datosDecodificados
-            self.isLoading = false
+            self.locations = datosDecodificados
         } catch {
             self.errorMessage = error.localizedDescription
-            self.isLoading = false
         }
+        isLoading = false
     }
 }

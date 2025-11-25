@@ -15,7 +15,6 @@ final class DonationSheetViewModel: ObservableObject {
         let systemImage: String   // para icons en el picker
     }
     
-    // --- NUEVA PROPIEDAD ---
     // Almacena el bazar preseleccionado hasta que se cargan los demás
     private var preselectedBazaar: Location?
 
@@ -30,13 +29,17 @@ final class DonationSheetViewModel: ObservableObject {
     // Entrega
     @Published var preferPickupAtBazaar: Bool = true {
         didSet {
+            // Si activa la opción y no hay bazar seleccionado, autoselecciona el primero DISPONIBLE
             if preferPickupAtBazaar, selectedBazaar == nil {
                 selectedBazaar = bazaars.first
             }
             recomputeAvailableTypes()
         }
     }
+    
+    // Lista filtrada de bazares (Solo activos)
     @Published var bazaars: [Location] = []
+    
     @Published var selectedBazaar: Location? {
         didSet { recomputeAvailableTypes() }
     }
@@ -56,16 +59,18 @@ final class DonationSheetViewModel: ObservableObject {
     private let client = SupabaseManager.shared.client
     private var hasLoadedBazaars = false
     
-    // --- INIT POR DEFECTO (SIN CAMBIOS) ---
+    // --- INIT POR DEFECTO ---
     init() { }
 
-    // --- ¡NUEVO INIT! ---
-    /// Permite crear el VM con un bazar preseleccionado desde el mapa.
+    // --- INIT CON PRESELECCIÓN ---
     convenience init(preselectedBazaar: Location) {
         self.init()
-        self.preselectedBazaar = preselectedBazaar
-        self.preferPickupAtBazaar = true
-        self.selectedBazaar = preselectedBazaar
+        // Solo permitimos la preselección si el bazar está activo
+        if preselectedBazaar.isActive {
+            self.preselectedBazaar = preselectedBazaar
+            self.preferPickupAtBazaar = true
+            self.selectedBazaar = preselectedBazaar
+        }
     }
 
     func prefillPickupAddress(_ address: String?) {
@@ -77,7 +82,6 @@ final class DonationSheetViewModel: ObservableObject {
 
     // MARK: - Validaciones
     var isValid: Bool {
-        // ... (tu lógica de 'isValid' no cambia) ...
         guard !donationName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
         guard !selectedImages.isEmpty else { return false }
         guard selectedType != nil else { return false }
@@ -87,7 +91,7 @@ final class DonationSheetViewModel: ObservableObject {
         return currentUserId != nil
     }
 
-    // MARK: - Cargar bazares (MODIFICADO)
+    // MARK: - Cargar bazares (CORREGIDO)
     func loadBazaars() async {
         guard !hasLoadedBazaars else { return }
         hasLoadedBazaars = true
@@ -101,18 +105,24 @@ final class DonationSheetViewModel: ObservableObject {
                 .execute()
                 .value
 
-            bazaars = response
+            // ✅ AQUÍ ESTÁ EL ARREGLO: Filtramos solo los activos
+            let activeBazaars = response.filter { $0.isActive }
+            bazaars = activeBazaars
             
-            // --- LÓGICA DE SELECCIÓN MODIFICADA ---
-            // Si venimos del mapa, mantenemos la preselección.
-            // Si no, seleccionamos el primero de la lista.
+            // --- LÓGICA DE SELECCIÓN ---
             if let preselected = self.preselectedBazaar {
-                // Asegurarnos que el objeto 'preselected' es el de la lista
-                self.selectedBazaar = bazaars.first { $0.id == preselected.id } ?? preselected
-                self.preferPickupAtBazaar = true
-                self.preselectedBazaar = nil // Consumimos la preselección
+                // Verificamos que el preseleccionado siga existiendo en la lista de activos
+                if let found = bazaars.first(where: { $0.id == preselected.id }) {
+                    self.selectedBazaar = found
+                    self.preferPickupAtBazaar = true
+                } else {
+                    // Si el preseleccionado ahora está cerrado (inactivo), seleccionamos el primero disponible
+                    self.selectedBazaar = bazaars.first
+                }
+                self.preselectedBazaar = nil
+                
             } else if selectedBazaar == nil {
-                selectedBazaar = response.first
+                selectedBazaar = bazaars.first
             }
             
             recomputeAvailableTypes()
@@ -124,7 +134,6 @@ final class DonationSheetViewModel: ObservableObject {
     }
 
     // MARK: - Imágenes
-    // ... (tu función 'loadImages' sin cambios) ...
     func loadImages() async {
         var newImages: [Image] = []
         var newData: [Data] = []
@@ -145,7 +154,6 @@ final class DonationSheetViewModel: ObservableObject {
         selectedImageDatas = newData
     }
 
-    // ... (tu función 'removeImage' sin cambios) ...
     func removeImage(at index: Int) {
         guard selectedImages.indices.contains(index),
               selectedImageDatas.indices.contains(index),
@@ -157,7 +165,6 @@ final class DonationSheetViewModel: ObservableObject {
     }
 
     // MARK: - Mapeo de Location -> tipos
-    // ... (tu función 'recomputeAvailableTypes' sin cambios) ...
     private func recomputeAvailableTypes() {
         var options: [TypeOption] = []
         func add(_ cond: Bool, slug: String, name: String, icon: String) {
@@ -174,6 +181,7 @@ final class DonationSheetViewModel: ObservableObject {
             add(l.cleaning,   slug: "limpieza",            name: "Limpieza",            icon: "sparkles")
             add(l.medicine,   slug: "medicinas",           name: "Medicinas",           icon: "cross.case.fill")
         } else {
+            // Si es recolección a domicilio, mostramos lo que acepta CUALQUIER bazar activo
             let anyFood       = bazaars.contains(where: { $0.food })
             let anyClothes    = bazaars.contains(where: { $0.clothes })
             let anyEquipment  = bazaars.contains(where: { $0.equipment })
@@ -181,6 +189,7 @@ final class DonationSheetViewModel: ObservableObject {
             let anyAppliances = bazaars.contains(where: { $0.appliances })
             let anyCleaning   = bazaars.contains(where: { $0.cleaning })
             let anyMedicine   = bazaars.contains(where: { $0.medicine })
+            
             add(anyFood,       slug: "alimentos",           name: "Alimentos",           icon: "cart.fill")
             add(anyClothes,    slug: "ropa",                name: "Ropa",                icon: "tshirt.fill")
             add(anyEquipment,  slug: "equipo",              name: "Equipo",              icon: "wrench.and.screwdriver")
@@ -190,6 +199,8 @@ final class DonationSheetViewModel: ObservableObject {
             add(anyMedicine,   slug: "medicinas",           name: "Medicinas",           icon: "cross.case.fill")
         }
         availableTypes = options
+        
+        // Validar selección actual
         if let sel = selectedType, !availableTypes.contains(sel) {
             selectedType = availableTypes.first
         } else if selectedType == nil {
@@ -201,7 +212,6 @@ final class DonationSheetViewModel: ObservableObject {
     private func initialDBStatus() -> String { "in_process" }
 
     // MARK: - Payload
-    // ... (tu struct 'NewDonation' sin cambios) ...
     private struct NewDonation: Encodable {
         let user_id: UUID
         let name: String
@@ -218,7 +228,6 @@ final class DonationSheetViewModel: ObservableObject {
     }
 
     // MARK: - Submit
-    // ... (tu función 'submit' sin cambios) ...
     func submit() async {
         guard isValid, let userId = currentUserId, let sel = selectedType else {
             errorMessage = "Completa: Nombre, Foto(s), Tipo y Ubicación."
@@ -255,7 +264,7 @@ final class DonationSheetViewModel: ObservableObject {
                 .insert(payload)
                 .execute()
             submitOK = true
-          
+        
         } catch {
             errorMessage = error.localizedDescription
             submitOK = false
@@ -263,7 +272,6 @@ final class DonationSheetViewModel: ObservableObject {
     }
 
     // MARK: - Storage
-    // ... (tu función 'uploadImage' sin cambios) ...
     private func uploadImage(data: Data, userId: UUID) async throws -> String {
         let fileName = "donation_\(userId.uuidString)_\(UUID().uuidString).jpg"
         let storage = client.storage.from("donations")
@@ -271,7 +279,6 @@ final class DonationSheetViewModel: ObservableObject {
             try await storage
                 .upload(path: fileName, file: data)
             let urlResponse = try await storage.getPublicURL(path: fileName)
-            print("✅ Imagen subida: \(urlResponse.absoluteString)")
             return urlResponse.absoluteString
         } catch {
             print("⚠️ Error al subir imagen: \(error.localizedDescription)")

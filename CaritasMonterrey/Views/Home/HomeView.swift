@@ -8,7 +8,14 @@ struct HomeView: View {
     @EnvironmentObject private var appState: AppState
 
     @State private var navPath = NavigationPath()
-    @State private var showDonationSheet = false
+    
+    // Usamos un enum opcional para controlar el sheet principal
+    @State private var activeSheet: HomeSheet?
+
+    private enum HomeSheet: Identifiable {
+        case donation
+        var id: String { "donation" }
+    }
 
     var body: some View {
         NavigationStack(path: $navPath) {
@@ -19,7 +26,9 @@ struct HomeView: View {
                         title: vm.banner.title,
                         assetName: vm.banner.assetName,
                         systemFallback: vm.banner.systemFallback
-                    ) { showDonationSheet = true }
+                    ) {
+                        activeSheet = .donation
+                    }
 
                     Text("Acciones rápidas")
                         .font(.title3).bold()
@@ -39,7 +48,7 @@ struct HomeView: View {
                                 switch card.route {
                                 case .mapV:       navPath.append(card.route)
                                 case .donationsV: navPath.append(card.route)
-                                case .donateV:    showDonationSheet = true
+                                case .donateV:    activeSheet = .donation
                                 }
                             }
                         }
@@ -82,8 +91,8 @@ struct HomeView: View {
                     .buttonStyle(.plain)
                 }
             }
-
             .task {
+                // Carga inicial al abrir la app
                 await vm.loadStats(for: appState.session?.user.id)
             }
             .navigationDestination(for: HomeViewModel.Route.self) { route in
@@ -104,17 +113,21 @@ struct HomeView: View {
                     EmptyView()
                 }
             }
-            .sheet(isPresented: $showDonationSheet) {
-                DonationSheet(viewModel: DonationSheetViewModel())
-                    .presentationDetents([.large])
+            // 👇 AQUÍ ESTÁ EL CAMBIO IMPORTANTE 👇
+            .sheet(item: $activeSheet, onDismiss: {
+                // Este bloque se ejecuta cuando DonationSheet desaparece de la pantalla.
+                // Aquí forzamos la recarga de las estadísticas en el Home.
+                Task {
+                    await vm.loadStats(for: appState.session?.user.id)
+                }
+            }) { item in
+                switch item {
+                case .donation:
+                    DonationSheet(viewModel: DonationSheetViewModel())
+                        .environmentObject(appState)
+                        .presentationDetents([.large])
+                }
             }
         }
     }
-}
-
-#Preview {
-    HomeView()
-        .environmentObject(HomeViewModel())
-        .environmentObject(DonationsViewModel())
-        .environmentObject(MapaViewModel())
 }

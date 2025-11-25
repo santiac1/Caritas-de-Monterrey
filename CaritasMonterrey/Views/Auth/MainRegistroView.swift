@@ -2,25 +2,28 @@ import SwiftUI
 import AVKit
 import AVFoundation
 
+// 1. Definimos las rutas posibles fuera de la vista
+
 struct MainRegistroView: View {
+    // 2. Variable de estado para controlar toda la navegación del stack
+    @State private var path = NavigationPath()
+    
     var body: some View {
-        NavigationStack {
+        // 3. Vinculamos el Stack al path
+        NavigationStack(path: $path) {
             ZStack {
-                // Video de fondo (si no existe, mostrará el color de fondo)
+                // --- FONDO DE VIDEO ---
                 if let _ = Bundle.main.path(forResource: "background-video", ofType: "mp4") {
                     LoopingVideoPlayer(videoName: "background-video", videoType: "mp4")
                         .ignoresSafeArea()
                         .overlay(
-                            // Capa semitransparente opcional para mejorar legibilidad
-                            Color.black.opacity(0.1)
-                                .ignoresSafeArea()
+                            Color.black.opacity(0.1).ignoresSafeArea()
                         )
                 } else {
-                    // Fallback al color de fondo original
-                    Color(.systemBackground)
-                        .ignoresSafeArea()
+                    Color(.systemBackground).ignoresSafeArea()
                 }
                 
+                // --- CONTENIDO ---
                 VStack {
                     // Logo
                     logoHeader
@@ -30,36 +33,77 @@ struct MainRegistroView: View {
                     
                     // Botones en la parte inferior
                     VStack(spacing: 16) {
-                        // Botón "Log in"
-                        NavigationLink(destination: LoginView()) {
+                        
+                        // 4. Botón "Iniciar Sesión" (Ahora es un Button, no un Link)
+                        Button(action: {
+                            // Lógica aquí
+                            path.append(AuthRoute.login)
+                        }) {
                             Text("Iniciar Sesión")
                                 .font(.headline.weight(.bold))
-                                .foregroundStyle(.white)
+                               
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 18)
-                                .background(Color("AccentColor"))
-                                .clipShape(RoundedRectangle(cornerRadius: 30))
-                                .shadow(color: Color("AccentColor").opacity(0.3), radius: 10, x: 0, y: 5)
+                                .padding(.vertical, 11)
+                            
                         }
+                        .buttonStyle(.glassProminent)
                         
-                        // Botón "Create account"
-                        NavigationLink(destination: SignUpView()) {
+                        // 4. Botón "Crear Cuenta"
+                        Button(action: {
+                            path.append(AuthRoute.signup)
+                        }) {
                             Text("Crear Cuenta")
                                 .font(.headline.weight(.bold))
-                                .foregroundStyle(.white)
+                               
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 18)
-                                .background(Color("SecondaryBlue"))
-                                .clipShape(RoundedRectangle(cornerRadius: 30))
-                                .shadow(color: Color("SecondaryBlue").opacity(0.3), radius: 10, x: 0, y: 5)
+                                .padding(.vertical, 11)
                         }
+                        .buttonStyle(.glassProminent)
+                        .tint(Color(.secondaryBlue))
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 50)
                 }
+                
+                // 5. Destino de navegación centralizado
+
+                .navigationDestination(for: AuthRoute.self) { route in
+                    switch route {
+                    case .login:
+                        LoginView()
+                    case .signup:
+                        SignUpView()
+                    }
+                }
             }
         }
     }
+           
+    
+    // MARK: - Componentes Visuales
+    
+    private var logoHeader: some View {
+        HStack {
+            Spacer()
+            if let icon = UIImage(named: "caritas") {
+                Image(uiImage: icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 100)
+                    .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+            } else {
+                Image(systemName: "heart.text.square.fill")
+                    .font(.system(size: 100))
+                    .foregroundStyle(Color("AccentColor"))
+            }
+            Spacer()
+        }
+        .padding(.bottom, 30)
+    }
+}
+
+// Mantén tu código de LoopingVideoPlayer y PlayerUIView exactamente igual aquí abajo...
+// (No es necesario cambiar nada en el reproductor de video)
     
     // MARK: - Componentes Visuales
     
@@ -81,7 +125,6 @@ struct MainRegistroView: View {
         }
         .padding(.bottom, 30) // Ajuste de padding inferior para el logo
     }
-}
 // MARK: - Video de Fondo
 struct LoopingVideoPlayer: UIViewRepresentable {
     let videoName: String

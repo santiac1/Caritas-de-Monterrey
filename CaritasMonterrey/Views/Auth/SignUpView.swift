@@ -19,7 +19,6 @@ struct SignUpView: View {
     @State private var errorMessage: String?
     @State private var showSuccessAlert = false
     
-    // Estado UI extra solo para el toggle de ver contraseña (necesario para el diseño)
     @State private var showPassword = false
     @FocusState private var focusedField: Field?
     
@@ -46,7 +45,6 @@ struct SignUpView: View {
         isAdult
     }
 
-    // MARK: - Frontend Modificado
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
@@ -54,7 +52,7 @@ struct SignUpView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
                     
-                    // 1. Header igual a la imagen
+                    // 1. Header
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Crea una cuenta")
                             .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -65,7 +63,8 @@ struct SignUpView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             
-                            NavigationLink(destination: LoginView()) {
+                            // ⚠️ CORRECCIÓN AQUÍ: Usamos AuthRoute en lugar de destination directo
+                            NavigationLink(value: AuthRoute.login) {
                                 Text("Inicia sesión")
                                     .font(.subheadline.weight(.bold))
                                     .foregroundStyle(titleColor)
@@ -75,7 +74,7 @@ struct SignUpView: View {
                     }
                     .padding(.top, 10)
 
-                    // 2. Campos con estilo "Cut Border"
+                    // 2. Campos
                     VStack(spacing: 24) {
                         CustomStyledField<Field>(title: "Nombre", text: $firstName, isSecure: false, focusedField: $focusedField, fieldValue: .firstName)
                         CustomStyledField<Field>(title: "Apellido", text: $lastName, isSecure: false, focusedField: $focusedField, fieldValue: .lastName)
@@ -84,7 +83,6 @@ struct SignUpView: View {
                         CustomStyledField<Field>(title: "Teléfono", text: $phone, isSecure: false, focusedField: $focusedField, fieldValue: .phone)
                             .keyboardType(.phonePad)
                         
-                        // Wrapper visual para el DatePicker
                         CustomDatePickerField(title: "Fecha de nacimiento", date: $birthdate)
                         
                         CustomStyledField<Field>(
@@ -108,7 +106,7 @@ struct SignUpView: View {
                     }
                     .padding(.top, 10)
 
-                    // 3. Requisitos de contraseña (Bullet points) - Solo se muestra cuando el campo de contraseña está enfocado
+                    // 3. Requisitos
                     if focusedField == .password {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Tu contraseña debe de contener:")
@@ -143,7 +141,7 @@ struct SignUpView: View {
                         .tint(Color("AccentColor"))
                         .padding(.vertical, 10)
 
-                    // 5. Botón Registrarse
+                    // 5. Botón
                     Button {
                         Task { await register() }
                     } label: {
@@ -163,7 +161,7 @@ struct SignUpView: View {
                     }
                     .disabled(!formIsValid || isLoading)
                     .opacity(!formIsValid || isLoading ? 0.7 : 1)
-
+                    .buttonStyle(.glassProminent)
                     Spacer(minLength: 40)
                 }
                 .padding(24)
@@ -176,7 +174,6 @@ struct SignUpView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "chevron.left")
-                        .foregroundStyle(Color("SecondaryBlue"))
                         .font(.headline)
                 }
             }
@@ -210,11 +207,9 @@ struct SignUpView: View {
         errorMessage = nil
 
         do {
-            // 1) Crear usuario en Auth
             let response = try await appState.signUp(email: email, password: password)
             let user = response.user
 
-            // 2) Insertar perfil en tabla `profiles` con birthdate "yyyy-MM-dd"
             let payload = ProfileInsert(
                 id: user.id,
                 role: "user",
@@ -222,7 +217,7 @@ struct SignUpView: View {
                 last_name: lastName,
                 username: publicName,
                 phone: phone,
-                birthdate: DateFormatter.yyyyMMdd.string(from: birthdate), // <- clave
+                birthdate: DateFormatter.yyyyMMdd.string(from: birthdate),
                 company_name: nil,
                 rfc: nil,
                 address: nil
@@ -244,7 +239,7 @@ struct SignUpView: View {
     }
 }
 
-// MARK: - Estructuras Auxiliares (INTACTAS)
+// ... (Resto de estructuras ProfileInsert y CustomDatePickerField se mantienen igual)
 private struct ProfileInsert: Encodable {
     let id: UUID
     let role: String
@@ -252,13 +247,11 @@ private struct ProfileInsert: Encodable {
     let last_name: String?
     let username: String?
     let phone: String?
-    let birthdate: String?        // "yyyy-MM-dd"
+    let birthdate: String?
     let company_name: String?
     let rfc: String?
     let address: String?
 }
-
-// MARK: - Componentes Visuales Personalizados (Frontend)
 
 struct CustomDatePickerField: View {
     let title: String
@@ -266,7 +259,7 @@ struct CustomDatePickerField: View {
     @Environment(\.colorScheme) private var colorScheme
     
     private var borderColor: Color {
-        colorScheme == .dark ? Color("AccentColor") : Color("SecondaryBlue")
+        colorScheme == .dark ? Color(.white) : Color("SecondaryBlue")
     }
     
     private var backgroundColor: Color {
@@ -298,12 +291,5 @@ struct CustomDatePickerField: View {
                 .padding(.horizontal, 1)
                 .offset(x: 20, y: -7)
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        SignUpView()
-            .environmentObject(AppState())
     }
 }

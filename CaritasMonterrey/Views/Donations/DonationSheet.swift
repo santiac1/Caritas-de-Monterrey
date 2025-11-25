@@ -59,7 +59,7 @@ extension DonationSheet {
 }
 
 
-// MARK: - Sección Imagen (MODIFICADO)
+// MARK: - Sección Imagen
 extension DonationSheet {
     private var donationImageSection: some View {
         GroupBox {
@@ -117,7 +117,6 @@ extension DonationSheet {
                 }
             }
         } label: {
-            // --- Etiqueta MODIFICADA (ya no es opcional) ---
             Label("Foto(s) de la donación", systemImage: "photo.stack.fill")
                 .foregroundStyle(.secondary)
         }
@@ -214,18 +213,26 @@ extension DonationSheet {
             .tint(Color("AccentColor"))
 
             if viewModel.preferPickupAtBazaar {
-                Menu {
-                    ForEach(viewModel.bazaars) { bazaar in
-                        Button(bazaar.name) { viewModel.selectedBazaar = bazaar }
+                // Si la lista de bazares (ahora filtrada) está vacía, mostrar aviso
+                if viewModel.bazaars.isEmpty {
+                    Text("No hay bazares activos en este momento.")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .padding(.top, 4)
+                } else {
+                    Menu {
+                        ForEach(viewModel.bazaars) { bazaar in
+                            Button(bazaar.name) { viewModel.selectedBazaar = bazaar }
+                        }
+                    } label: {
+                        HStack {
+                            Text(viewModel.selectedBazaar?.name ?? "Selecciona un bazar")
+                                .foregroundStyle(viewModel.selectedBazaar == nil ? .secondary : .primary)
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                        }
+                        .padding(.vertical, 4)
                     }
-                } label: {
-                    HStack {
-                        Text(viewModel.selectedBazaar?.name ?? "Selecciona un bazar")
-                            .foregroundStyle(viewModel.selectedBazaar == nil ? .secondary : .primary)
-                        Spacer()
-                        Image(systemName: "chevron.down")
-                    }
-                    .padding(.vertical, 4)
                 }
             } else {
                 Text("Recolección a domicilio")
@@ -274,6 +281,7 @@ extension DonationSheet {
                 Button("Cerrar", systemImage:"xmark") { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
+                // CORREGIDO: Botón simple, sin anidamiento
                 Button {
                     Task {
                         viewModel.currentUserId = appState.session?.user.id
@@ -290,12 +298,11 @@ extension DonationSheet {
                     if viewModel.isSubmitting {
                         ProgressView()
                     } else {
-                        Button("Confirmar",systemImage:"checkmark") {
-                            dismiss()
-                        }
+                        // Usamos Label en lugar de Button para el contenido visual
+                        Label("Confirmar", systemImage: "checkmark")
+                            .labelStyle(.titleAndIcon)
                     }
                 }
-                // El botón se desactivará automáticamente si `isValid` es falso
                 .disabled(viewModel.isSubmitting || !viewModel.isValid)
             }
         }

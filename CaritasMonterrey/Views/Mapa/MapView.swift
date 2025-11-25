@@ -11,46 +11,51 @@ struct MapView: View {
 
     @State private var fullMap = true
     
-    // 1. Maneja qué bazar está seleccionado para mostrar el primer sheet.
-    @State private var selectedLocation: Location?
+    // --- NUEVA ARQUITECTURA DE SHEETS ---
+    private enum MapSheet: Identifiable {
+        case detail(Location)
+        case donation(Location)
+        
+        var id: String {
+            switch self {
+            case .detail(let location): return "detail-\(location.id)"
+            case .donation(let location): return "donation-\(location.id)"
+            }
+        }
+    }
     
-    // 2. Maneja la aparición del SEGUNDO sheet (DonationSheet).
-    @State private var showingDonationSheet = false
-    
-    // 3. Almacena el VM preconfigurado para el DonationSheet.
-    @State private var donationSheetViewModel: DonationSheetViewModel?
+    @State private var activeSheet: MapSheet?
 
     var body: some View {
         VStack {
-            // --- CORRECCIÓN 1: Eliminamos el 'selection' de aquí ---
             Map(position: $position) {
                 UserAnnotation()
 
-                ForEach(viewModel.Locations) { location in
-                    
-                    // --- CORRECCIÓN 2: Typo '2D' ---
+                ForEach(viewModel.locations) { location in
                     let coordinate = CLLocationCoordinate2D(
-                        latitude: CLLocationDegrees(location.latitude),
-                        longitude: CLLocationDegrees(location.longitude)
+                        latitude: location.latitude,
+                        longitude: location.longitude
                     )
                     
                     Annotation(location.name, coordinate: coordinate, anchor: .bottom) {
-                        
-                        // --- CORRECCIÓN 3: Envolvemos la burbuja en un Button ---
                         Button {
-                            self.selectedLocation = location
+                            activeSheet = .detail(location)
                         } label: {
-                            BubbleAnnotationLabel(icon: "building.2.fill")
+                            BubbleAnnotationLabel(
+                                icon: "building.2.fill",
+                                isActive: location.isActive
+                            )
                         }
-                        .buttonStyle(.plain) // Importante para que no parezca un botón de texto
+                        .buttonStyle(.plain)
                     }
-                    // .tag(location) // <-- Ya no se necesita
                 }
             }
             .mapStyle(.standard(elevation: .realistic))
             .onAppear {
                 locationManager.requestWhenInUseAuthorization()
-                Task { await viewModel.fetchMapa() }
+                if viewModel.locations.isEmpty {
+                    Task { await viewModel.fetchMapa() }
+                }
             }
             .mapControls {
                 if fullMap {
@@ -58,156 +63,237 @@ struct MapView: View {
                 }
             }
         }
-        // --- PRIMER SHEET: Muestra detalles del bazar ---
-        // Esto funciona porque tu 'Location' es Identifiable (implícito por el ForEach)
-        .sheet(item: $selectedLocation) { location in
-            LocationDetailSheet(
-                location: location,
-                onDonarAqui: {
-                    // 1. Crear el VM preconfigurado
-                    self.donationSheetViewModel = DonationSheetViewModel(preselectedBazaar: location)
-                    // 2. Descartar el primer sheet
-                    self.selectedLocation = nil
-                    // 3. Activar el segundo sheet
-                    self.showingDonationSheet = true
-                }
-            )
-            .presentationDetents([.height(350), .medium]) // Controlar altura
-            .presentationDragIndicator(.visible)
-        }
-        // --- SEGUNDO SHEET: Muestra el formulario de donación ---
-        .sheet(isPresented: $showingDonationSheet) {
-            if let vm = donationSheetViewModel {
-                DonationSheet(viewModel: vm)
-                    .environmentObject(appState) // Pasar el appState
-            } else {
-                Text("Error al cargar formulario") // Fallback
+        .sheet(item: $activeSheet) { item in
+            switch item {
+            case .detail(let location):
+                LocationDetailSheet(
+                    location: location,
+                    onDonarAqui: {
+                        activeSheet = .donation(location)
+                    }
+                )
+                // --- CAMBIO CLAVE DE UX ---
+                // Iniciamos con una altura pequeña (aprox 20-25% de la pantalla) para no tapar el mapa.
+                // Permitimos expandir a mediano y grande para ver detalles y Street View.
+                .presentationDetents([.fraction(0.25), .medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled(upThrough: .medium)) // Permite interactuar con el mapa si el sheet está bajo
+                
+            case .donation(let location):
+                DonationSheet(
+                    viewModel: DonationSheetViewModel(preselectedBazaar: location)
+                )
+                .environmentObject(appState)
+                .presentationDetents([.large])
             }
         }
     }
 }
 
-// MARK: - Vista de Detalle del Bazar (NUEVA)
-/// El primer sheet que se abre al tocar un pin del mapa.
+// MARK: - Componentes Visuales
+
 private struct LocationDetailSheet: View {
-    
     let location: Location
-    var onDonarAqui: () -> Void // Callback para abrir el DonationSheet
+    var onDonarAqui: () -> Void
     
-    // Placeholder para el estado (abierto/cerrado)
+    // Estado para la vista de 360 (Street View)
+    @State private var lookAroundScene: MKLookAroundScene?
+    
     var isOpen: Bool {
-        // Aquí puedes poner lógica de horario real
-        return true // Asumimos que siempre está abierto por ahora
+        return location.isActive
     }
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                
-                // --- Encabezado ---
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(location.name)
-                            .font(.title2).bold()
-                        
-                        Text(isOpen ? "Abierto" : "Cerrado")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(isOpen ? .green : .red)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    
+                    // --- Encabezado Compacto ---
+                    // Esta es la parte que se ve primero en el detent pequeño
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(location.name)
+                                .font(.title2).bold()
+                                .lineLimit(1)
+                            
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(isOpen ? Color.green : Color.red)
+                                    .frame(width: 8, height: 8)
+                                
+                                Text(isOpen ? "Abierto para recibir" : "No recibe donaciones")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(isOpen ? .green : .red)
+                            }
+                        }
+                        Spacer()
+                        DismissButton()
                     }
-                    Spacer()
-                    // Botón para cerrar el sheet
-                    DismissButton()
-                }
-                
-                // --- Artículos Aceptados ---
-                Text("Artículos aceptados")
-                    .font(.headline)
-                
-                let acceptedItems = location.acceptedItemTags
-                if acceptedItems.isEmpty {
-                    Text("No se especifican artículos por ahora.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                } else {
-                    // Muestra las "píldoras" de lo que se acepta
-                    AcceptedItemsView(items: acceptedItems)
-                }
-                
-                Spacer()
-                
-                // --- Botón de Acción ---
-                Button(action: onDonarAqui) {
-                    Text("Donar en este bazar")
+                    
+                    // Botón de acción principal visible desde el inicio
+                    Button(action: onDonarAqui) {
+                        HStack {
+                            if isOpen {
+                                Text("Donar aquí")
+                                Image(systemName: "arrow.right")
+                            } else {
+                                Text("No disponible")
+                                Image(systemName: "nosign")
+                            }
+                        }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.regular)
+                    .tint(isOpen ? Color("AccentColor") : Color.gray)
+                    .disabled(!isOpen)
+                    .padding(.bottom, 8) // Separación visual antes del contenido detallado
+
+                    Divider()
+                    
+                    // --- Contenido Expandido ---
+                    // Esto se verá mejor al subir el sheet a .medium o .large
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        // Dirección
+                        if !location.address.isEmpty {
+                            Label(location.address, systemImage: "mappin.and.ellipse")
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        // Street View (Look Around)
+                        if let scene = lookAroundScene {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Vista de calle")
+                                    .font(.headline)
+                                
+                                LookAroundPreview(initialScene: scene)
+                                    .frame(height: 150)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(.tertiary, lineWidth: 1)
+                                    )
+                            }
+                            .transition(.opacity)
+                        } else {
+                            // Placeholder o estado de carga opcional para Street View
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                    .controlSize(.small)
+                                Spacer()
+                            }
+                            .frame(height: 50)
+                        }
+
+                        // Artículos aceptados
+                        Text("Artículos aceptados")
+                            .font(.headline)
+                            .padding(.top, 4)
+                        
+                        let acceptedItems = location.acceptedItemTags
+                        if acceptedItems.isEmpty {
+                            Text("Este bazar no tiene información específica.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            AcceptedItemsView(items: acceptedItems)
+                        }
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .tint(Color("AccentColor")) // Usa tu color de acento
-                
+                .padding(24)
             }
-            .padding(24)
+            // Cargar la escena de Street View al aparecer
+            .task {
+                await fetchLookAroundScene()
+            }
+            .onChange(of: location.id) {
+                Task { await fetchLookAroundScene() }
+            }
+        }
+    }
+    
+    // Función para obtener la escena de LookAround
+    private func fetchLookAroundScene() async {
+        // Reseteamos primero para evitar mostrar una ubicación anterior
+        lookAroundScene = nil
+        let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        let request = MKLookAroundSceneRequest(coordinate: coordinate)
+        do {
+            lookAroundScene = try await request.scene
+        } catch {
+            print("Error cargando LookAround: \(error.localizedDescription)")
         }
     }
 }
 
-// --- Vista Auxiliar para las "píldoras" ---
+// Actualizamos la burbuja
+struct BubbleAnnotationLabel: View {
+    let icon: String
+    var isActive: Bool = true
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.headline)
+                .foregroundStyle(.white)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    isActive ?
+                    AnyShapeStyle(LinearGradient(
+                        colors: [
+                            Color(red: 1.0, green: 0.40, blue: 0.60),
+                            Color(red: 1.0, green: 0.10, blue: 0.40)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )) :
+                    AnyShapeStyle(Color.gray)
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(.white.opacity(0.25), lineWidth: 0.8)
+        )
+        .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 6)
+    }
+}
+
+// MARK: - Helpers
+
 private struct AcceptedItemsView: View {
     let items: [Location.AcceptedItem]
     
     var body: some View {
-        GeometryReader { geometry in
-            self.generateContent(in: geometry)
-        }
-        .frame(height: 100) // Ajusta la altura según sea necesario
-    }
-
-    private func generateContent(in g: GeometryProxy) -> some View {
-        var width = CGFloat.zero
-        var height = CGFloat.zero
-
-        return ZStack(alignment: .topLeading) {
-            ForEach(self.items, id: \.name) { item in
-                self.item(for: item)
-                    .padding([.horizontal, .vertical], 4)
-                    .alignmentGuide(.leading, computeValue: { d in
-                        if (abs(width - d.width) > g.size.width) {
-                            width = 0
-                            height -= d.height
-                        }
-                        let result = width
-                        if item.name == self.items.last!.name {
-                            width = 0 // Reseteo final
-                        } else {
-                            width -= d.width
-                        }
-                        return result
-                    })
-                    .alignmentGuide(.top, computeValue: { d in
-                        let result = height
-                        if item.name == self.items.last!.name {
-                            height = 0 // Reseteo final
-                        }
-                        return result
-                    })
+        // Usamos FlowLayout simplificado con LazyVGrid o un Wrapper personalizado si tienes uno.
+        // Como fallback usamos un LazyVGrid adaptativo que se ve muy bien para "píldoras".
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 8)], spacing: 8) {
+            ForEach(items, id: \.name) { item in
+                HStack(spacing: 4) {
+                    Image(systemName: item.icon)
+                    Text(item.name)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+                .font(.caption)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
             }
         }
     }
-
-    private func item(for item: Location.AcceptedItem) -> some View {
-        HStack(spacing: 4) {
-            Image(systemName: item.icon)
-            Text(item.name)
-        }
-        .font(.caption)
-        .padding(8)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-    }
 }
 
-// --- Botón de Cerrar Personalizado ---
 private struct DismissButton: View {
     @Environment(\.dismiss) var dismiss
     
@@ -216,16 +302,12 @@ private struct DismissButton: View {
             dismiss()
         } label: {
             Image(systemName: "xmark.circle.fill")
-                .font(.title)
+                .font(.title2)
                 .foregroundStyle(Color(.systemFill))
         }
     }
 }
 
-
-// MARK: - Helpers
-// --- Extensión de Location para la UI ---
-// (Asumiendo que tu modelo 'Location' no la tiene)
 extension Location {
     struct AcceptedItem: Hashable {
         let name: String
@@ -244,44 +326,3 @@ extension Location {
         return items
     }
 }
-
-// --- Tu 'BubbleAnnotationLabel' sin cambios ---
-struct BubbleAnnotationLabel: View {
-    let icon: String
-
-    var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.headline)
-                .foregroundStyle(.white)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 1.0, green: 0.40, blue: 0.60), // rosa
-                            Color(red: 1.0, green: 0.10, blue: 0.40)  // fucsia
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(.white.opacity(0.25), lineWidth: 0.8)
-        )
-        .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 6)
-    }
-}
-
-#Preview {
-    // Necesitarás actualizar tu preview para inyectar el AppState
-    MapView()
-        .environmentObject(MapaViewModel())
-        .environmentObject(AppState()) // <-- Añadir
-}
-
