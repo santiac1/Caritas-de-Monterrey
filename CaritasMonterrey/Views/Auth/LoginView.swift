@@ -157,7 +157,7 @@ struct LoginView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
+            .padding(.vertical, 11) // 11 como en MainRegistroView
         }
         .disabled(isLoading)
         .buttonStyle(.glassProminent) // Estilo aplicado al botón completo
