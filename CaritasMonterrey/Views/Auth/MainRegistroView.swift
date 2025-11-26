@@ -13,8 +13,8 @@ struct MainRegistroView: View {
         NavigationStack(path: $path) {
             ZStack {
                 // --- FONDO DE VIDEO ---
-                if let _ = Bundle.main.path(forResource: "background-video", ofType: "mp4") {
-                    LoopingVideoPlayer(videoName: "background-video", videoType: "mp4")
+                if let _ = Bundle.main.path(forResource: "background-video", ofType: "mov") {
+                    LoopingVideoPlayer(videoName: "background-video", videoType: "mov")
                         .ignoresSafeArea()
                         .overlay(
                             Color.black.opacity(0.1).ignoresSafeArea()
