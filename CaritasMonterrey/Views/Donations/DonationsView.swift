@@ -5,6 +5,8 @@ struct DonationsView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var viewModel: DonationsViewModel
     @Namespace private var tabsNS // <--- RE-AÑADIDO: Necesario para la animación
+    
+    @State private var selectedDonation: Donation?
 
     var body: some View {
         // Usamos un ScrollView principal para que el título grande se colapse
@@ -32,7 +34,9 @@ struct DonationsView: View {
                         // El LazyVStack va directo dentro del ScrollView principal
                         LazyVStack(spacing: 12) {
                             ForEach(viewModel.filteredDonations) { donation in
-                                DonationCard(donation: donation)
+                                DonationCard(donation: donation) {
+                                    selectedDonation = donation
+                                }
                             }
                         }
                         .padding(.horizontal, 16)
@@ -58,6 +62,9 @@ struct DonationsView: View {
             if let id = appState.session?.user.id {
                 await viewModel.refresh(for: id)
             }
+        }
+        .sheet(item: $selectedDonation) { donation in
+            DetallesDonacionView(donation: donation)
         }
         .alert("Error", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -119,6 +126,7 @@ private struct FilterBar: View {
 // MARK: - Card (badge según enum de BD)
 private struct DonationCard: View {
     let donation: Donation
+    var onShowDetails: () -> Void
     
     private var badge: (text: String, color: Color, icon: String) {
         switch donation.status {
@@ -133,25 +141,39 @@ private struct DonationCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center) {
-                Image(systemName: "shippingbox.fill")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-                
+                // 1. Ícono de estado a la izquierda
+                Image(systemName: badge.icon)
+                .font(.system(size: 12)) 
+                .foregroundStyle(badge.color)
+                .padding(8)
+                .background(badge.color.opacity(0.15), in: Circle())
+
+                // 2. Título
                 Text(donation.title)
                     .font(.headline).fontWeight(.bold)
                     .lineLimit(1)
                 
                 Spacer()
                 
-                HStack(spacing: 6) {
-                    Image(systemName: badge.icon)
-                    Text(badge.text)
+                // 3. Ícono "caja"
+                Image(systemName: "shippingbox.fill")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                
+                // 4. Menú de 3 puntos (círculo)
+                Menu {
+                    Button {
+                        onShowDetails()
+                    } label: {
+                        Label("Ver detalles", systemImage: "info.circle")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
                 }
-                .font(.caption).fontWeight(.semibold)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(badge.color.opacity(0.18), in: Capsule())
-                .foregroundStyle(badge.color)
             }
             
             HStack {
