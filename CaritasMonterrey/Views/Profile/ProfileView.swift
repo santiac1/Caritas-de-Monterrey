@@ -48,7 +48,8 @@ struct ProfileView: View {
         .navigationTitle("Perfil")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: SettingsView()) {
+                // ✅ CORRECCIÓN: Usamos AppRoute en lugar de destino directo
+                NavigationLink(value: AppRoute.settings) {
                     Image(systemName: "gearshape.fill")
                         .imageScale(.large)
                 }
@@ -148,12 +149,5 @@ private struct BadgeView: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(Color(.systemGray4))
         )
-    }
-}
-
-#Preview {
-    NavigationStack {
-        ProfileView()
-            .environmentObject(AppState())
     }
 }

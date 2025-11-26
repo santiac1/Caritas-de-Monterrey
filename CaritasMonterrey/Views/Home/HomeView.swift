@@ -8,8 +8,6 @@ struct HomeView: View {
     @EnvironmentObject private var appState: AppState
 
     @State private var navPath = NavigationPath()
-    
-    // Usamos un enum opcional para controlar el sheet principal
     @State private var activeSheet: HomeSheet?
 
     private enum HomeSheet: Identifiable {
@@ -20,8 +18,9 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $navPath) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 24) {
 
+                    // 1. Banner Principal
                     BannerCard(
                         title: vm.banner.title,
                         assetName: vm.banner.assetName,
@@ -29,97 +28,78 @@ struct HomeView: View {
                     ) {
                         activeSheet = .donation
                     }
+                    .padding(.top, 10)
 
-                    Text("Acciones rápidas")
-                        .font(.title3).bold()
-                        .padding(.top, 8)
-
-                    LazyVGrid(
-                        columns: [GridItem(.flexible(), spacing: 14),
-                                  GridItem(.flexible(), spacing: 14)],
-                        spacing: 14
-                    ) {
-                        ForEach(vm.secondaryCards) { card in
-                            ActionCard(
-                                title: card.title,
-                                assetName: card.assetName,
-                                systemFallback: card.systemFallback
-                            ) {
-                                switch card.route {
-                                case .mapV:       navPath.append(card.route)
-                                case .donationsV: navPath.append(card.route)
-                                case .donateV:    activeSheet = .donation
-                                }
-                            }
+                    // 2. Estadísticas
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Tus estadísticas")
+                            .font(.title3).bold()
+                        
+                        LazyVGrid(
+                            columns: [GridItem(.flexible(), spacing: 14),
+                                      GridItem(.flexible(), spacing: 14)],
+                            spacing: 14
+                        ) {
+                            StatCard(title: "Donaciones", value: vm.totalText, systemIcon: "chart.bar.fill")
+                            StatCard(title: "En proceso", value: vm.inProgressText, systemIcon: "clock.badge.checkmark")
+                            StatCard(title: "Última donación", value: vm.lastDonationText, systemIcon: "calendar")
                         }
-                    }
-
-                    Text("Tus estadísticas")
-                        .font(.title3).bold()
-                        .padding(.top, 8)
-
-                    LazyVGrid(
-                        columns: [GridItem(.flexible(), spacing: 14),
-                                  GridItem(.flexible(), spacing: 14)],
-                        spacing: 14
-                    ) {
-                        StatCard(title: "Donaciones", value: vm.totalText, systemIcon: "chart.bar.fill")
-                        StatCard(title: "En proceso", value: vm.inProgressText, systemIcon: "clock.badge.checkmark")
-                        StatCard(title: "Última donación", value: vm.lastDonationText, systemIcon: "calendar")
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 8)
+                .padding(.bottom, 20)
             }
             .navigationTitle(vm.screenTitle)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: NotificationsView()) {
-                        Image(systemName: "bell.fill")
-                            .font(.title3)
-                            .foregroundStyle(.primary)
+                    Button { navPath.append(AppRoute.notifications) } label: {
+                        Image(systemName: "bell.fill").font(.title3).foregroundStyle(.primary)
                     }
-                    .buttonStyle(.plain)
                 }
                 ToolbarSpacer(.fixed, placement: .primaryAction)
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: ProfileView()) {
-                        Image(systemName: "person.crop.circle")
-                            .font(.title3)
-                            .foregroundStyle(.primary)
+                    Button { navPath.append(AppRoute.profile) } label: {
+                        Image(systemName: "person.crop.circle").font(.title3).foregroundStyle(.primary)
                     }
-                    .buttonStyle(.plain)
                 }
             }
-            .task {
-                // Carga inicial al abrir la app
-                await vm.loadStats(for: appState.session?.user.id)
+            .onAppear {
+                Task { await vm.loadStats(for: appState.session?.user.id) }
             }
-            .navigationDestination(for: HomeViewModel.Route.self) { route in
+            // --- MANEJADOR DE RUTAS GLOBAL ---
+            .navigationDestination(for: AppRoute.self) { route in
                 switch route {
-                case .mapV:
+                case .map:
                     MapView()
                         .environmentObject(mapaVM)
+                        .environmentObject(appState)
                         .navigationTitle("Mapa")
                         .navigationBarTitleDisplayMode(.inline)
 
-                case .donationsV:
+                case .myDonations:
                     DonationsView()
                         .environmentObject(donationsVM)
                         .navigationTitle("Mis donaciones")
                         .navigationBarTitleDisplayMode(.inline)
-
-                case .donateV:
+                        
+                case .notifications:
+                    NotificationsView()
+                        .navigationTitle("Notificaciones")
+                        
+                case .profile:
+                    ProfileView()
+                        // No ponemos título aquí porque ProfileView tiene el suyo propio
+                
+                case .settings:
+                    SettingsView()
+                        // SettingsView tiene su propio título definido internamente
+                        
+                case .donateAction:
                     EmptyView()
                 }
             }
-            // 👇 AQUÍ ESTÁ EL CAMBIO IMPORTANTE 👇
             .sheet(item: $activeSheet, onDismiss: {
-                // Este bloque se ejecuta cuando DonationSheet desaparece de la pantalla.
-                // Aquí forzamos la recarga de las estadísticas en el Home.
-                Task {
-                    await vm.loadStats(for: appState.session?.user.id)
-                }
+                Task { await vm.loadStats(for: appState.session?.user.id) }
             }) { item in
                 switch item {
                 case .donation:

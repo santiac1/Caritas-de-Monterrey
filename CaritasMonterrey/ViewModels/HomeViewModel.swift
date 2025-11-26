@@ -44,19 +44,15 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
-    
-    enum Route: Hashable {
-        case donateV
-        case mapV
-        case donationsV
-    }
+    // CORRECCIÓN: Eliminamos el enum Route interno y usamos AppRoute global
+    // enum Route: Hashable { ... } <- ELIMINADO
 
     struct Promo: Identifiable, Hashable {
         let id = UUID()
         let title: String
         let assetName: String?
         let systemFallback: String
-        let route: Route
+        let route: AppRoute // <-- Usamos AppRoute
     }
 
     // UI copy
@@ -68,13 +64,13 @@ final class HomeViewModel: ObservableObject {
         title: "Se parte del cambio, ¡Haz una donación ahora!",
         assetName: "polla_dona",
         systemFallback: "heart.circle.fill",
-        route: .donateV
+        route: .donateAction
     )
 
     // Tarjetas de acción
     @Published private(set) var secondaryCards: [Promo] = [
-        .init(title: "Ver bazares cercanos", assetName: nil, systemFallback: "mappin.and.ellipse", route: .mapV),
-        .init(title: "Mis donaciones",       assetName: nil, systemFallback: "gift.fill",          route: .donationsV)
+        .init(title: "Ver bazares cercanos", assetName: nil, systemFallback: "mappin.and.ellipse", route: .map),
+        .init(title: "Mis donaciones",       assetName: nil, systemFallback: "gift.fill",          route: .myDonations)
     ]
 
     // Resumen (para el Home)

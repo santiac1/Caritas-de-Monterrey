@@ -105,7 +105,7 @@ final class DonationSheetViewModel: ObservableObject {
                 .execute()
                 .value
 
-            // ✅ AQUÍ ESTÁ EL ARREGLO: Filtramos solo los activos
+            // ✅ Filtramos solo los activos
             let activeBazaars = response.filter { $0.isActive }
             bazaars = activeBazaars
             
@@ -276,9 +276,18 @@ final class DonationSheetViewModel: ObservableObject {
         let fileName = "donation_\(userId.uuidString)_\(UUID().uuidString).jpg"
         let storage = client.storage.from("donations")
         do {
-            try await storage
-                .upload(path: fileName, file: data)
-            let urlResponse = try await storage.getPublicURL(path: fileName)
+            // CORRECCIÓN 1: Usamos la nueva firma 'upload(_:data:options:)'
+            // El nombre del archivo va sin etiqueta, y 'file:' ahora es 'data:'.
+            try await storage.upload(
+                fileName,
+                data: data,
+                options: FileOptions(contentType: "image/jpeg")
+            )
+            
+            // CORRECCIÓN 2: 'getPublicURL' necesita 'try' (sin await) porque puede lanzar errores de validación
+            let urlResponse = try storage.getPublicURL(path: fileName)
+            
+            print("✅ Imagen subida: \(urlResponse.absoluteString)")
             return urlResponse.absoluteString
         } catch {
             print("⚠️ Error al subir imagen: \(error.localizedDescription)")

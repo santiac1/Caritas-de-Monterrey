@@ -4,7 +4,11 @@
 //
 //  Created by Alumno on 20/10/25.
 //
-//  Rediseñado por Gemini con un estilo minimalista y moderno.
+//
+//  NotificationsView.swift
+//  CaritasMonterrey
+//
+//  Created by Alumno on 20/10/25.
 //
 
 import SwiftUI
@@ -13,8 +17,17 @@ struct NotificationsView: View {
     @StateObject var viewModel = NotificationsViewModel()
 
     var body: some View {
-        NavigationStack {
-            List {
+        List {
+            if viewModel.notifications.isEmpty {
+                // ✅ CORRECCIÓN: description espera un Text(), no un String directo.
+                ContentUnavailableView(
+                    "Sin notificaciones",
+                    systemImage: "bell.slash",
+                    description: Text("Te avisaremos cuando haya actualizaciones sobre tus donaciones.")
+                )
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+            } else {
                 ForEach(viewModel.notifications) { notification in
                     NotificationRowView(notification: notification)
                         .listRowSeparator(.hidden)
@@ -34,14 +47,14 @@ struct NotificationsView: View {
                 }
                 .onDelete(perform: deleteNotification)
             }
-            .listStyle(.plain)
-            .navigationTitle("Notificaciones")
-            .task {
-                await viewModel.loadNotifications()
-            }
-            .refreshable {
-                await viewModel.loadNotifications()
-            }
+        }
+        .listStyle(.plain)
+        .navigationTitle("Notificaciones")
+        .task {
+            await viewModel.loadNotifications()
+        }
+        .refreshable {
+            await viewModel.loadNotifications()
         }
     }
 
@@ -53,15 +66,10 @@ struct NotificationsView: View {
                 for id in idsToDelete {
                     try await viewModel.deleteNotification(id: id)
                 }
-
-                // Si la BD elimina correctamente, entonces sí, lo borras de la lista local
                 viewModel.notifications.remove(atOffsets: offsets)
-
             } catch {
                 print("Error deleting:", error)
             }
         }
     }
-
 }
-

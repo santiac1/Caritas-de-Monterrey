@@ -20,10 +20,21 @@ final class SupabaseManager: ObservableObject {
             let container = try decoder.singleValueContainer()
             let dateString = try container.decode(String.self)
 
-            if let date = SupabaseManager.iso8601WithFractional.date(from: dateString) {
+            // CORRECCIÓN: Creamos los formateadores localmente.
+            // Esto elimina el error de 'nonisolated'/'Sendable' porque cada hilo
+            // tiene su propia instancia segura del formateador.
+            
+            // 1. Intentar formato con segundos fraccionales (común en Supabase)
+            let iso8601WithFractional = ISO8601DateFormatter()
+            iso8601WithFractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = iso8601WithFractional.date(from: dateString) {
                 return date
             }
-            if let date = SupabaseManager.iso8601.date(from: dateString) {
+            
+            // 2. Intentar formato estándar
+            let iso8601 = ISO8601DateFormatter()
+            iso8601.formatOptions = [.withInternetDateTime]
+            if let date = iso8601.date(from: dateString) {
                 return date
             }
 
@@ -35,8 +46,10 @@ final class SupabaseManager: ObservableObject {
             )
         }
 
+        // Configuración de Auth corregida para evitar advertencias futuras
         let options = SupabaseClientOptions(
-            db: .init(decoder: decoder)
+            db: .init(decoder: decoder),
+            auth: .init(emitLocalSessionAsInitialSession: true)
         )
 
         client = SupabaseClient(
@@ -45,18 +58,4 @@ final class SupabaseManager: ObservableObject {
             options: options
         )
     }
-
-    private static let iso8601WithFractional: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
-
-    private static let iso8601: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
-        return formatter
-    }()
 }
-
-
