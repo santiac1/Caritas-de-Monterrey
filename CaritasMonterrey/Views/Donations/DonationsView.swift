@@ -1,253 +1,128 @@
 import SwiftUI
-import Auth    // ← REQUIRED to access appState.session?.user.id
+import Auth
 
 struct DonationsView: View {
-    @EnvironmentObject private var appState: AppState
-    @EnvironmentObject private var viewModel: DonationsViewModel
-    @Namespace private var tabsNS // <--- RE-AÑADIDO: Necesario para la animación
+    @EnvironmentObject var viewModel: DonationsViewModel
+    @EnvironmentObject var appState: AppState // Necesario para el userId
     
-    @State private var selectedDonation: Donation?
+    // Estado para el filtro seleccionado en la UI
+    @State private var selectedFilter: DonationFilter = .all
+    @Namespace private var animationNamespace
 
     var body: some View {
-        // Usamos un ScrollView principal para que el título grande se colapse
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) { // <--- Reducido el spacing
-                
-                // CAMBIO: Volvemos a tu FilterBar, que es como el ejemplo de GitHub
-                FilterBar(selection: $viewModel.selectedFilter, namespace: tabsNS)
-                    .padding(.top, 8)
-                    .padding(.bottom, 12)
-
-                //
-                // ¡TODA ESTA LÓGICA PERMANECE IDÉNTICA!
-                //
-                Group {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .padding(.top, 40)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else if viewModel.filteredDonations.isEmpty {
-                        EmptyStateView(message: "No hay donaciones en esta categoría.")
-                            .padding(.top, 80)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else {
-                        // El LazyVStack va directo dentro del ScrollView principal
-                        LazyVStack(spacing: 12) {
-                            ForEach(viewModel.filteredDonations) { donation in
-                                DonationCard(donation: donation) {
-                                    selectedDonation = donation
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 24)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                
-            }
-            // No se necesita .padding(.top, 12) aquí
-        }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Mis donaciones")
-        .navigationBarTitleDisplayMode(.large) // <--- Se mantiene el título grande
-        .task {
-            // Lógica intacta
-            if let id = appState.session?.user.id {
-                await viewModel.load(for: id)
-            }
-        }
-        .refreshable {
-            // Lógica intacta
-            if let id = appState.session?.user.id {
-                await viewModel.refresh(for: id)
-            }
-        }
-        .sheet(item: $selectedDonation) { donation in
-            DetallesDonacionView(donation: donation)
-        }
-        .alert("Error", isPresented: Binding(
-            get: { viewModel.errorMessage != nil },
-            set: { _ in }
-        )) {
-            Button("Aceptar", role: .cancel) { }
-        } message: {
-            Text(viewModel.errorMessage ?? "")
-        }
-    }
-}
-
-// MARK: - Filter Bar (píldoras deslizables)
-// ¡Esta es tu struct original, pero MÁS LIMPIA!
-private struct FilterBar: View {
-    @Binding var selection: DonationFilter
-    var namespace: Namespace.ID
-
-    private let items = DonationFilter.allCases
-
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(items, id: \.self) { item in
-                    Button {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                            selection = item
-                        }
-                    } label: {
-                        Text(item.title)
-                            .font(.subheadline).fontWeight(.semibold)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .foregroundStyle(selection == item ? .white : .primary)
-                            .background(
-                                ZStack {
-                                    if selection == item {
-                                        Capsule()
-                                            .fill(Color("AccentColor"))
-                                            .matchedGeometryEffect(id: "tab-pill", in: namespace)
-                                    } else {
-                                        Capsule()
-                                            .fill(Color(.secondarySystemBackground))
-                                            .opacity(0.8)
-                                    }
-                                }
-                            )
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.horizontal, 16) // <-- Padding para el HStack
+        VStack(spacing: 0) {
             
+            // MARK: - Barra de Filtros
+            // Usamos el componente reutilizable que creamos
+            DonationsFilterBar(selection: $selectedFilter, namespace: animationNamespace)
+                .padding(.vertical, 10)
+                .background(Color(UIColor.systemBackground))
+            
+            // MARK: - Lista de Donaciones
+            if viewModel.isLoading {
+                Spacer()
+                ProgressView()
+                Spacer()
+            } else if filteredDonations.isEmpty {
+                ContentUnavailableView(
+                    "Sin donaciones",
+                    systemImage: "tray",
+                    description: Text("No tienes donaciones con este filtro.")
+                )
+            } else {
+                List {
+                    ForEach(filteredDonations) { donation in
+                        NavigationLink(destination: DetallesDonacionView(donation: donation)) {
+                            DonationRow(donation: donation)
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    }
+                }
+                .listStyle(.plain)
+                .refreshable {
+                    await viewModel.refresh(for: appState.session?.user.id)
+                }
+            }
+        }
+        .navigationTitle("Mis donaciones")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            // Carga inicial usando el ID del usuario actual
+            await viewModel.load(for: appState.session?.user.id)
+        }
+    }
+    
+    // Lógica de filtrado local para la vista de usuario
+    var filteredDonations: [Donation] {
+        switch selectedFilter {
+        case .all:
+            return viewModel.donations
+        case .inProcess:
+            return viewModel.donations.filter { $0.status == .in_process }
+        case .accepted:
+            return viewModel.donations.filter { $0.status == .accepted }
+        case .received:
+            return viewModel.donations.filter { $0.status == .received }
+        case .rejected:
+            return viewModel.donations.filter { $0.status == .rejected || $0.status == .returned }
         }
     }
 }
 
-
-// MARK: - Card (badge según enum de BD)
-private struct DonationCard: View {
+// MARK: - Componente Row Local
+private struct DonationRow: View {
     let donation: Donation
-    var onShowDetails: () -> Void
     
-    private var badge: (text: String, color: Color, icon: String) {
-        switch donation.status {
-        case .in_process: return ("En proceso", Color(red: 0.40, green: 0.75, blue: 0.75), "circle.dashed")
-        case .accepted:   return ("Aceptada",    .green,  "checkmark.seal.fill")
-        case .rejected:   return ("Rechazada",   .red,    "xmark.octagon.fill")
-        case .returned:   return ("Devuelta",    .orange, "arrow.uturn.backward.circle.fill")
-        case .received:   return ("Recibida", .purple, "shippingbox.fill")
-        }
-    }
-        
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center) {
-                // 1. Ícono de estado a la izquierda
-                Image(systemName: badge.icon)
-                .font(.system(size: 12)) 
-                .foregroundStyle(badge.color)
-                .padding(8)
-                .background(badge.color.opacity(0.15), in: Circle())
-
-                // 2. Título
-                Text(donation.title)
-                    .font(.headline).fontWeight(.bold)
+        HStack(spacing: 16) {
+            // Icono con círculo de fondo
+            ZStack {
+                Circle()
+                    .fill(Color(UIColor.secondarySystemBackground))
+                    .frame(width: 48, height: 48)
+                Image(systemName: iconForType(donation.type))
+                    .foregroundStyle(Color("AccentColor"))
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(donation.name)
+                    .font(.headline)
                     .lineLimit(1)
                 
-                Spacer()
-                
-                // 3. Ícono "caja"
-                Image(systemName: "shippingbox.fill")
-                    .font(.headline)
+                Text(donation.formattedDate)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
-                
-                // 4. Menú de 3 puntos (círculo)
-                Menu {
-                    Button {
-                        onShowDetails()
-                    } label: {
-                        Label("Ver detalles", systemImage: "info.circle")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-                }
             }
             
-            HStack {
-                Image(systemName: "calendar")
-                    .foregroundStyle(.secondary)
-                Text(donation.formattedDate.isEmpty ? "—" : donation.formattedDate)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                
-                Spacer()
-                
-                if let w = donation.shipping_weight, !w.isEmpty {
-                    Pill(icon: "scalemass", text: w)
-                }
-                Pill(icon: "tag.fill", text: donation.type.capitalized)
-            }
+            Spacer()
+            
+            // Badge de estado
+            Text(donation.statusDisplay.rawValue)
+                .font(.caption2)
+                .fontWeight(.bold)
+                .foregroundStyle(donation.statusDisplay.color)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(donation.statusDisplay.color.opacity(0.1))
+                .clipShape(Capsule())
         }
-        .padding(16)
+        .padding()
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground))
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(UIColor.secondarySystemGroupedBackground))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
-        )
-        .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
     }
-}
     
-// MARK: - Vistas Auxiliares
-
-private struct Pill: View {
-    let icon: String
-    let text: String
-    var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.caption)
-            Text(text)
-                .font(.caption).bold()
-                .lineLimit(1)
+    func iconForType(_ type: String) -> String {
+        switch type.lowercased() {
+        case "alimentos": return "carrot.fill"
+        case "ropa": return "tshirt.fill"
+        case "medicinas": return "cross.case.fill"
+        case "muebles": return "sofa.fill"
+        case "equipo": return "wrench.and.screwdriver"
+        default: return "archivebox.fill"
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .foregroundStyle(.primary)
-        .background(Capsule().fill(Color.primary.opacity(0.08)))
-    }
-}
-    
-private struct EmptyStateView: View {
-    let message: String
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "moon.stars.fill")
-                .font(.system(size: 50))
-                .foregroundColor(Color(red: 0.4, green: 0.75, blue: 0.75))
-            Text("¡Todo al día!")
-                .font(.headline).fontWeight(.bold)
-            Text(message)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(.horizontal, 40)
-    }
-}
-    
-// MARK: - Preview
-    
-#Preview {
-    NavigationStack {
-        DonationsView()
-            .environmentObject(AppState())
-            .environmentObject(DonationsViewModel())
     }
 }

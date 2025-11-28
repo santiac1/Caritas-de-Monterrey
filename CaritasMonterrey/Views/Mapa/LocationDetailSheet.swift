@@ -6,7 +6,6 @@ struct LocationDetailSheet: View {
     let location: Location
     var onDonarAqui: () -> Void
     
-    // Estado para la vista de 360 (Street View)
     @State private var lookAroundScene: MKLookAroundScene?
     @Environment(\.dismiss) private var dismiss
     
@@ -17,44 +16,43 @@ struct LocationDetailSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 16) { // Reduje el espaciado general
                     
-                    // 1. ENCABEZADO PERSONALIZADO (Nombre + Botón Cerrar Alineados)
-                    // Usamos esto en lugar del Toolbar para tener control total del diseño
-                    HStack(alignment: .top) {
-                        Text(location.name)
-                            .font(.title).bold()
-                            .fixedSize(horizontal: false, vertical: true) // Permite múltiples líneas si es largo
-                        
-                        Spacer()
-                        
-                        // Botón "X" minimalista
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark")
-                                .foregroundStyle(.gray)  // Color discreto
-                                .padding(8)              // Área de toque
-                                
-                        }
-                        .buttonStyle(.glass) // Evita animaciones o estilos extraños
-                        .buttonBorderShape(.circle)
+                    // 1. VISTA DE CALLE (Ahora al principio)
+                    if let scene = lookAroundScene {
+                        LookAroundPreview(initialScene: scene)
+                            .frame(height: 160) // Un poco más compacto
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(.tertiary, lineWidth: 1)
+                            )
+                            .transition(.opacity)
                     }
                     
-                    // 2. ESTADO
+                    // 2. DIRECCIÓN (Debajo de la vista de calle)
+                    if !location.address.isEmpty {
+                        Text(location.address)
+                            .font(.caption) // Letra más pequeña
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    
+                    // 3. STATUS (Abierto/Cerrado)
                     HStack(spacing: 6) {
                         Circle()
                             .fill(isOpen ? Color.green : Color.red)
                             .frame(width: 8, height: 8)
                         
-                        Text(isOpen ? "Abierto para recibir" : "No recibe donaciones")
+                        Text(isOpen ? "Abierto" : "Cerrado")
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundStyle(isOpen ? .green : .red)
+                        
+                        Spacer() // Empuja al inicio si hubiera algo más, o solo alinea izq
                     }
-                    // Quitamos padding top extra porque ya está en el HStack del encabezado
                     
-                    // 3. TAGS (Artículos aceptados)
+                    // 4. ARTÍCULOS ACEPTADOS (Tags más pequeños)
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Artículos aceptados")
                             .font(.headline)
@@ -62,79 +60,65 @@ struct LocationDetailSheet: View {
                         let acceptedItems = location.acceptedItemTags
                         if acceptedItems.isEmpty {
                             Text("Información general disponible.")
-                                .font(.subheadline)
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                         } else {
                             AcceptedItemsView(items: acceptedItems)
                         }
                     }
                     
-                    // 4. BOTÓN DE DONAR
+                    // 5. BOTÓN DE DONAR (Al final)
                     Button(action: onDonarAqui) {
                         HStack {
                             if isOpen {
                                 Text("Donar en este bazar")
                                 Image(systemName: "arrow.right")
                             } else {
-                                Text("Bazar no disponible")
+                                Text("No disponible")
                                 Image(systemName: "nosign")
                             }
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 2) // Padding vertical interno reducido
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .tint(isOpen ? Color("AccentColor") : Color.gray)
                     .disabled(!isOpen)
-                    
-                    Divider()
-                    
-                    // 5. STREET VIEW (Look Around)
-                    if let scene = lookAroundScene {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Vista de calle")
-                                .font(.headline)
-                            
-                            LookAroundPreview(initialScene: scene)
-                                .frame(height: 180)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(.tertiary, lineWidth: 1)
-                                )
-                        }
-                        .transition(.opacity)
-                    } else {
-                        // Espacio reservado mientras carga
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                        .frame(height: 100)
-                    }
-                    
-                    // 6. DIRECCIÓN (Al final)
-                    if !location.address.isEmpty {
-                        HStack(alignment: .top, spacing: 10) {
-                            Image(systemName: "mappin.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(Color("AccentColor"))
-                            
-                            Text(location.address)
-                                .font(.callout)
-                                .foregroundStyle(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .padding(.top, 4)
+                    .padding(.top, 8) // Separación extra antes del botón
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 12) // ✅ Reduje mucho el espacio superior (antes 24)
+                .padding(.bottom, 24)
+            }
+            // --- TOOLBAR (Acciones y Título) ---
+            .navigationTitle(location.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                // Izquierda: Mapas
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        openInMaps()
+                    } label: {
+                        Image(systemName: "map.fill")
+                            .foregroundStyle(Color("AccentColor"))
                     }
                 }
-                .padding(24)
+                
+                // Derecha: Cerrar
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.body)
+                            .fontWeight(.regular)
+                            .foregroundStyle(.secondary)
+                            .padding(4)
+                    }
+                }
             }
-            // Ocultamos la barra de sistema para que nuestro encabezado mande
-            .toolbar(.hidden, for: .navigationBar)
             .task {
                 await fetchLookAroundScene()
             }
@@ -144,15 +128,21 @@ struct LocationDetailSheet: View {
         }
     }
     
+    private func openInMaps() {
+        let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        let placemark = MKPlacemark(coordinate: coordinate)
+        let mapItem = MKMapItem(placemark: placemark)
+        mapItem.name = location.name
+        mapItem.openInMaps()
+    }
+    
     private func fetchLookAroundScene() async {
         lookAroundScene = nil
         let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
         let request = MKLookAroundSceneRequest(coordinate: coordinate)
         do {
             lookAroundScene = try await request.scene
-        } catch {
-            // Silencioso
-        }
+        } catch { }
     }
 }
 
@@ -162,26 +152,24 @@ struct AcceptedItemsView: View {
     let items: [Location.AcceptedItem]
     
     var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 8)], spacing: 8) {
-            ForEach(items, id: \.name) { item in
-                HStack(spacing: 4) {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(items, id: \.name) { item in
                     Image(systemName: item.icon)
-                    Text(item.name)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                        .font(.body) // ✅ Más pequeño (antes title3)
+                        .foregroundStyle(.primary)
+                        .padding(8) // ✅ Menos padding (antes 10)
+                        .background(
+                            Capsule()
+                                .fill(Color.gray.opacity(0.1))
+                        )
                 }
-                .font(.caption)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
             }
         }
     }
 }
 
-// Extensión para transformar los booleanos del modelo en etiquetas visuales
+// Extensión de modelo (sin cambios)
 extension Location {
     struct AcceptedItem: Hashable {
         let name: String

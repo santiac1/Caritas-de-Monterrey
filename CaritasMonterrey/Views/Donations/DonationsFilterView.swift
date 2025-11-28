@@ -2,23 +2,16 @@ import SwiftUI
 
 struct DonationsFilterView: View {
     @Environment(\.dismiss) private var dismiss
-    @Binding var selectedFilter: DonationFilter
+    
+    // Solo recibimos el orden, ya que el estado se filtra en la barra de la vista principal
     @Binding var sortOrder: SortOrder
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Estado") {
-                    Picker("Estado", selection: $selectedFilter) {
-                        ForEach(DonationFilter.allCases, id: \.self) { filter in
-                            Text(filter.title).tag(filter)
-                        }
-                    }
-                }
-
-                Section("Ordenar por") {
+                Section("Ordenar por fecha") {
                     Picker("Orden", selection: $sortOrder) {
-                        ForEach(SortOrder.allCases, id: \.self) { order in
+                        ForEach(SortOrder.allCases) { order in
                             Text(order.title).tag(order)
                         }
                     }
@@ -26,21 +19,17 @@ struct DonationsFilterView: View {
                 }
             }
             .navigationTitle("Filtros")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cerrar") { dismiss() }
-                }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Aplicar") { dismiss() }
+                    Button("Listo") { dismiss() }
                 }
             }
         }
+        .presentationDetents([.height(250)]) // Altura compacta
     }
 }
 
 #Preview {
-    DonationsFilterView(
-        selectedFilter: .constant(.all),
-        sortOrder: .constant(.newest)
-    )
+    DonationsFilterView(sortOrder: .constant(.newest))
 }
