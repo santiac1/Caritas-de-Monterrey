@@ -8,6 +8,7 @@ struct DonationSheet: View {
     @Environment(\.colorScheme) private var scheme
     @EnvironmentObject private var appState: AppState
     @State private var showHelpAlert = false
+    @State private var showSuccessAlert = false
 
     private var accent: Color { scheme == .dark ? Color(.white) : .primaryCyan }
 
@@ -287,11 +288,7 @@ extension DonationSheet {
                         viewModel.currentUserId = appState.session?.user.id
                         await viewModel.submit()
                         if viewModel.submitOK {
-                            if viewModel.helpNeeded {
-                                showHelpAlert = true
-                            } else {
-                                dismiss()
-                            }
+                            showSuccessAlert = true
                         }
                     }
                 } label: {
@@ -304,6 +301,14 @@ extension DonationSheet {
                     }
                 }
                 .disabled(viewModel.isSubmitting || !viewModel.isValid)
+                .alert("¡Tu donación fue creada con éxito!", isPresented: $showSuccessAlert) {
+                    Button("Aceptar") {
+                        viewModel.submitOK = false
+                        dismiss()
+                    }
+                } message: {
+                    Text("Será revisada por un administrador.")
+                }
             }
         }
     }

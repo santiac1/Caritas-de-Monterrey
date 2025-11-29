@@ -68,9 +68,9 @@ final class AppState: ObservableObject {
         profile = nil
     }
 
-    func loadProfile(for userId: UUID) async {
-        isLoadingProfile = true
-        defer { isLoadingProfile = false }
+    func loadProfile(for userId: UUID, silent: Bool = false) async {
+        if !silent { isLoadingProfile = true }
+        defer { if !silent { isLoadingProfile = false } }
         do {
             let profile: Profile = try await SupabaseManager.shared.client
                 .from("profiles")

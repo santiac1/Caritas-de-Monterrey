@@ -21,6 +21,7 @@ final class DonationsViewModel: ObservableObject {
 
     func load(for userId: UUID?) async {
         guard let userId else { return }
+        if isLoading { return }
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -36,8 +37,9 @@ final class DonationsViewModel: ObservableObject {
 
             donations = result
         } catch {
+            if (error as? CancellationError) != nil { return }
             errorMessage = error.localizedDescription
-            donations = []
+            print(errorMessage!)
         }
     }
 

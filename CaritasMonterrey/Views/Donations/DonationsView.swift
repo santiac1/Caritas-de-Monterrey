@@ -47,8 +47,8 @@ struct DonationsView: View {
         }
         .navigationTitle("Mis donaciones")
         .navigationBarTitleDisplayMode(.inline)
-        .task {
-            // Carga inicial usando el ID del usuario actual
+        .task(id: appState.session?.user.id) {
+            guard let userId = appState.session?.user.id else { return }
             await viewModel.load(for: appState.session?.user.id)
         }
     }

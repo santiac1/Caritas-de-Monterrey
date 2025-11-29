@@ -104,13 +104,13 @@ struct SettingsView: View {
         .onChange(of: appState.profile?.id) { _ in
             viewModel.loadProfileData(appState: appState)
         }
-        .alert("Perfil actualizado", isPresented: $showSuccessAlert) {
+        .alert("¡Tus datos fueron modificados correctamente!", isPresented: $showSuccessAlert) {
             Button("Aceptar") {
                 viewModel.resetSaveState()
-                dismiss()
+                // Eliminado dismiss() para mantenernos en la misma pantalla
             }
         } message: {
-            Text("Tus datos se guardaron correctamente.")
+            Text("La información de tu perfil ha sido actualizada.")
         }
     }
 
@@ -118,7 +118,8 @@ struct SettingsView: View {
         guard let userId = appState.session?.user.id else { return }
         await viewModel.saveProfile(userId: userId)
         if viewModel.didSave {
-            await appState.loadProfile(for: userId)
+            // silent: true para NO mostrar pantalla de carga global (RootRouter) y evitar que se resetee la navegación
+            await appState.loadProfile(for: userId, silent: true)
             viewModel.loadProfileData(appState: appState)
             showSuccessAlert = true
         }

@@ -14,7 +14,7 @@ struct AdminHelpRequestsView: View {
                     .background(Color(UIColor.systemBackground))
                 
                 // MARK: - Lista de Solicitudes
-                if viewModel.isLoading {
+                if viewModel.isLoading && viewModel.donations.isEmpty {
                     Spacer()
                     ProgressView("Cargando solicitudes...")
                     Spacer()
@@ -77,11 +77,17 @@ struct AdminHelpRequestsView: View {
             .task {
                 await viewModel.loadHelpRequests()
             }
-            .onChange(of: viewModel.currentFilter) { _ in
-                Task { await viewModel.loadHelpRequests() }
+            .onChange(of: viewModel.currentFilter) { _, _ in
+                Task {
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second debounce
+                    await viewModel.loadHelpRequests()
+                }
             }
-            .onChange(of: viewModel.currentSort) { _ in
-                Task { await viewModel.loadHelpRequests() }
+            .onChange(of: viewModel.currentSort) { _, _ in
+                Task {
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second debounce
+                    await viewModel.loadHelpRequests()
+                }
             }
             // ✅ NUEVO: Manejo de navegación para ir al Perfil y Ajustes
             .navigationDestination(for: AppRoute.self) { route in
@@ -104,15 +110,13 @@ private struct AdminDonationRow: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            // Avatar con iniciales
+            // Icono con círculo de fondo (Categoría)
             ZStack {
                 Circle()
                     .fill(Color(UIColor.secondarySystemBackground))
                     .frame(width: 48, height: 48)
-                
-                Text(initials(name: donation.donorName))
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
+                Image(systemName: iconForType(donation.type))
+                    .foregroundStyle(Color("AccentColor"))
             }
             
             VStack(alignment: .leading, spacing: 4) {
@@ -154,11 +158,14 @@ private struct AdminDonationRow: View {
         )
     }
     
-    func initials(name: String?) -> String {
-        guard let name = name, !name.isEmpty else { return "?" }
-        let parts = name.split(separator: " ")
-        let first = parts.first?.prefix(1) ?? ""
-        let last = parts.count > 1 ? parts.last?.prefix(1) ?? "" : ""
-        return "\(first)\(last)".uppercased()
+    func iconForType(_ type: String) -> String {
+        switch type.lowercased() {
+        case "alimentos": return "carrot.fill"
+        case "ropa": return "tshirt.fill"
+        case "medicinas": return "cross.case.fill"
+        case "muebles": return "sofa.fill"
+        case "equipo": return "wrench.and.screwdriver"
+        default: return "archivebox.fill"
+        }
     }
 }

@@ -290,7 +290,7 @@ private struct FullScreenImageView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: "xmark")
                             .font(.title2)
                             .foregroundStyle(.white)
                     }

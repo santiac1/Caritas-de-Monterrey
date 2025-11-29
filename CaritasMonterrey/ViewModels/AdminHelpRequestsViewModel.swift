@@ -13,8 +13,10 @@ final class AdminHelpRequestsViewModel: ObservableObject {
     @Published var currentSort: SortOrder = .newest
 
     func loadHelpRequests() async {
+        if isLoading { return }
         isLoading = true
         errorMessage = nil
+        defer { isLoading = false }
         do {
             // 1. Construimos la "base" de la consulta (Filtros)
             var query = SupabaseManager.shared.client
@@ -35,6 +37,7 @@ final class AdminHelpRequestsViewModel: ObservableObject {
 
             // 4. Cargar perfiles de usuarios (Donantes)
             let userIds = Array(Set(fetched.map { $0.user_id }))
+            print("DEBUG: User IDs to fetch: \(userIds)")
             var profiles: [UUID: Profile] = [:]
             
             if !userIds.isEmpty {
@@ -45,24 +48,29 @@ final class AdminHelpRequestsViewModel: ObservableObject {
                     .execute()
                     .value
                 profileList.forEach { profiles[$0.id] = $0 }
+                print("DEBUG: Fetched Profiles: \(profileList)")
             }
 
             // 5. Unir donación con nombre del donante
             donations = fetched.map { donation in
                 var donation = donation
                 if let profile = profiles[donation.user_id] {
+                    print("hi")
                     let fullName = [profile.firstName, profile.lastName]
                         .compactMap { $0 }
                         .joined(separator: " ")
                         .trimmingCharacters(in: .whitespaces)
                     donation.donorName = fullName.isEmpty ? profile.username : fullName
+                } else {
+                    print("no")
                 }
                 return donation
             }
         } catch {
+            if (error as? CancellationError) != nil { return }
             errorMessage = error.localizedDescription
+            print(errorMessage!)
         }
-        isLoading = false
     }
 
     // Funciones de acción (Sin cambios)
