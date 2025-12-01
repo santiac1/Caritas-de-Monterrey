@@ -21,9 +21,22 @@
 		FB37B7B22EA70559001B47C1 /* CaritasMonterrey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CaritasMonterrey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DAB1A1652EDBD90600B70680 /* Exceptions for "CaritasMonterrey" folder in "CaritasMonterrey" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FB37B7B12EA70559001B47C1 /* CaritasMonterrey */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		FB37B7CB2EA70599001B47C1 /* CaritasMonterrey */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DAB1A1652EDBD90600B70680 /* Exceptions for "CaritasMonterrey" folder in "CaritasMonterrey" target */,
+			);
 			path = CaritasMonterrey;
 			sourceTree = "<group>";
 		};
@@ -290,6 +303,7 @@
 				DEVELOPMENT_TEAM = QF3KWRPJP5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CaritasMonterrey/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Cáritas";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Show the user location";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -326,6 +340,7 @@
 				DEVELOPMENT_TEAM = QF3KWRPJP5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CaritasMonterrey/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Cáritas";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Show the user location";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

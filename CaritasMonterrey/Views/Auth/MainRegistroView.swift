@@ -3,6 +3,8 @@ import AVKit
 import AVFoundation
 
 // 1. Definimos las rutas posibles fuera de la vista
+// (Asegúrate de tener definido tu enum AuthRoute en tu proyecto,
+// o defínelo aquí si falta. Asumo que ya existe en otro archivo).
 
 struct MainRegistroView: View {
     // 2. Variable de estado para controlar toda la navegación del stack
@@ -22,7 +24,7 @@ struct MainRegistroView: View {
                 } else {
                     Color(.systemBackground).ignoresSafeArea()
                 }
-                
+               
                 // --- CONTENIDO ---
                 VStack {
                     // Logo
@@ -33,15 +35,15 @@ struct MainRegistroView: View {
                     
                     // Botones en la parte inferior
                     VStack(spacing: 16) {
-                        
-                        // 4. Botón "Iniciar Sesión" (Ahora es un Button, no un Link)
+                       
+                        // 4. Botón "Iniciar Sesión"
                         Button(action: {
                             // Lógica aquí
                             path.append(AuthRoute.login)
                         }) {
                             Text("Iniciar Sesión")
                                 .font(.headline.weight(.bold))
-                               
+                                
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 11)
                             
@@ -54,7 +56,7 @@ struct MainRegistroView: View {
                         }) {
                             Text("Crear Cuenta")
                                 .font(.headline.weight(.bold))
-                               
+                                
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 11)
                         }
@@ -64,9 +66,8 @@ struct MainRegistroView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 50)
                 }
-                
+               
                 // 5. Destino de navegación centralizado
-
                 .navigationDestination(for: AuthRoute.self) { route in
                     switch route {
                     case .login:
@@ -78,7 +79,7 @@ struct MainRegistroView: View {
             }
         }
     }
-           
+            
     
     // MARK: - Componentes Visuales
     
@@ -102,29 +103,6 @@ struct MainRegistroView: View {
     }
 }
 
-// Mantén tu código de LoopingVideoPlayer y PlayerUIView exactamente igual aquí abajo...
-// (No es necesario cambiar nada en el reproductor de video)
-    
-    // MARK: - Componentes Visuales
-    
-    private var logoHeader: some View {
-        HStack {
-            Spacer()
-            if let icon = UIImage(named: "caritas") {
-                Image(uiImage: icon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 100) // ¡Más grande!
-                    .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
-            } else {
-                Image(systemName: "heart.text.square.fill")
-                    .font(.system(size: 100))
-                    .foregroundStyle(Color("AccentColor"))
-            }
-            Spacer()
-        }
-        .padding(.bottom, 30) // Ajuste de padding inferior para el logo
-    }
 // MARK: - Video de Fondo
 struct LoopingVideoPlayer: UIViewRepresentable {
     let videoName: String
@@ -177,7 +155,12 @@ class PlayerUIView: UIView {
         }
         
         let url = URL(fileURLWithPath: path)
-        let asset = AVAsset(url: url)
+        
+        // --- CORRECCIÓN AQUÍ ---
+        // Antes: let asset = AVAsset(url: url) -> Deprecado
+        // Ahora: Usamos AVURLAsset explícitamente
+        let asset = AVURLAsset(url: url)
+        
         let item = AVPlayerItem(asset: asset)
         let queuePlayer = AVQueuePlayer(playerItem: item)
         
@@ -222,4 +205,3 @@ class PlayerUIView: UIView {
     MainRegistroView()
         .environmentObject(AppState())
 }
-

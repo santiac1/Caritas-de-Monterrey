@@ -128,10 +128,16 @@ struct LocationDetailSheet: View {
         }
     }
     
+    // CORRECCIÓN EXACTA SEGÚN EL WARNING
     private func openInMaps() {
-        let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-        let placemark = MKPlacemark(coordinate: coordinate)
-        let mapItem = MKMapItem(placemark: placemark)
+        // Creamos un CLLocation estándar
+        let locationObj = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        
+        // Usamos EXACTAMENTE el inicializador que pide el warning: init(location:address:)
+        // Pasamos nil en address ya que MapKit resolverá la dirección o usará el pin,
+        // o puedes pasar un diccionario de dirección si lo tuvieras formateado.
+        let mapItem = MKMapItem(location: locationObj, address: nil)
+        
         mapItem.name = location.name
         mapItem.openInMaps()
     }

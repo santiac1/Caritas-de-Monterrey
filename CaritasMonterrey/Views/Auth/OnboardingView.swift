@@ -62,7 +62,7 @@ struct OnboardingView: View {
                                         .foregroundColor(.secondary)
                                         .multilineTextAlignment(.center)
                                         .padding(.horizontal, 30)
-                                    
+                                   
                                     // Texto "ver más" solo en la última página
                                     if page.isLast {
                                         Button {
@@ -145,18 +145,17 @@ struct OnboardingView: View {
                     .padding(.horizontal, 40)
                     .padding(.bottom, 50)
                 }
-
-                // 🔁 Navegación automática al login
-                NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
-                    EmptyView()
-                }
-                .hidden()
-                
-                // 🔁 Navegación automática a MainRegistro
-                NavigationLink(destination: MainRegistroView(), isActive: $navigateToMainRegistro) {
-                    EmptyView()
-                }
-                .hidden()
+            }
+            // --- CORRECCIONES AQUÍ ---
+            // Reemplazamos los NavigationLink ocultos por .navigationDestination
+            
+            // 🔁 Navegación automática al login
+            .navigationDestination(isPresented: $navigateToLogin) {
+                LoginView()
+            }
+            // 🔁 Navegación automática a MainRegistro
+            .navigationDestination(isPresented: $navigateToMainRegistro) {
+                MainRegistroView()
             }
             .sheet(isPresented: $showTermsAndPrivacy) {
                 TermsAndPrivacyView()
@@ -194,33 +193,33 @@ struct TermsAndPrivacyView: View {
             Text("Aviso de Privacidad")
                 .font(.title2)
                 .bold()
-            
+           
             Text("CÁRITAS DE MONTERREY, A.B.P.")
                 .font(.headline)
-            
+           
             Group {
                 Text("Introducción")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 Text("CÁRITAS DE MONTERREY, A.B.P. informa sobre la recopilación, propósito y protección de datos personales de acuerdo con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).")
-                
+               
                 Text("Sujetos de Datos")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 Text("Se protegen los datos personales de beneficiarios, donantes, voluntarios, prestadores de servicio social y personal.")
-                
+               
                 Text("Responsable")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 Text("CÁRITAS DE MONTERREY, A.B.P., ubicada en FRANCISCO G. SADA PTE 2810 OBISPADO MONTERREY, NUEVO LEON, MEXICO 64040, es responsable del tratamiento de datos.")
-                
+               
                 Text("Finalidades Primarias")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 VStack(alignment: .leading, spacing: 4) {
                     Text("1. Recaudación de donaciones.")
                     Text("2. Registro de donantes y pagos en línea.")
@@ -232,36 +231,36 @@ struct TermsAndPrivacyView: View {
                     Text("8. Voluntariado.")
                     Text("9. Generación de bases de datos.")
                 }
-                
+               
                 Text("Finalidades Secundarias")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 VStack(alignment: .leading, spacing: 4) {
                     Text("1. Evaluación de calidad de servicio.")
                     Text("2. Envío de Boletines Electrónicos.")
                     Text("3. Mercadotecnia o publicidad.")
                     Text("4. Desarrollo de estudios y programas para determinar hábitos de consumo.")
                 }
-                
+               
                 Text("Limitación de Uso de Datos")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 Text("Los usuarios pueden enviar un correo electrónico a caritas@caritas.org.mx para optar por no recibir comunicaciones relacionadas con las finalidades secundarias.")
-                
+               
                 Text("Cambios al Aviso de Privacidad")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 Text("Las actualizaciones se notificarán a través del sitio web de la institución.")
-                
+               
                 Text("Derechos ARCO")
                     .font(.headline)
                     .padding(.top, 8)
-                
+               
                 Text("Los titulares de datos pueden ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición mediante aviso escrito en las oficinas de la institución.")
-                
+               
                 Text("Última actualización: 08/01/2025")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -316,4 +315,3 @@ private struct OnboardingPage: Identifiable {
 #Preview {
     OnboardingView()
 }
-

@@ -1,16 +1,17 @@
 import SwiftUI
 import MapKit
 import CoreLocation
-import Auth
+// import Auth // Asumo que esto es de tu proyecto
+// importadas las dependencias necesarias...
 
 struct MapView: View {
+    // MARK: - Propiedades de Estado
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var locationManager = CLLocationManager()
     @EnvironmentObject private var viewModel: MapaViewModel
     @EnvironmentObject private var appState: AppState
 
-    @State private var fullMap = true
-    
+    // Sheet management
     private enum MapSheet: Identifiable {
         case detail(Location)
         case donation(Location)
@@ -26,7 +27,9 @@ struct MapView: View {
     @State private var activeSheet: MapSheet?
 
     var body: some View {
-        VStack {
+        VStack { // Volvemos a VStack o simplemente Map como root si no hay más elementos
+            
+            // MARK: - Mapa Principal
             Map(position: $position) {
                 UserAnnotation()
 
@@ -56,10 +59,11 @@ struct MapView: View {
                     Task { await viewModel.fetchMapa() }
                 }
             }
+            // NOTA: Hemos quitado .mapControls para usar nuestros propios botones personalizados
+            
             .mapControls {
-                if fullMap {
-                    MapUserLocationButton()
-                }
+                MapCompass()
+                MapUserLocationButton()
             }
         }
         .sheet(item: $activeSheet) { item in
@@ -71,7 +75,6 @@ struct MapView: View {
                         activeSheet = .donation(location)
                     }
                 )
-                // --- CAMBIO: Empezamos en .medium para ver más info de golpe ---
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled(upThrough: .medium))
@@ -85,10 +88,40 @@ struct MapView: View {
             }
         }
     }
+
+    // MARK: - Lógica de Negocio
+    private func selectNearestLocation() {
+        guard let userLocation = locationManager.location else { return }
+        
+        var closestLocation: Location?
+        var smallestDistance: CLLocationDistance?
+        
+        for location in viewModel.locations {
+            let locCoordinate = CLLocation(latitude: location.latitude, longitude: location.longitude)
+            let distance = userLocation.distance(from: locCoordinate)
+            
+            if smallestDistance == nil || distance < smallestDistance! {
+                smallestDistance = distance
+                closestLocation = location
+            }
+        }
+        
+        if let closest = closestLocation {
+            // Abrimos el detalle
+            activeSheet = .detail(closest)
+            
+            // Movemos la cámara al bazar
+            withAnimation {
+                position = .region(MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: closest.latitude, longitude: closest.longitude),
+                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                ))
+            }
+        }
+    }
 }
 
-// MARK: - Componentes Visuales del Mapa
-
+// MARK: - Componentes Visuales (BubbleLabel)
 struct BubbleAnnotationLabel: View {
     let icon: String
     var isActive: Bool = true

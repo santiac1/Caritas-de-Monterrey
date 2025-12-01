@@ -48,8 +48,10 @@ struct DonationsView: View {
         .navigationTitle("Mis donaciones")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: appState.session?.user.id) {
+            // CORRECCIÓN: Usamos la variable 'userId' que definimos en el guard
+            // para eliminar el warning de "defined but never used".
             guard let userId = appState.session?.user.id else { return }
-            await viewModel.load(for: appState.session?.user.id)
+            await viewModel.load(for: userId)
         }
     }
     
@@ -89,7 +91,7 @@ private struct DonationRow: View {
                 Text(donation.name)
                     .font(.headline)
                     .lineLimit(1)
-                
+               
                 Text(donation.formattedDate)
                     .font(.caption)
                     .foregroundStyle(.secondary)

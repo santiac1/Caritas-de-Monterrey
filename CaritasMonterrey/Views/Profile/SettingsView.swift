@@ -20,7 +20,7 @@ struct SettingsView: View {
                     TextField("Nombre público", text: $viewModel.username)
                         .textInputAutocapitalization(.words)
                 }
-                
+               
                 HStack {
                     Image(systemName: "person.fill")
                         .foregroundStyle(.secondary)
@@ -28,7 +28,7 @@ struct SettingsView: View {
                     TextField("Nombre", text: $viewModel.firstName)
                         .textInputAutocapitalization(.words)
                 }
-                
+               
                 HStack {
                     Image(systemName: "person")
                         .foregroundStyle(.secondary)
@@ -36,7 +36,7 @@ struct SettingsView: View {
                     TextField("Apellido", text: $viewModel.lastName)
                         .textInputAutocapitalization(.words)
                 }
-                
+               
                 HStack {
                     Image(systemName: "phone.fill")
                         .foregroundStyle(.green)
@@ -101,7 +101,8 @@ struct SettingsView: View {
         .onAppear {
             viewModel.loadProfileData(appState: appState)
         }
-        .onChange(of: appState.profile?.id) { _ in
+        // CORRECCIÓN: Actualizado para iOS 17+. Usamos closure de dos parámetros (_, _)
+        .onChange(of: appState.profile?.id) { _, _ in
             viewModel.loadProfileData(appState: appState)
         }
         .alert("¡Tus datos fueron modificados correctamente!", isPresented: $showSuccessAlert) {

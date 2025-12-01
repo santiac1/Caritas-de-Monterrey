@@ -14,7 +14,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
 
         let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-
+        
+        // Aquí es donde normalmente enviarías este token a tu servidor backend (Supabase/Firebase).
+        print("Device Push Token: \(token)")
     }
 }
-

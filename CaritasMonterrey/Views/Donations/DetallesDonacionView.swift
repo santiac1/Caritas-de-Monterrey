@@ -4,8 +4,8 @@ struct DetallesDonacionView: View {
     let donation: Donation
     @Environment(\.dismiss) var dismiss
     
-    // Estado para mostrar la imagen en pantalla completa
-    @State private var selectedImage: String?
+    // 1. CORRECCIÓN: Cambiamos String? por una estructura propia que sea Identifiable
+    @State private var selectedImage: ImageItem?
     
     var body: some View {
         ZStack {
@@ -19,47 +19,47 @@ struct DetallesDonacionView: View {
                     
                         // Fila 1: Nombre (Solo y Grande)
                         Text(donation.name)
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(.primary)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(.primary)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                                     
                         // Fila 2: Badge de Estado + Fecha (Separados por Spacer)
                         HStack(alignment: .center, spacing: 12) {
-                        // Badge (Izquierda)
-                        Text(donation.statusDisplay.rawValue)
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundStyle(donation.statusDisplay.color)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(donation.statusDisplay.color.opacity(0.1))
-                        .clipShape(Capsule())
-                                            
-                        Spacer() // ✅ Empuja la fecha a la derecha
-                                                
-                                                // Fecha (Derecha)
-                                                HStack(spacing: 4) {
-                                                    Image(systemName: "calendar")
-                                                    if let created = donation.created_at {
-                                                        Text(created, format: .dateTime.day().month().year())
-                                                    } else {
-                                                        Text("—")
-                                                    }
-                                                }
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                            }
-                                            
-                                            // Fila 3: ID
+                            // Badge (Izquierda)
+                            Text(donation.statusDisplay.rawValue)
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .foregroundStyle(donation.statusDisplay.color)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(donation.statusDisplay.color.opacity(0.1))
+                                .clipShape(Capsule())
+                                                        
+                            Spacer() // ✅ Empuja la fecha a la derecha
+                                                                        
+                            // Fecha (Derecha)
+                            HStack(spacing: 4) {
+                                Image(systemName: "calendar")
+                                if let created = donation.created_at {
+                                    Text(created, format: .dateTime.day().month().year())
+                                } else {
+                                    Text("—")
+                                }
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        }
+                                                            
+                        // Fila 3: ID
                         Text("ID: #\(donation.id)")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                             .padding(.top, 2)
-                                        
+                                                                    
                         // Fila 4: Información del Donante (Debajo del ID)
                         if let donor = donation.donorName {
-                        Label(donor, systemImage: "person.circle.fill")
+                            Label(donor, systemImage: "person.circle.fill")
                                 .font(.title3)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 4)
@@ -101,7 +101,8 @@ struct DetallesDonacionView: View {
                                     }
                                     .frame(maxWidth: .infinity)
                                     .onTapGesture {
-                                        selectedImage = imageUrl
+                                        // 2. CORRECCIÓN: Envolvemos la URL en nuestra estructura segura
+                                        selectedImage = ImageItem(id: imageUrl)
                                     }
                                 }
                             }
@@ -201,8 +202,9 @@ struct DetallesDonacionView: View {
             }
             .navigationTitle("Detalles")
             .navigationBarTitleDisplayMode(.inline)
-            .fullScreenCover(item: $selectedImage) { imageUrl in
-                FullScreenImageView(imageUrl: imageUrl)
+            // 3. CORRECCIÓN: Usamos el item (que ahora es ImageItem) para obtener la URL
+            .fullScreenCover(item: $selectedImage) { item in
+                FullScreenImageView(imageUrl: item.id)
             }
         }
     }
@@ -222,7 +224,7 @@ private struct DetailRow: View {
                 Circle()
                     .fill(Color(UIColor.systemGray6))
                     .frame(width: 40, height: 40)
-                
+               
                 Image(systemName: icon)
                     .foregroundStyle(.black.opacity(0.7))
                     .font(.system(size: 16))
@@ -232,7 +234,7 @@ private struct DetailRow: View {
                 Text(title)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                
+               
                 Text(value)
                     .font(.body)
                     .fontWeight(.semibold)
@@ -257,7 +259,7 @@ private struct FullScreenImageView: View {
         NavigationStack {
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
-                
+               
                 AsyncImage(url: URL(string: imageUrl)) { phase in
                     switch phase {
                     case .success(let image):
@@ -300,9 +302,10 @@ private struct FullScreenImageView: View {
     }
 }
 
-// ✅ Extension vital para que no crashee el zoom
-extension String: Identifiable {
-    public var id: String { self }
+// 4. CORRECCIÓN: Definimos una estructura pequeña para manejar el Identifiable
+// en lugar de usar "extension String: Identifiable"
+struct ImageItem: Identifiable {
+    let id: String
 }
 
 #Preview {
