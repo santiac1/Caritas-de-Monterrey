@@ -25,7 +25,6 @@ struct Campaign: Identifiable, Codable, Hashable {
     }
 }
 
-// Payload para crear/actualizar campañas
 struct CampaignPayload: Encodable {
     let title: String
     let description: String

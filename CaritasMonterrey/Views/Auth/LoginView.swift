@@ -5,7 +5,6 @@ struct LoginView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     
-    // MARK: - Variables de Estado
     @State private var email: String = ""
     @State private var password: String = ""
     
@@ -14,7 +13,6 @@ struct LoginView: View {
     @State private var showPassword = false
     @FocusState private var focusedField: Field?
     
-    // Estado para animación de error
     @State private var shakeAttempts: Int = 0
     
     private var titleColor: Color {
@@ -27,7 +25,6 @@ struct LoginView: View {
     }
 
     var body: some View {
-        // ✅ CORRECTO: Sin NavigationStack aquí, ya que MainRegistroView lo provee.
         ZStack {
             Color(.systemBackground)
                 .ignoresSafeArea()
@@ -41,7 +38,6 @@ struct LoginView: View {
                     logoHeader
                         .padding(.top, 1)
                     
-                    // Encabezado con enlace a Registro (Lógica AuthRoute implementada)
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Iniciar sesión")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -52,7 +48,6 @@ struct LoginView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             
-                            // 👇 AQUÍ USAMOS LA LÓGICA DE ENUMS
                             NavigationLink(value: AuthRoute.signup) {
                                 Text("Regístrate")
                                     .font(.subheadline.weight(.bold))
@@ -121,7 +116,7 @@ struct LoginView: View {
         }
     }
 
-    // MARK: - Componentes Visuales
+    // Empieza para visual
 
     private var logoHeader: some View {
         HStack {
@@ -167,16 +162,16 @@ struct LoginView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 11) // 11 como en MainRegistroView
+            .padding(.vertical, 11)
         }
         .disabled(isLoading)
-        .buttonStyle(.glassProminent) // Estilo aplicado al botón completo
+        .buttonStyle(.glassProminent)
         .tint(Color("SecondaryBlue"))
         .opacity(isLoading ? 0.8 : 1)
         .padding(.top, 10)
     }
     
-    // MARK: - Lógica y Animaciones
+    // Empieza logica para animaciones
     private func signIn() async {
         errorMessage = nil
         
@@ -210,7 +205,6 @@ struct LoginView: View {
     }
 }
 
-// MARK: - Efecto Shake (Temblor)
 struct ShakeEffect: GeometryEffect {
     var amount: CGFloat = 10
     var shakesPerUnit = 3
@@ -223,8 +217,6 @@ struct ShakeEffect: GeometryEffect {
     }
 }
 
-// MARK: - Campo Personalizado (Estilo borde cortado) - Compartido
-// NOTA: Si este struct ya existe en otro archivo o en SignUpView, bórralo de aquí para evitar errores de duplicidad.
 struct CustomStyledField<Field: Hashable>: View {
     let title: String
     @Binding var text: String
@@ -234,7 +226,6 @@ struct CustomStyledField<Field: Hashable>: View {
     var fieldValue: Field? = nil
     @Environment(\.colorScheme) private var colorScheme
     
-    // Detectar si el campo está activo
     private var isActive: Bool {
         if let focusedField = focusedField, let fieldValue = fieldValue {
             return focusedField.wrappedValue == fieldValue
@@ -244,10 +235,8 @@ struct CustomStyledField<Field: Hashable>: View {
     
     private var borderColor: Color {
         if isActive {
-            // Campo seleccionado
             return colorScheme == .dark ? Color("PrimaryCyan") : Color("SecondaryBlue")
         } else {
-            // Campo no seleccionado
             return colorScheme == .dark ? Color.white : Color.black
         }
     }
@@ -320,7 +309,6 @@ struct CustomStyledField<Field: Hashable>: View {
                 .background(labelBackgroundColor)
                 .offset(x: 20, y: -9) // Alineado más cerca de la línea
         }
-        // Hacer que cualquier toque dentro del borde enfoque el campo correspondiente
         .contentShape(Rectangle())
         .onTapGesture {
             if let focusedField = focusedField, let fieldValue = fieldValue {

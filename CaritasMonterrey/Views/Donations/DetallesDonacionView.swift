@@ -134,6 +134,12 @@ struct DetallesDonacionView: View {
                                 value: donation.help_needed ? "Recolección solicitada" : "Entrega personal"
                             )
                             
+                            // Fila: Bazar
+                            if let bazaarName = donation.location_name, !bazaarName.isEmpty {
+                                Divider().padding(.leading, 60)
+                                DetailRow(icon: "building.2.fill", title: "Bazar", value: bazaarName)
+                            }
+                            
                             // Fila: Peso (si aplica)
                             if let shipping = donation.shipping_weight, !shipping.isEmpty, donation.help_needed {
                                 Divider().padding(.leading, 60)
@@ -309,5 +315,26 @@ struct ImageItem: Identifiable {
 }
 
 #Preview {
-    DetallesDonacionView(donation: Donation.sampleDonations[0])
+    DetallesDonacionView(
+        donation: Donation(
+            id: 1,
+            user_id: UUID(),
+            name: "Donación de ropa de invierno",
+            type: "ropa",
+            status: .in_process,
+            help_needed: true,
+            shipping_weight: "10 kg",
+            pickup_address: "Av. Siempre Viva 123, Monterrey, N.L.",
+            pickup_date: Date(),
+            notes: "Chamarras y suéteres en muy buen estado.",
+            amount: nil,
+            created_at: Date(),
+            location_name: "Centro Cáritas Obispado",
+            admin_note: "Gracias por tu apoyo, esta donación ayudará a muchas familias.",
+            image_urls: [
+                "https://picsum.photos/600/400"
+            ],
+            donorName: "Juan Pérez"
+        )
+    )
 }

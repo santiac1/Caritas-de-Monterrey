@@ -6,7 +6,7 @@ struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
-    // MARK: - Variables de Estado
+    // Variables de estado
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var publicName: String = ""
@@ -45,7 +45,7 @@ struct SignUpView: View {
         isAdult
     }
     
-    // Array de errores faltantes para mostrar en rojo
+    // ERRORES POSIBLES
     private var validationErrors: [String] {
         var errors: [String] = []
         if firstName.isEmpty { errors.append("Nos gustaría saber cómo te llamas.") }
@@ -68,7 +68,7 @@ struct SignUpView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
                     
-                    // 1. Header
+                    // Header
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Crea una cuenta")
                             .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -89,7 +89,7 @@ struct SignUpView: View {
                     }
                     .padding(.top, 10)
 
-                    // 2. Campos
+                    // Campos para llenar
                     VStack(spacing: 24) {
                         CustomStyledField<Field>(title: "Nombre", text: $firstName, isSecure: false, focusedField: $focusedField, fieldValue: .firstName)
                         CustomStyledField<Field>(title: "Apellido", text: $lastName, isSecure: false, focusedField: $focusedField, fieldValue: .lastName)
@@ -98,7 +98,7 @@ struct SignUpView: View {
                         CustomStyledField<Field>(title: "Teléfono", text: $phone, isSecure: false, focusedField: $focusedField, fieldValue: .phone)
                             .keyboardType(.phonePad)
                         
-                        // MARK: - Date Picker Nativo
+                        // Picker especializado para la fecha
                         ZStack(alignment: .topLeading) {
                             HStack {
                                 DatePicker("", selection: $birthdate, displayedComponents: .date)
@@ -118,7 +118,6 @@ struct SignUpView: View {
                                     .stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 1.5)
                             )
                             
-                            // Label
                             Text("Fecha de nacimiento")
                                 .font(.caption)
                                 .foregroundStyle(colorScheme == .dark ? Color.white : Color.black)
@@ -170,7 +169,6 @@ struct SignUpView: View {
                         .animation(.easeInOut(duration: 0.3), value: focusedField)
                     }
 
-                    // MARK: - Errores en Rojo (si intenta registrarse y falla validación)
                     if let errorMessage {
                         Text(errorMessage)
                             .foregroundStyle(.red)
@@ -179,14 +177,13 @@ struct SignUpView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    // 4. Texto Legal
+                    // Texto Legal
                     Text("Al hacer clic en el botón de Registrarse debajo, accedes a los [Términos de Servicio](#) de Caritas de Monterrey y reconoces el [Aviso de Privacidad](#).")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .tint(Color("AccentColor"))
                         .padding(.vertical, 10)
 
-                    // 5. Botón
                     Button {
                         Task { await register() }
                     } label: {
@@ -203,14 +200,14 @@ struct SignUpView: View {
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 30))
                     }
-                    .buttonStyle(.glassProminent) // Estilo aplicado al botón completo
+                    .buttonStyle(.glassProminent)
                     .tint(Color("SecondaryBlue"))
                     .disabled(isLoading)
                     .opacity(isLoading ? 0.7 : 1)
                     Spacer(minLength: 40)
                 }
                 .padding(24)
-                .contentShape(Rectangle()) // Hace que el fondo del scroll sea tapeable
+                .contentShape(Rectangle())
                 .onTapGesture {
                     focusedField = nil
                 }
@@ -237,13 +234,12 @@ struct SignUpView: View {
         }
     }
 
-    // MARK: - Registro
     @MainActor
     private func register() async {
         // Validar formulario y mostrar errores
         guard formIsValid else {
-            // Unir los errores en una lista legible
-            errorMessage = "¡Vaya! Revisa estos detalles para continuar:\n" + validationErrors.map { "• \($0)" }.joined(separator: "\n")
+            // Unir los errores
+            errorMessage = "¡Vaya! Revisa estos detalles para continuar:\n" + validationErrors.map { "\($0)" }.joined(separator: "\n")
             triggerErrorAnimation()
             return
         }
@@ -252,11 +248,11 @@ struct SignUpView: View {
         errorMessage = nil
 
         do {
-            // 1. Registrar usuario en Supabase (sin asumir que devuelve sesión activa)
+            // Registro de usuario dentro de la base de datos
             let response = try await appState.signUp(email: email, password: password)
             let user = response.user
             
-            // 2. Crear perfil en BD
+            // Crear el perfil en la BD
             let payload = ProfileInsert(
                 id: user.id,
                 role: "user",
@@ -277,8 +273,7 @@ struct SignUpView: View {
                 .single()
                 .execute()
 
-            // 3. Iniciar sesión automáticamente para abrir la app
-            // Independientemente de lo que devuelva signUp, intentamos un signIn directo.
+            // Intentar SignIn directo
             try await appState.signIn(email: email, password: password)
             
         } catch {
@@ -289,7 +284,6 @@ struct SignUpView: View {
         isLoading = false
     }
 
-    // MARK: - Animación de error
     private func triggerErrorAnimation() {
         withAnimation(.default) {
             shakeAttempts += 1
@@ -299,7 +293,6 @@ struct SignUpView: View {
     }
 }
 
-// ... (Resto de estructuras ProfileInsert y CustomDatePickerField se mantienen igual)
 private struct ProfileInsert: Encodable {
     let id: UUID
     let role: String

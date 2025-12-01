@@ -2,7 +2,7 @@
 //  BazaarManagementViewModel.swift
 //  CaritasMonterrey
 //
-//  Created by OpenAI on 2024.
+//  Created by Alumno on 17/10/25.
 //
 
 import Foundation

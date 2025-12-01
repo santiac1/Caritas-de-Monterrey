@@ -60,7 +60,7 @@ struct CampaignView: View {
             .listSectionSeparator(.hidden)
         }
         .scrollContentBackground(.hidden)
-        .background(Color(.systemGroupedBackground))
+        .background(Color(.secondarySystemBackground))
         .listStyle(.plain)
         .navigationTitle("Gestión de campañas")
         .toolbar {
@@ -219,8 +219,6 @@ private struct CampaignCard: View {
     }
 }
 
-// MARK: - Campaign Form
-
 private struct CampaignForm: View {
     var campaign: Campaign?
     var onSave: (CampaignPayload) -> Void
@@ -230,10 +228,10 @@ private struct CampaignForm: View {
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var startDate: Date = Date()
-    @State private var endDate: Date = Date().addingTimeInterval(7 * 24 * 60 * 60) // 7 days from now
+    @State private var endDate: Date = Date().addingTimeInterval(7 * 24 * 60 * 60)
     @State private var isActive: Bool = true
     
-    // Photo picker states
+    // Picker de fotos
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var selectedImage: Image?
     @State private var selectedImageData: Data?
@@ -251,7 +249,7 @@ private struct CampaignForm: View {
             }
             
             Section("Imagen") {
-                // PhotosPicker button
+                // Botón para el picker de fotos
                 PhotosPicker(
                     selection: $selectedPhotoItem,
                     matching: .images,
@@ -267,7 +265,7 @@ private struct CampaignForm: View {
                     .padding(.vertical, 8)
                 }
                 
-                // Image preview
+                // Preview
                 if let selectedImage {
                     selectedImage
                         .resizable()
@@ -367,7 +365,6 @@ private struct CampaignForm: View {
         }
     }
     
-    // MARK: - Load Image
     private func loadImage() async {
         guard let item = selectedPhotoItem else { return }
         
@@ -375,7 +372,6 @@ private struct CampaignForm: View {
             if let data = try await item.loadTransferable(type: Data.self),
                let uiImage = UIImage(data: data) {
                 
-                // 1. Resize if needed (max 1024px)
                 let maxDimension: CGFloat = 1024
                 var finalImage = uiImage
                 
@@ -396,7 +392,6 @@ private struct CampaignForm: View {
                 }
                 
                 selectedImage = Image(uiImage: finalImage)
-                // 2. Compress to JPEG 0.6
                 selectedImageData = finalImage.jpegData(compressionQuality: 0.6)
             }
         } catch {
@@ -404,11 +399,10 @@ private struct CampaignForm: View {
         }
     }
     
-    // MARK: - Save Campaign
     private func saveCampaign() async {
         var finalImageUrl: String? = uploadedImageUrl ?? campaign?.image_url
         
-        // Upload new image if selected
+        // Subir imagen
         if let imageData = selectedImageData {
             isUploadingImage = true
             do {

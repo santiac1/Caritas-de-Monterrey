@@ -8,7 +8,7 @@ final class ProfileSettingsViewModel: ObservableObject {
     @Published var firstName: String = ""
     @Published var lastName: String = ""
     @Published var phone: String = ""
-
+    
     @Published private(set) var isSaving = false
     @Published private(set) var didSave = false
     @Published var errorMessage: String?

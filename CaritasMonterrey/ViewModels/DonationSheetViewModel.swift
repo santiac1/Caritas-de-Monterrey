@@ -7,21 +7,18 @@ import PhotosUI
 @MainActor
 final class DonationSheetViewModel: ObservableObject {
 
-    // MARK: - Tipo dinámico (opción para el picker)
+    //Desplegar opciones
     struct TypeOption: Identifiable, Hashable {
         let id = UUID()
-        let slug: String          // lo que se guarda en BD
-        let displayName: String   // lo que ve el usuario
-        let systemImage: String   // para icons en el picker
+        let slug: String
+        let displayName: String   // View para el usuario
+        let systemImage: String   // Picker icons
     }
     
-    // Almacena el bazar preseleccionado hasta que se cargan los demás
     private var preselectedBazaar: Location?
 
-    // MARK: - Props observables (UI)
     @Published var donationName: String = ""
     @Published var notes: String = ""
-    @Published var amount: String = ""            // ya no se usa (no hay monetaria)
     @Published var helpNeeded: Bool = false {
         didSet {
             preferPickupAtBazaar = !helpNeeded
@@ -33,7 +30,7 @@ final class DonationSheetViewModel: ObservableObject {
     // Entrega
     @Published var preferPickupAtBazaar: Bool = true {
         didSet {
-            // Si activa la opción y no hay bazar seleccionado, autoselecciona el primero DISPONIBLE
+            // Determinar uno default
             if preferPickupAtBazaar, selectedBazaar == nil {
                 selectedBazaar = bazaars.first
             }
@@ -41,14 +38,11 @@ final class DonationSheetViewModel: ObservableObject {
         }
     }
     
-    // Lista filtrada de bazares (Solo activos)
+    // Filtrar bazares
     @Published var bazaars: [Location] = []
-    
     @Published var selectedBazaar: Location? {
         didSet { recomputeAvailableTypes() }
     }
-
-    // ... (el resto de tus propiedades @Published no cambian) ...
     @Published private(set) var availableTypes: [TypeOption] = []
     @Published var selectedType: TypeOption? = nil
     @Published var selectedPhotoItems: [PhotosPickerItem] = []
@@ -57,19 +51,23 @@ final class DonationSheetViewModel: ObservableObject {
     @Published private(set) var isSubmitting = false
     @Published var submitOK = false
     @Published var errorMessage: String?
+    @Published var restrictedMessage: String?
     var currentUserId: UUID?
+    
+    private let classifier = DonationClassifier()
+    private var allBazaars: [Location] = []
+    private var isLargeAppliance = false
 
     // Infra
     private let client = SupabaseManager.shared.client
     private var hasLoadedBazaars = false
     
-    // --- INIT POR DEFECTO ---
     init() { }
 
-    // --- INIT CON PRESELECCIÓN ---
+    //Preselección inicial
     convenience init(preselectedBazaar: Location) {
         self.init()
-        // Solo permitimos la preselección si el bazar está activo
+        // Solo activos
         if preselectedBazaar.isActive {
             self.preselectedBazaar = preselectedBazaar
             self.preferPickupAtBazaar = true
@@ -84,7 +82,7 @@ final class DonationSheetViewModel: ObservableObject {
         pickupAddress = address
     }
 
-    // MARK: - Validaciones
+    // Validar
     var isValid: Bool {
         guard !donationName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
         guard !selectedImages.isEmpty else { return false }
@@ -94,8 +92,7 @@ final class DonationSheetViewModel: ObservableObject {
         if helpNeeded && pickupAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return false }
         return currentUserId != nil
     }
-
-    // MARK: - Cargar bazares (CORREGIDO)
+    
     func loadBazaars() async {
         guard !hasLoadedBazaars else { return }
         hasLoadedBazaars = true
@@ -108,19 +105,17 @@ final class DonationSheetViewModel: ObservableObject {
                 .order("name")
                 .execute()
                 .value
-
-            // ✅ Filtramos solo los activos
             let activeBazaars = response.filter { $0.isActive }
-            bazaars = activeBazaars
+            self.allBazaars = activeBazaars
+            self.applyBazaarFilter()
             
-            // --- LÓGICA DE SELECCIÓN ---
             if let preselected = self.preselectedBazaar {
-                // Verificamos que el preseleccionado siga existiendo en la lista de activos
+                // Verificar existencia
                 if let found = bazaars.first(where: { $0.id == preselected.id }) {
                     self.selectedBazaar = found
                     self.preferPickupAtBazaar = true
                 } else {
-                    // Si el preseleccionado ahora está cerrado (inactivo), seleccionamos el primero disponible
+                    // Seleccionar alguno disponible
                     self.selectedBazaar = bazaars.first
                 }
                 self.preselectedBazaar = nil
@@ -137,8 +132,10 @@ final class DonationSheetViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Imágenes
     func loadImages() async {
+        print("DEBUG: Iniciando loadImages")
+        print("DEBUG: Items seleccionados: \(selectedPhotoItems.count)")
+        
         var newImages: [Image] = []
         var newData: [Data] = []
 
@@ -146,16 +143,51 @@ final class DonationSheetViewModel: ObservableObject {
             do {
                 if let data = try await item.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
+                    print("DEBUG: Imagen cargada exitosamente")
                     newImages.append(Image(uiImage: uiImage))
                     newData.append(data)
+                } else {
+                    print("DEBUG: Falló carga de data o UIImage")
                 }
             } catch {
-                print("Error al cargar imagen: \(error.localizedDescription)")
+                print("DEBUG: Error al cargar imagen: \(error.localizedDescription)")
             }
         }
 
         selectedImages = newImages
         selectedImageDatas = newData
+        
+        print("DEBUG: Data count para ML: \(newData.count)")
+        
+        // ML Prediction
+        if let firstData = newData.first, let uiImage = UIImage(data: firstData) {
+            do {
+                let prediction = try await classifier.predict(image: uiImage)
+                print("ViewModel recibió predicción: \(prediction ?? "Nula")")
+                
+                if prediction == "Electrodomestico_Grande" {
+                    self.isLargeAppliance = true
+                    print("DETECTADO: Electrodoméstico Grande - Filtrando bazares")
+                } else {
+                    self.isLargeAppliance = false
+                    print("Donación normal detectada: \(prediction ?? "sin clasificar")")
+                }
+            } catch {
+                print("⚠️ ML Error: \(error)")
+                
+                if let visionError = error as NSError?,
+                   visionError.domain == "com.apple.Vision",
+                   visionError.code == 9 {
+                    print("Prueba en un dispositivo físico para que el modelo funcione correctamente.")
+                }
+                
+                self.isLargeAppliance = false
+            }
+        } else {
+            self.isLargeAppliance = false
+            print("DEBUG: No hay data para ML prediction")
+        }
+        applyBazaarFilter()
     }
 
     func removeImage(at index: Int) {
@@ -168,7 +200,35 @@ final class DonationSheetViewModel: ObservableObject {
         selectedPhotoItems.remove(at: index)
     }
 
-    // MARK: - Mapeo de Location -> tipos
+    private func applyBazaarFilter() {
+        if isLargeAppliance {
+            // Filtrar solo Caritas Centro
+            let centro = allBazaars.filter { $0.name.contains("Centro") }  
+            bazaars = centro
+            
+            if let first = centro.first {
+                selectedBazaar = first
+                restrictedMessage = "Tu donación solo puede ser recibida en el Bazar \(first.name)"
+            } else {
+                // Si no encuentra Centro, dejar todos o manejar error
+                bazaars = allBazaars
+                restrictedMessage = nil
+            }
+        } else {
+            bazaars = allBazaars
+            restrictedMessage = nil
+        }
+        
+        // Re-validar selección
+        if let selected = selectedBazaar, !bazaars.contains(where: { $0.id == selected.id }) {
+            selectedBazaar = bazaars.first
+        } else if selectedBazaar == nil {
+            selectedBazaar = bazaars.first
+        }
+        
+        recomputeAvailableTypes()
+    }
+
     private func recomputeAvailableTypes() {
         var options: [TypeOption] = []
         func add(_ cond: Bool, slug: String, name: String, icon: String) {
@@ -185,7 +245,6 @@ final class DonationSheetViewModel: ObservableObject {
             add(l.cleaning,   slug: "limpieza",            name: "Limpieza",            icon: "sparkles")
             add(l.medicine,   slug: "medicinas",           name: "Medicinas",           icon: "cross.case.fill")
         } else {
-            // Si es recolección a domicilio, mostramos lo que acepta CUALQUIER bazar activo
             let anyFood       = bazaars.contains(where: { $0.food })
             let anyClothes    = bazaars.contains(where: { $0.clothes })
             let anyEquipment  = bazaars.contains(where: { $0.equipment })
@@ -196,15 +255,14 @@ final class DonationSheetViewModel: ObservableObject {
             
             add(anyFood,       slug: "alimentos",           name: "Alimentos",           icon: "cart.fill")
             add(anyClothes,    slug: "ropa",                name: "Ropa",                icon: "tshirt.fill")
-            add(anyEquipment,  slug: "equipo",              name: "Equipo",              icon: "wrench.and.screwdriver")
+            add(anyEquipment,  slug: "equipo",              name: "Equipo",              icon: "wrench.and.screwdriver.fill")
             add(anyFurniture,  slug: "muebles",             name: "Muebles",             icon: "sofa.fill")
-            add(anyAppliances, slug: "electrodomesticos",   name: "Electrodomésticos",   icon: "powerplug")
-            add(anyCleaning,   slug: "limpieza",            name: "Limpieza",            icon: "sparkles")
+            add(anyAppliances, slug: "electrodomesticos",   name: "Electrodomésticos",   icon: "powerplug.fill")
+            add(anyCleaning,   slug: "limpieza",            name: "Limpieza",            icon: "sparkles.fill")
             add(anyMedicine,   slug: "medicinas",           name: "Medicinas",           icon: "cross.case.fill")
         }
         availableTypes = options
         
-        // Validar selección actual
         if let sel = selectedType, !availableTypes.contains(sel) {
             selectedType = availableTypes.first
         } else if selectedType == nil {
@@ -212,11 +270,10 @@ final class DonationSheetViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Helpers
     private func initialDBStatus() -> String { "in_process" }
 
-    // MARK: - Payload
-    private struct NewDonation: Encodable {
+        //Payload
+        private struct NewDonation: Encodable {
         let user_id: UUID
         let name: String
         let type: String
@@ -231,7 +288,6 @@ final class DonationSheetViewModel: ObservableObject {
         let image_urls: [String]?
     }
 
-    // MARK: - Submit
     func submit() async {
         guard isValid, let userId = currentUserId, let sel = selectedType else {
             errorMessage = "Completa: Nombre, Foto(s), Tipo y Ubicación."
@@ -275,26 +331,23 @@ final class DonationSheetViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Storage
+    // Alamacenamiento
     private func uploadImage(data: Data, userId: UUID) async throws -> String {
         let fileName = "donation_\(userId.uuidString)_\(UUID().uuidString).jpg"
         let storage = client.storage.from("donations")
         do {
-            // CORRECCIÓN 1: Usamos la nueva firma 'upload(_:data:options:)'
-            // El nombre del archivo va sin etiqueta, y 'file:' ahora es 'data:'.
             try await storage.upload(
                 fileName,
                 data: data,
                 options: FileOptions(contentType: "image/jpeg")
             )
             
-            // CORRECCIÓN 2: 'getPublicURL' necesita 'try' (sin await) porque puede lanzar errores de validación
             let urlResponse = try storage.getPublicURL(path: fileName)
             
-            print("✅ Imagen subida: \(urlResponse.absoluteString)")
+            print("Imagen subida: \(urlResponse.absoluteString)")
             return urlResponse.absoluteString
         } catch {
-            print("⚠️ Error al subir imagen: \(error.localizedDescription)")
+            print("Error al subir imagen: \(error.localizedDescription)")
             throw error
         }
     }

@@ -33,7 +33,6 @@ struct ActionCard: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
             }
-            // Un único padding para todo el contenido
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
             .frame(maxWidth: .infinity, minHeight: HomeCardStyle.height)

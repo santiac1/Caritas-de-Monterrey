@@ -2,12 +2,11 @@
 //  LaunchScreen.swift
 //  CaritasMonterrey
 //
-//  Adapted for CaritasMonterrey
+//  CaritasMonterrey
 //
 
 import SwiftUI
 
-/// Configuración para personalizar colores, tiempos y el PUNTO DE ZOOM
 struct LaunchScreenConfig {
     var initialDelay: Double = 0.5
     var backgroundColor: Color = .white
@@ -17,12 +16,9 @@ struct LaunchScreenConfig {
     var forceHideLogo: Bool = true
     var animation: Animation = .smooth(duration: 1, extraBounce: 0)
     
-    // NUEVO: Coordenadas del punto de zoom (0,0 es arriba-izq, 1,1 es abajo-der)
-    // Por defecto es el centro, pero lo cambiaremos en la App
     var zoomAnchor: UnitPoint = .center
 }
 
-/// Esta estructura reemplaza al WindowGroup en tu App principal
 struct LaunchScreen<RootView: View, Logo: View>: Scene {
     var config: LaunchScreenConfig = .init()
     @ViewBuilder var logo: () -> Logo
@@ -96,7 +92,6 @@ fileprivate struct LaunchScreenView<Logo: View>: View {
     
     var body: some View {
         ZStack {
-            // CAPA 1: MÁSCARA (EL AGUJERO)
             Rectangle()
                 .fill(config.backgroundColor)
                 .mask {
@@ -110,7 +105,6 @@ fileprivate struct LaunchScreenView<Logo: View>: View {
                                     .blendMode(.destinationOut)
                                     .animation(.smooth(duration: 0.3, extraBounce: 0)) { content in
                                         content
-                                            // APLICAMOS EL ANCHOR AQUÍ TAMBIÉN PARA EL REBOTE
                                             .scaleEffect(scaleDown ? 0.8 : 1, anchor: config.zoomAnchor)
                                     }
                                     .visualEffect { content, geometryProxy in
@@ -119,17 +113,14 @@ fileprivate struct LaunchScreenView<Logo: View>: View {
                                         let maxScale = max(scaleX, scaleY)
                                         
                                         return content
-                                            // APLICAMOS EL ANCHOR DEL ZOOM AQUÍ
                                             .scaleEffect(scaleUp ? maxScale : 1.0, anchor: config.zoomAnchor)
                                     }
                             }
                     }
                 }
             
-            // CAPA 2: EL TAPÓN SÓLIDO
             if showSolidLogo {
                 logo
-                    // APLICAMOS EL ANCHOR AQUÍ PARA QUE COINCIDA VISUALMENTE
                     .scaleEffect(scaleDown ? 0.8 : 1, anchor: config.zoomAnchor)
                     .transition(.opacity)
             }

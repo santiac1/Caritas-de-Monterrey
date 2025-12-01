@@ -4,12 +4,6 @@
 //
 //  Created by Alumno on 20/10/25.
 //
-//
-//  NotificationsView.swift
-//  CaritasMonterrey
-//
-//  Created by Alumno on 20/10/25.
-//
 
 import SwiftUI
 
@@ -19,7 +13,6 @@ struct NotificationsView: View {
     var body: some View {
         List {
             if viewModel.notifications.isEmpty {
-                // ✅ CORRECCIÓN: description espera un Text(), no un String directo.
                 ContentUnavailableView(
                     "Sin notificaciones",
                     systemImage: "bell.slash",
@@ -68,7 +61,7 @@ struct NotificationsView: View {
                 }
                 viewModel.notifications.remove(atOffsets: offsets)
             } catch {
-                print("Error deleting:", error)
+                print("Error al borrar:", error)
             }
         }
     }

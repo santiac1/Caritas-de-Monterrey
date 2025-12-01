@@ -1,0 +1,1831 @@
+{
+  "activityEntities" : [
+    "experimentCreated",
+    [
+      {
+        "createdDate" : "2025-11-25T22:22:52Z",
+        "event" : "experimentCreated",
+        "id" : "87AF748D-F341-46F8-9B0C-46EEFCECED07",
+        "subtitle" : "MyImageClassifier 1",
+        "title" : "Model Source Created"
+      }
+    ],
+    "trainingFinished",
+    [
+      {
+        "createdDate" : "2025-11-25T22:23:02Z",
+        "event" : "trainingFinished",
+        "id" : "C373203E-8A02-4310-A57B-517D2C9D507C",
+        "subtitle" : "Model converged at 19 iterations",
+        "title" : "Training Completed"
+      }
+    ],
+    "trainingDataAdded",
+    [
+      {
+        "createdDate" : "2025-11-25T22:22:59Z",
+        "event" : "trainingDataAdded",
+        "id" : "1561BD3A-B725-4440-95A0-4C8561FD1ECD",
+        "subtitle" : "images_dataset",
+        "title" : "Training Data Added"
+      }
+    ],
+    "trainingStarted",
+    [
+      {
+        "createdDate" : "2025-11-25T22:23:01Z",
+        "event" : "trainingStarted",
+        "id" : "26F26DDC-3CBA-48AF-8C65-06ABEC4A84C3",
+        "subtitle" : "25 iterations",
+        "title" : "Training Started"
+      }
+    ]
+  ],
+  "contentDataResult" : {
+    "createdDate" : "2025-11-25T22:22:52Z"
+  },
+  "createdDate" : "2025-11-25T22:22:52Z",
+  "evaluationContainerEntity" : {
+    "createdDate" : "2025-11-25T22:23:02Z",
+    "evaluationEntities" : [
+      {
+        "analysedDataType" : "none",
+        "createdDate" : "2025-11-25T22:23:02Z",
+        "dataResult" : {
+
+        },
+        "id" : "09fe1e12-c7fb-4c60-91bc-91aeca9dbb27"
+      }
+    ],
+    "id" : "f46ef6eb-ab4b-4274-ad03-b468971f7e5f",
+    "modifiedDate" : "2025-11-25T22:23:02Z",
+    "previewType" : "imageClassifier",
+    "testingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2025-11-25T22:22:52Z",
+      "dataResult" : {
+        "createdDate" : "2025-11-25T22:22:52Z"
+      },
+      "id" : "0d2f029d-ec28-4717-8f70-91353734e1bf"
+    },
+    "trainingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2025-11-25T22:22:52Z",
+      "dataResult" : {
+        "classesCount" : 13,
+        "createdDate" : "2025-11-25T22:22:52Z",
+        "dataAnalysis" : {
+          "classifierAnalysis" : {
+            "details" : [
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Clothing%20696x1044.jpg",
+              [
+                "ROPA"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Risperdal%20Tablets.jpg",
+              [
+                "medicina_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Grande/images4.jpeg",
+              [
+                "Equipo_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles%20Imagenes.webp",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Image.jpg",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsa%20de%20Frijoles%20Images%20(1).jpeg",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Jabon%20Liquido%20para%20Ropa.jpeg",
+              [
+                "limpieza_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Flea%20Market%20Ropa.jpg",
+              [
+                "ROPA"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/7c7b053a6ae648ca9246f486498ab5ed.jpg",
+              [
+                "Mueble_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Jabon%20Liquido%20para%20Ropa.webp",
+              [
+                "limpieza_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/images.jpeg",
+              [
+                "Electrodomestico_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/images8.jpeg",
+              [
+                "Equipo_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/D_NQ_NP_2X_797275-MCR93853094040_102025-T.webp",
+              [
+                "Electrodomestico_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicina%20Blister.jpg",
+              [
+                "medicina_blister"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Donation%20Box%20Used%20Clothes.avif",
+              [
+                "ROPA"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles.webp",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicina%20Blister%20Image.jpeg",
+              [
+                "medicina_blister"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medical%20Blister%20Packaging.avif",
+              [
+                "medicina_blister"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/images6.jpeg",
+              [
+                "Electrodomestico_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/10de95c71088405da1d1ba2690ffd488.jpg",
+              [
+                "Mueble_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/orozco_web_vert.jpg",
+              [
+                "Equipo_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.png",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/balon-baloncesto-wilson-nba-drv-plus-unico-7.jpg",
+              [
+                "Equipo_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Red%20Dress%20Sewing%20Illustration.jpg",
+              [
+                "ROPA"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsa%20de%20Frijoles%20Images.jpeg",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Arroz%20Prima%20500g%2020%20bolsas.webp",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/images3.jpeg",
+              [
+                "Equipo_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Blister%20Pack%20Medicine%20Pills.webp",
+              [
+                "medicina_blister"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Bolsa%20de%20Arroz.webp",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Individual%20Food%20Cans.webp",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsas%20de%20Arroz%20Mar%202023.webp",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Pill%20Box%20Illustration.jpg",
+              [
+                "medicina_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Medicina%20Caja%20Photo.jpeg",
+              [
+                "medicina_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Individual%20Food%20Cans.avif",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Individual%20Food%20Cans.webp",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/images2.jpeg",
+              [
+                "Electrodomestico_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Liquid%20Detergent%20New%20Formula%201800.png",
+              [
+                "limpieza_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/IMG_3502.jpg.jxl",
+              [
+                "Electrodomestico_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Jabon%20Individual%20Caseras.avif",
+              [
+                "limpieza_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes%20(2).jpg",
+              [
+                "limpieza_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Medicina%20Caja.jpg",
+              [
+                "medicina_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Used%20Clothes.webp",
+              [
+                "ROPA"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes.jpg",
+              [
+                "limpieza_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Individual%20Food%20Cans%20(1).avif",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/images5.jpeg",
+              [
+                "Electrodomestico_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/txoiip2qbthc1.jpeg",
+              [
+                "Electrodomestico_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Lirio%20Neutro%20Soap%2020g.jpg",
+              [
+                "limpieza_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Chico/images4.jpeg",
+              [
+                "Mueble_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20Photos.jpeg",
+              [
+                "limpieza_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/images.jpeg",
+              [
+                "Equipo_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicine%20Blister%20Pack.jpg",
+              [
+                "medicina_blister"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Images.jpeg",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/D_NQ_NP_2X_789550-MLV98254072805_112025-N.webp",
+              [
+                "Electrodomestico_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes%20(1).jpg",
+              [
+                "limpieza_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Usada%20Ropa%20Prenda.jpg",
+              [
+                "ROPA"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/images.jpeg",
+              [
+                "Mueble_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/silln-mecedora-0-781x1024.jpeg",
+              [
+                "Mueble_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsas%20de%20Arroz.jpg",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Grande/surtido-objetos-sucios-arrojados_23-2148996981.jpg.avif",
+              [
+                "Equipo_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/9185NOtBVSL._AC_UF1000,1000_QL80_.jpg",
+              [
+                "Equipo_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Chico/images2.jpeg",
+              [
+                "Mueble_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/s-l1200.webp",
+              [
+                "Equipo_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/24_2025-09-05.jpg",
+              [
+                "Electrodomestico_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Food%20Cans%20Image.webp",
+              [
+                "alimentos_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20de%20Algas.jpg",
+              [
+                "limpieza_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.webp",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20Zote%20Rosa%20400g.webp",
+              [
+                "limpieza_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Cloralex%20Floral%20Aroma.jpg",
+              [
+                "limpieza_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20Neutro%20Limpiadora.jpg",
+              [
+                "limpieza_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicine%20Capsules%20Blister.webp",
+              [
+                "medicina_blister"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/7%20Timeless%20Clothing%20Items.jpg",
+              [
+                "ROPA"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Chico/1467860540.jpg",
+              [
+                "Mueble_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Blister%20Pack%20with%20Colorful%20Capsules.jpg",
+              [
+                "medicina_blister"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/D_NQ_NP_915807-MLV71858777152_092023-O.webp",
+              [
+                "Mueble_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/118230814-a-huge-lot-of-the-old-used-and-broken-spare-parts-from-no-name-mass-production-electric-home.jpg",
+              [
+                "Electrodomestico_Chico"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Milled%20Rice%20in%20Plastic%20Bag.jpg",
+              [
+                "alimentos_individual"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Medicine%20Box%20Print.jpg",
+              [
+                "medicina_caja"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/S8-640w.jpg.webp",
+              [
+                "Electrodomestico_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/s-l1200.jpg",
+              [
+                "Mueble_Grande"
+              ],
+              "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/1B-640w.jpg.webp",
+              [
+                "Electrodomestico_Grande"
+              ]
+            ],
+            "labelStats" : {
+              "Electrodomestico_Chico" : 6,
+              "Electrodomestico_Grande" : 6,
+              "Equipo_Chico" : 7,
+              "Equipo_Grande" : 2,
+              "Mueble_Chico" : 3,
+              "Mueble_Grande" : 6,
+              "ROPA" : 7,
+              "alimentos_caja" : 10,
+              "alimentos_individual" : 8,
+              "limpieza_caja" : 6,
+              "limpieza_individual" : 7,
+              "medicina_blister" : 7,
+              "medicina_caja" : 5
+            }
+          },
+          "issues" : [
+            {
+              "description" : "13 classes found, including alimentos_caja, alimentos_individual, medicina_blister",
+              "severity" : "debug"
+            },
+            {
+              "description" : "80 images found, automatically creating validation set",
+              "severity" : "good"
+            },
+            {
+              "description" : "Smallest class is \"Equipo_Grande\" with 2 images",
+              "severity" : "debug"
+            },
+            {
+              "description" : "Largest class is \"alimentos_caja\" with 10 images",
+              "severity" : "debug"
+            }
+          ],
+          "objectDetectorAnalysis" : {
+            "details" : {
+
+            }
+          },
+          "summary" : {
+            "canUseValidation" : 1,
+            "classCount" : 13,
+            "sampleCount" : 80
+          }
+        },
+        "dataSourceID" : "FE89A82E-6508-4D86-B5CE-E4ED825E1381",
+        "dataURL" : "file:///Users/victorvalero/Desktop/imagenes/images_dataset/",
+        "itemsCount" : 80
+      },
+      "dataSourceID" : "FE89A82E-6508-4D86-B5CE-E4ED825E1381",
+      "evaluationResult" : {
+        "imageClassifier" : {
+          "accuracy" : 1,
+          "confusionMatrix" : [
+            {
+              "actual" : "Electrodomestico_Chico",
+              "count" : 5,
+              "expected" : "Electrodomestico_Chico"
+            },
+            {
+              "actual" : "Electrodomestico_Grande",
+              "count" : 5,
+              "expected" : "Electrodomestico_Grande"
+            },
+            {
+              "actual" : "Equipo_Chico",
+              "count" : 6,
+              "expected" : "Equipo_Chico"
+            },
+            {
+              "actual" : "Equipo_Grande",
+              "count" : 2,
+              "expected" : "Equipo_Grande"
+            },
+            {
+              "actual" : "Mueble_Chico",
+              "count" : 3,
+              "expected" : "Mueble_Chico"
+            },
+            {
+              "actual" : "Mueble_Grande",
+              "count" : 5,
+              "expected" : "Mueble_Grande"
+            },
+            {
+              "actual" : "ROPA",
+              "count" : 6,
+              "expected" : "ROPA"
+            },
+            {
+              "actual" : "alimentos_caja",
+              "count" : 9,
+              "expected" : "alimentos_caja"
+            },
+            {
+              "actual" : "alimentos_individual",
+              "count" : 7,
+              "expected" : "alimentos_individual"
+            },
+            {
+              "actual" : "limpieza_caja",
+              "count" : 5,
+              "expected" : "limpieza_caja"
+            },
+            {
+              "actual" : "limpieza_individual",
+              "count" : 6,
+              "expected" : "limpieza_individual"
+            },
+            {
+              "actual" : "medicina_blister",
+              "count" : 6,
+              "expected" : "medicina_blister"
+            },
+            {
+              "actual" : "medicina_caja",
+              "count" : 5,
+              "expected" : "medicina_caja"
+            }
+          ],
+          "statsByLabel" : {
+            "Electrodomestico_Chico" : {
+              "count" : 5,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Electrodomestico_Grande" : {
+              "count" : 5,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Equipo_Chico" : {
+              "count" : 6,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Equipo_Grande" : {
+              "count" : 2,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Mueble_Chico" : {
+              "count" : 3,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Mueble_Grande" : {
+              "count" : 5,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "ROPA" : {
+              "count" : 6,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "alimentos_caja" : {
+              "count" : 9,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "alimentos_individual" : {
+              "count" : 7,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "limpieza_caja" : {
+              "count" : 5,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "limpieza_individual" : {
+              "count" : 6,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "medicina_blister" : {
+              "count" : 6,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "medicina_caja" : {
+              "count" : 5,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "4552756c-0d12-4556-a563-d4328a5f2ad9"
+    },
+    "validationEvaluationEntity" : {
+      "analysedDataType" : "auto",
+      "createdDate" : "2025-11-25T22:22:52Z",
+      "dataResult" : {
+        "createdDate" : "2025-11-25T22:22:52Z"
+      },
+      "evaluationResult" : {
+        "imageClassifier" : {
+          "accuracy" : 1,
+          "confusionMatrix" : [
+            {
+              "actual" : "Electrodomestico_Chico",
+              "count" : 1,
+              "expected" : "Electrodomestico_Chico"
+            },
+            {
+              "actual" : "Electrodomestico_Grande",
+              "count" : 1,
+              "expected" : "Electrodomestico_Grande"
+            },
+            {
+              "actual" : "Equipo_Chico",
+              "count" : 1,
+              "expected" : "Equipo_Chico"
+            },
+            {
+              "actual" : "Mueble_Grande",
+              "count" : 1,
+              "expected" : "Mueble_Grande"
+            },
+            {
+              "actual" : "ROPA",
+              "count" : 1,
+              "expected" : "ROPA"
+            },
+            {
+              "actual" : "alimentos_caja",
+              "count" : 1,
+              "expected" : "alimentos_caja"
+            },
+            {
+              "actual" : "alimentos_individual",
+              "count" : 1,
+              "expected" : "alimentos_individual"
+            },
+            {
+              "actual" : "limpieza_caja",
+              "count" : 1,
+              "expected" : "limpieza_caja"
+            },
+            {
+              "actual" : "limpieza_individual",
+              "count" : 1,
+              "expected" : "limpieza_individual"
+            },
+            {
+              "actual" : "medicina_blister",
+              "count" : 1,
+              "expected" : "medicina_blister"
+            }
+          ],
+          "statsByLabel" : {
+            "Electrodomestico_Chico" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Electrodomestico_Grande" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Equipo_Chico" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Mueble_Grande" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "ROPA" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "alimentos_caja" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "alimentos_individual" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "limpieza_caja" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "limpieza_individual" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "medicina_blister" : {
+              "count" : 1,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "9816eda4-6a5f-49fb-a29c-c8f8318b29e9"
+    }
+  },
+  "evaluationEntity" : {
+    "analysedDataType" : "none",
+    "dataResult" : {
+
+    },
+    "id" : "75eae59d-18a9-4370-85ff-46a58305f5e8"
+  },
+  "evaluationState" : "uninitialized",
+  "id" : "E72661E8-FF3D-47B9-95A9-D079AC3B3E62",
+  "modelEntity" : {
+    "createdDate" : "2025-11-25T22:22:52Z",
+    "experimentID" : "E72661E8-FF3D-47B9-95A9-D079AC3B3E62",
+    "id" : "28037EC7-7B86-4622-9E8F-8138980D8493",
+    "modelURL" : "Models/MyImageClassifier%201.mlmodel",
+    "modifiedDate" : "2025-11-25T22:22:52Z",
+    "title" : "",
+    "version" : "1.0"
+  },
+  "modifiedDate" : "2025-11-25T22:23:02Z",
+  "preferredFilename" : "MyImageClassifier 1",
+  "settingEntity" : {
+    "algorithmType" : "maxEnt",
+    "augmentations" : [
+
+    ],
+    "featureExtractorType" : "scenePrintV1",
+    "featureNames" : [
+
+    ],
+    "handActionClassifierAugmentations" : [
+
+    ],
+    "handPoseClassifierAugmentations" : [
+
+    ],
+    "harVideoAugmentations" : 0,
+    "iterationCount" : 25,
+    "seedType" : "default",
+    "styleTransferAlgorithmType" : "image",
+    "taskType" : "imageClassifier",
+    "transferLearningEmbeddingType" : "dynamic"
+  },
+  "snapshotRole" : {
+    "withoutSnapshots" : 0
+  },
+  "state" : "trained",
+  "title" : "MyImageClassifier 1",
+  "trainingEntity" : {
+    "analysedDataType" : "datasource",
+    "checkpointMetrics" : {
+      "25" : {
+        "createdDate" : "2025-11-25T22:23:02Z",
+        "iteration" : 25,
+        "metrics" : {
+
+        }
+      }
+    },
+    "dataResult" : {
+      "classesCount" : 13,
+      "createdDate" : "2025-11-25T22:22:52Z",
+      "dataAnalysis" : {
+        "classifierAnalysis" : {
+          "details" : [
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Medicina%20Caja.jpg",
+            [
+              "medicina_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes%20(1).jpg",
+            [
+              "limpieza_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Flea%20Market%20Ropa.jpg",
+            [
+              "ROPA"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/images2.jpeg",
+            [
+              "Electrodomestico_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/7%20Timeless%20Clothing%20Items.jpg",
+            [
+              "ROPA"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Individual%20Food%20Cans%20(1).avif",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Arroz%20Prima%20500g%2020%20bolsas.webp",
+            [
+              "alimentos_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/D_NQ_NP_915807-MLV71858777152_092023-O.webp",
+            [
+              "Mueble_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/s-l1200.jpg",
+            [
+              "Mueble_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Grande/surtido-objetos-sucios-arrojados_23-2148996981.jpg.avif",
+            [
+              "Equipo_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles%20Imagenes.webp",
+            [
+              "alimentos_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsa%20de%20Frijoles%20Images%20(1).jpeg",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Bolsa%20de%20Arroz.webp",
+            [
+              "alimentos_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Jabon%20Liquido%20para%20Ropa.jpeg",
+            [
+              "limpieza_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Chico/images4.jpeg",
+            [
+              "Mueble_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/images.jpeg",
+            [
+              "Mueble_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Clothing%20696x1044.jpg",
+            [
+              "ROPA"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/images3.jpeg",
+            [
+              "Equipo_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/7c7b053a6ae648ca9246f486498ab5ed.jpg",
+            [
+              "Mueble_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Individual%20Food%20Cans.webp",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/IMG_3502.jpg.jxl",
+            [
+              "Electrodomestico_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Jabon%20Individual%20Caseras.avif",
+            [
+              "limpieza_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Lirio%20Neutro%20Soap%2020g.jpg",
+            [
+              "limpieza_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/balon-baloncesto-wilson-nba-drv-plus-unico-7.jpg",
+            [
+              "Equipo_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicina%20Blister%20Image.jpeg",
+            [
+              "medicina_blister"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/9185NOtBVSL._AC_UF1000,1000_QL80_.jpg",
+            [
+              "Equipo_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Pill%20Box%20Illustration.jpg",
+            [
+              "medicina_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Liquid%20Detergent%20New%20Formula%201800.png",
+            [
+              "limpieza_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes%20(2).jpg",
+            [
+              "limpieza_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicine%20Capsules%20Blister.webp",
+            [
+              "medicina_blister"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Milled%20Rice%20in%20Plastic%20Bag.jpg",
+            [
+              "alimentos_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Chico/images2.jpeg",
+            [
+              "Mueble_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20Neutro%20Limpiadora.jpg",
+            [
+              "limpieza_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/S8-640w.jpg.webp",
+            [
+              "Electrodomestico_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Image.jpg",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/24_2025-09-05.jpg",
+            [
+              "Electrodomestico_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/images8.jpeg",
+            [
+              "Equipo_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsas%20de%20Arroz%20Mar%202023.webp",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/images.jpeg",
+            [
+              "Electrodomestico_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Used%20Clothes.webp",
+            [
+              "ROPA"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Cloralex%20Floral%20Aroma.jpg",
+            [
+              "limpieza_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Red%20Dress%20Sewing%20Illustration.jpg",
+            [
+              "ROPA"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/D_NQ_NP_2X_789550-MLV98254072805_112025-N.webp",
+            [
+              "Electrodomestico_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Blister%20Pack%20Medicine%20Pills.webp",
+            [
+              "medicina_blister"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Risperdal%20Tablets.jpg",
+            [
+              "medicina_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.webp",
+            [
+              "alimentos_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/txoiip2qbthc1.jpeg",
+            [
+              "Electrodomestico_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Food%20Cans%20Image.webp",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20Photos.jpeg",
+            [
+              "limpieza_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles.webp",
+            [
+              "alimentos_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Images.jpeg",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsa%20de%20Frijoles%20Images.jpeg",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Grande/images4.jpeg",
+            [
+              "Equipo_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/D_NQ_NP_2X_797275-MCR93853094040_102025-T.webp",
+            [
+              "Electrodomestico_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20Zote%20Rosa%20400g.webp",
+            [
+              "limpieza_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/118230814-a-huge-lot-of-the-old-used-and-broken-spare-parts-from-no-name-mass-production-electric-home.jpg",
+            [
+              "Electrodomestico_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/10de95c71088405da1d1ba2690ffd488.jpg",
+            [
+              "Mueble_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Medicine%20Box%20Print.jpg",
+            [
+              "medicina_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medical%20Blister%20Packaging.avif",
+            [
+              "medicina_blister"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/s-l1200.webp",
+            [
+              "Equipo_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.png",
+            [
+              "alimentos_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Jabon%20Liquido%20para%20Ropa.webp",
+            [
+              "limpieza_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicina%20Blister.jpg",
+            [
+              "medicina_blister"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Medicine%20Blister%20Pack.jpg",
+            [
+              "medicina_blister"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Bolsas%20de%20Arroz.jpg",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes.jpg",
+            [
+              "limpieza_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Grande/silln-mecedora-0-781x1024.jpeg",
+            [
+              "Mueble_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/limpieza_individual/Jabon%20de%20Algas.jpg",
+            [
+              "limpieza_individual"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_caja/Individual%20Food%20Cans.avif",
+            [
+              "alimentos_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Usada%20Ropa%20Prenda.jpg",
+            [
+              "ROPA"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/images.jpeg",
+            [
+              "Equipo_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Mueble_Chico/1467860540.jpg",
+            [
+              "Mueble_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/images5.jpeg",
+            [
+              "Electrodomestico_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/ROPA/Donation%20Box%20Used%20Clothes.avif",
+            [
+              "ROPA"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Grande/1B-640w.jpg.webp",
+            [
+              "Electrodomestico_Grande"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_caja/Medicina%20Caja%20Photo.jpeg",
+            [
+              "medicina_caja"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Electrodomestico_Chico/images6.jpeg",
+            [
+              "Electrodomestico_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/medicina_blister/Blister%20Pack%20with%20Colorful%20Capsules.jpg",
+            [
+              "medicina_blister"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/Equipo_Chico/orozco_web_vert.jpg",
+            [
+              "Equipo_Chico"
+            ],
+            "file:///Users/victorvalero/Desktop/imagenes/images_dataset/alimentos_individual/Individual%20Food%20Cans.webp",
+            [
+              "alimentos_individual"
+            ]
+          ],
+          "labelStats" : {
+            "Electrodomestico_Chico" : 6,
+            "Electrodomestico_Grande" : 6,
+            "Equipo_Chico" : 7,
+            "Equipo_Grande" : 2,
+            "Mueble_Chico" : 3,
+            "Mueble_Grande" : 6,
+            "ROPA" : 7,
+            "alimentos_caja" : 10,
+            "alimentos_individual" : 8,
+            "limpieza_caja" : 6,
+            "limpieza_individual" : 7,
+            "medicina_blister" : 7,
+            "medicina_caja" : 5
+          }
+        },
+        "issues" : [
+          {
+            "description" : "13 classes found, including alimentos_caja, alimentos_individual, medicina_blister",
+            "severity" : "debug"
+          },
+          {
+            "description" : "80 images found, automatically creating validation set",
+            "severity" : "good"
+          },
+          {
+            "description" : "Smallest class is \"Equipo_Grande\" with 2 images",
+            "severity" : "debug"
+          },
+          {
+            "description" : "Largest class is \"alimentos_caja\" with 10 images",
+            "severity" : "debug"
+          }
+        ],
+        "objectDetectorAnalysis" : {
+          "details" : {
+
+          }
+        },
+        "summary" : {
+          "canUseValidation" : 1,
+          "classCount" : 13,
+          "sampleCount" : 80
+        }
+      },
+      "dataSourceID" : "FE89A82E-6508-4D86-B5CE-E4ED825E1381",
+      "dataURL" : "file:///Users/victorvalero/Desktop/imagenes/images_dataset/",
+      "itemsCount" : 80
+    },
+    "dataSourceID" : "FE89A82E-6508-4D86-B5CE-E4ED825E1381",
+    "featureExtractionCheckpointMayBeAvailable" : false,
+    "finishTime" : "2025-11-25T22:23:02Z",
+    "progress" : [
+      {
+        "count" : 1,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 2,
+        "currentRowIndex" : 0,
+        "icTrainingColumnHeader" : {
+          "elapsedTime" : 0.03561592102050781,
+          "hasValidation" : true,
+          "iterationCount" : 2,
+          "trainingAccuracy" : 0.2857142857142857,
+          "validationAccuracy" : 0.2
+        },
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 3,
+        "currentRowIndex" : 0,
+        "icTrainingColumnHeader" : {
+          "elapsedTime" : 0.04960298538208008,
+          "hasValidation" : true,
+          "iterationCount" : 3,
+          "trainingAccuracy" : 0.5285714285714286,
+          "validationAccuracy" : 0.5
+        },
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 4,
+        "currentRowIndex" : 0,
+        "icTrainingColumnHeader" : {
+          "elapsedTime" : 0.06454896926879883,
+          "hasValidation" : true,
+          "iterationCount" : 4,
+          "trainingAccuracy" : 0.6428571428571429,
+          "validationAccuracy" : 0.5
+        },
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 5,
+        "currentRowIndex" : 0,
+        "icTrainingColumnHeader" : {
+          "elapsedTime" : 0.08963000774383545,
+          "hasValidation" : true,
+          "iterationCount" : 5,
+          "trainingAccuracy" : 0.7571428571428571,
+          "validationAccuracy" : 0.6
+        },
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 10,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 11,
+        "currentRowIndex" : 0,
+        "icTrainingColumnHeader" : {
+          "elapsedTime" : 0.20761799812316895,
+          "hasValidation" : true,
+          "iterationCount" : 11,
+          "trainingAccuracy" : 1,
+          "validationAccuracy" : 0.9
+        },
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 15,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 19,
+        "currentRowIndex" : 0,
+        "icTrainingColumnHeader" : {
+          "elapsedTime" : 0.377951979637146,
+          "hasValidation" : true,
+          "iterationCount" : 19,
+          "trainingAccuracy" : 1,
+          "validationAccuracy" : 1
+        },
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 20,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 25,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 30,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 35,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 40,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 45,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 50,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 55,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 60,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 65,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 70,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 75,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 80,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 0
+      }
+    ],
+    "resumableCheckpoint" : {
+      "checkpointURL" : "file:///Users/victorvalero/Library/Caches/com.apple.dt.createml/projects/7A2C425D-C072-462A-88DE-C81BD970EC6Ada0385eefd72e34e7dbd7f86834bdf8e782517e3/sessions/checkpoint.sessions/E72661E8-FF3D-47B9-95A9-D079AC3B3E62/training-000000025.checkpoint",
+      "createdDate" : "2025-11-25T22:23:02Z",
+      "iteration" : 25
+    },
+    "resumableCheckpointURL" : "Checkpoints/E72661E8-FF3D-47B9-95A9-D079AC3B3E62.MyImageClassifier1.checkpoint",
+    "snapshottableCheckpointModelURL" : "Checkpoints/E72661E8-FF3D-47B9-95A9-D079AC3B3E62.MyImageClassifier1.checkpoint/training-000000025.checkpoint.model/checkpointModel.mlmodel",
+    "snapshottableCheckpoints" : {
+      "25" : {
+        "createdDate" : "2025-11-25T22:23:02Z",
+        "iteration" : 25,
+        "modelURL" : "file:///Users/victorvalero/Library/Caches/com.apple.dt.createml/projects/7A2C425D-C072-462A-88DE-C81BD970EC6Ada0385eefd72e34e7dbd7f86834bdf8e782517e3/sessions/checkpoint.sessions/E72661E8-FF3D-47B9-95A9-D079AC3B3E62/training-000000025.checkpoint.model/checkpointModel.mlmodel"
+      }
+    },
+    "startTime" : "2025-11-25T22:23:01Z",
+    "trainingAccuracy" : 1,
+    "trainingResults" : {
+      "imageClassifier" : {
+        "accuracy" : 1,
+        "confusionMatrix" : [
+          {
+            "actual" : "Electrodomestico_Chico",
+            "count" : 5,
+            "expected" : "Electrodomestico_Chico"
+          },
+          {
+            "actual" : "Electrodomestico_Grande",
+            "count" : 5,
+            "expected" : "Electrodomestico_Grande"
+          },
+          {
+            "actual" : "Equipo_Chico",
+            "count" : 6,
+            "expected" : "Equipo_Chico"
+          },
+          {
+            "actual" : "Equipo_Grande",
+            "count" : 2,
+            "expected" : "Equipo_Grande"
+          },
+          {
+            "actual" : "Mueble_Chico",
+            "count" : 3,
+            "expected" : "Mueble_Chico"
+          },
+          {
+            "actual" : "Mueble_Grande",
+            "count" : 5,
+            "expected" : "Mueble_Grande"
+          },
+          {
+            "actual" : "ROPA",
+            "count" : 6,
+            "expected" : "ROPA"
+          },
+          {
+            "actual" : "alimentos_caja",
+            "count" : 9,
+            "expected" : "alimentos_caja"
+          },
+          {
+            "actual" : "alimentos_individual",
+            "count" : 7,
+            "expected" : "alimentos_individual"
+          },
+          {
+            "actual" : "limpieza_caja",
+            "count" : 5,
+            "expected" : "limpieza_caja"
+          },
+          {
+            "actual" : "limpieza_individual",
+            "count" : 6,
+            "expected" : "limpieza_individual"
+          },
+          {
+            "actual" : "medicina_blister",
+            "count" : 6,
+            "expected" : "medicina_blister"
+          },
+          {
+            "actual" : "medicina_caja",
+            "count" : 5,
+            "expected" : "medicina_caja"
+          }
+        ],
+        "statsByLabel" : {
+          "Electrodomestico_Chico" : {
+            "count" : 5,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Electrodomestico_Grande" : {
+            "count" : 5,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Equipo_Chico" : {
+            "count" : 6,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Equipo_Grande" : {
+            "count" : 2,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Mueble_Chico" : {
+            "count" : 3,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Mueble_Grande" : {
+            "count" : 5,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "ROPA" : {
+            "count" : 6,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "alimentos_caja" : {
+            "count" : 9,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "alimentos_individual" : {
+            "count" : 7,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "limpieza_caja" : {
+            "count" : 5,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "limpieza_individual" : {
+            "count" : 6,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "medicina_blister" : {
+            "count" : 6,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "medicina_caja" : {
+            "count" : 5,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "validationAccuracy" : 1,
+    "validationResults" : {
+      "imageClassifier" : {
+        "accuracy" : 1,
+        "confusionMatrix" : [
+          {
+            "actual" : "Electrodomestico_Chico",
+            "count" : 1,
+            "expected" : "Electrodomestico_Chico"
+          },
+          {
+            "actual" : "Electrodomestico_Grande",
+            "count" : 1,
+            "expected" : "Electrodomestico_Grande"
+          },
+          {
+            "actual" : "Equipo_Chico",
+            "count" : 1,
+            "expected" : "Equipo_Chico"
+          },
+          {
+            "actual" : "Mueble_Grande",
+            "count" : 1,
+            "expected" : "Mueble_Grande"
+          },
+          {
+            "actual" : "ROPA",
+            "count" : 1,
+            "expected" : "ROPA"
+          },
+          {
+            "actual" : "alimentos_caja",
+            "count" : 1,
+            "expected" : "alimentos_caja"
+          },
+          {
+            "actual" : "alimentos_individual",
+            "count" : 1,
+            "expected" : "alimentos_individual"
+          },
+          {
+            "actual" : "limpieza_caja",
+            "count" : 1,
+            "expected" : "limpieza_caja"
+          },
+          {
+            "actual" : "limpieza_individual",
+            "count" : 1,
+            "expected" : "limpieza_individual"
+          },
+          {
+            "actual" : "medicina_blister",
+            "count" : 1,
+            "expected" : "medicina_blister"
+          }
+        ],
+        "statsByLabel" : {
+          "Electrodomestico_Chico" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Electrodomestico_Grande" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Equipo_Chico" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Mueble_Grande" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "ROPA" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "alimentos_caja" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "alimentos_individual" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "limpieza_caja" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "limpieza_individual" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "medicina_blister" : {
+            "count" : 1,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "validationEntity" : {
+    "analysedDataType" : "auto",
+    "dataResult" : {
+      "createdDate" : "2025-11-25T22:22:52Z"
+    },
+    "splitOptions" : {
+      "strategy" : {
+        "automatic" : {
+
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

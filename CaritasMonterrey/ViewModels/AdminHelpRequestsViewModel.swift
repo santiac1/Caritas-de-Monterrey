@@ -18,24 +18,23 @@ final class AdminHelpRequestsViewModel: ObservableObject {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            // 1. Construimos la "base" de la consulta (Filtros)
+            // Construir filtros
             var query = SupabaseManager.shared.client
                 .from("Donations")
                 .select()
 
-            // 2. Aplicamos filtros condicionales
+            // Filtros condicionales
             if let status = currentFilter.dbValue {
                 query = query.eq("status", value: status)
             }
 
-            // 3. Aplicamos el orden y ejecutamos AL FINAL
-            // CORRECCIÓN: No reasignamos a 'query', encadenamos directament el .order
+            // Se aplica orden
             let fetched: [Donation] = try await query
                 .order("created_at", ascending: currentSort == .oldest)
                 .execute()
                 .value
 
-            // 4. Cargar perfiles de usuarios (Donantes)
+            // Cargar donantes
             let userIds = Array(Set(fetched.map { $0.user_id }))
             print("DEBUG: User IDs to fetch: \(userIds)")
             var profiles: [UUID: Profile] = [:]
@@ -51,7 +50,7 @@ final class AdminHelpRequestsViewModel: ObservableObject {
                 print("DEBUG: Fetched Profiles: \(profileList)")
             }
 
-            // 5. Unir donación con nombre del donante
+            // Unir donacion con respectivo donador
             donations = fetched.map { donation in
                 var donation = donation
                 if let profile = profiles[donation.user_id] {
@@ -73,7 +72,6 @@ final class AdminHelpRequestsViewModel: ObservableObject {
         }
     }
 
-    // Funciones de acción (Sin cambios)
     @discardableResult
     func approveDonation(_ donation: Donation, pickupDate: Date?) async -> Bool {
         errorMessage = nil

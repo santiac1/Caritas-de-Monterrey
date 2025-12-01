@@ -3,22 +3,17 @@ import Auth
 
 struct DonationsView: View {
     @EnvironmentObject var viewModel: DonationsViewModel
-    @EnvironmentObject var appState: AppState // Necesario para el userId
-    
-    // Estado para el filtro seleccionado en la UI
+    @EnvironmentObject var appState: AppState
     @State private var selectedFilter: DonationFilter = .all
     @Namespace private var animationNamespace
 
     var body: some View {
         VStack(spacing: 0) {
             
-            // MARK: - Barra de Filtros
-            // Usamos el componente reutilizable que creamos
             DonationsFilterBar(selection: $selectedFilter, namespace: animationNamespace)
                 .padding(.vertical, 10)
-                .background(Color(UIColor.systemBackground))
+                .background(Color(UIColor.secondarySystemBackground))
             
-            // MARK: - Lista de Donaciones
             if viewModel.isLoading {
                 Spacer()
                 ProgressView()
@@ -41,25 +36,26 @@ struct DonationsView: View {
                         }
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .listRowBackground(Color.clear)
                     }
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
                 .refreshable {
                     await viewModel.refresh(for: appState.session?.user.id)
                 }
             }
         }
+        .background(Color(UIColor.secondarySystemBackground))
         .navigationTitle("Mis donaciones")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .task(id: appState.session?.user.id) {
-            // CORRECCIÓN: Usamos la variable 'userId' que definimos en el guard
-            // para eliminar el warning de "defined but never used".
             guard let userId = appState.session?.user.id else { return }
             await viewModel.load(for: userId)
         }
     }
     
-    // Lógica de filtrado local para la vista de usuario
+    // Filtros para el usuario
     var filteredDonations: [Donation] {
         switch selectedFilter {
         case .all:
@@ -76,13 +72,11 @@ struct DonationsView: View {
     }
 }
 
-// MARK: - Componente Row Local
 private struct DonationRow: View {
     let donation: Donation
     
     var body: some View {
         HStack(spacing: 16) {
-            // Icono con círculo de fondo
             ZStack {
                 Circle()
                     .fill(Color(UIColor.secondarySystemBackground))
@@ -95,7 +89,7 @@ private struct DonationRow: View {
                 Text(donation.name)
                     .font(.headline)
                     .lineLimit(1)
-               
+                
                 Text(donation.formattedDate)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -103,7 +97,6 @@ private struct DonationRow: View {
             
             Spacer()
             
-            // Badge de estado
             Text(donation.statusDisplay.rawValue)
                 .font(.caption2)
                 .fontWeight(.bold)
@@ -113,7 +106,6 @@ private struct DonationRow: View {
                 .background(donation.statusDisplay.color.opacity(0.1))
                 .clipShape(Capsule())
             
-            // Chevron
             Image(systemName: "chevron.right")
                 .font(.caption)
                 .foregroundStyle(.secondary.opacity(0.5))
@@ -121,8 +113,8 @@ private struct DonationRow: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(UIColor.secondarySystemGroupedBackground))
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                .fill(.white)
+                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
     

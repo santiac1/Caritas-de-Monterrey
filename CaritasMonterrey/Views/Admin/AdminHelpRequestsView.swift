@@ -8,12 +8,12 @@ struct AdminHelpRequestsView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 
-                // MARK: - Filtro Superior (Barra)
+                // Filtro
                 DonationsFilterBar(selection: $viewModel.currentFilter, namespace: animationNamespace)
                     .padding(.vertical, 10)
                     .background(Color(UIColor.systemBackground))
                 
-                // MARK: - Lista de Solicitudes
+                // Lista de solicitudes
                 if viewModel.isLoading && viewModel.donations.isEmpty {
                     Spacer()
                     ProgressView("Cargando solicitudes...")
@@ -47,12 +47,11 @@ struct AdminHelpRequestsView: View {
                     }
                 }
             }
+            .background(Color(.secondarySystemBackground))
             .navigationTitle("Solicitudes")
-            .navigationBarTitleDisplayMode(.large) // ✅ CAMBIO: Título grande y a la izquierda
+            .navigationBarTitleDisplayMode(.large)
             
-            // MARK: - Toolbar (Perfil y Orden)
             .toolbar {
-                // ✅ NUEVO: Botón de Perfil (Leading) para poder cerrar sesión
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink(value: AppRoute.profile) {
                         Image(systemName: "person.crop.circle")
@@ -61,7 +60,6 @@ struct AdminHelpRequestsView: View {
                     }
                 }
                 
-                // Botón de Ordenar (Trailing)
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("Orden", selection: $viewModel.currentSort) {
@@ -77,23 +75,22 @@ struct AdminHelpRequestsView: View {
                 }
             }
             
-            // MARK: - Carga y Recarga
             .task {
                 await viewModel.loadHelpRequests()
             }
             .onChange(of: viewModel.currentFilter) { _, _ in
                 Task {
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second debounce
+                    try? await Task.sleep(nanoseconds: 100_000_000)
                     await viewModel.loadHelpRequests()
                 }
             }
             .onChange(of: viewModel.currentSort) { _, _ in
                 Task {
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second debounce
+                    try? await Task.sleep(nanoseconds: 100_000_000)
                     await viewModel.loadHelpRequests()
                 }
             }
-            // ✅ NUEVO: Manejo de navegación para ir al Perfil y Ajustes
+            // Navegación
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
                 case .profile:
@@ -102,6 +99,8 @@ struct AdminHelpRequestsView: View {
                     SettingsView()
                 case .adminDonationDetail(let donation):
                     AdminSolicitudDetailView(donation: donation)
+                case .aboutCaritas:
+                    AboutCaritasView()
                 case .bazaarForm, .donateAction, .donationDetail, .campaignDetail, .map, .myDonations, .notifications:
                     EmptyView()
                 }
@@ -110,13 +109,12 @@ struct AdminHelpRequestsView: View {
     }
 }
 
-// MARK: - Fila de Donación (Admin)
+// Donación para admin
 private struct AdminDonationRow: View {
     let donation: Donation
     
     var body: some View {
         HStack(spacing: 16) {
-            // Icono con círculo de fondo (Categoría)
             ZStack {
                 Circle()
                     .fill(Color(UIColor.secondarySystemBackground))
@@ -138,6 +136,7 @@ private struct AdminDonationRow: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
+                // Borrar
                 // Badge de estado
                 Text(donation.statusDisplay.rawValue)
                     .font(.caption2)
@@ -148,7 +147,6 @@ private struct AdminDonationRow: View {
                     .background(donation.statusDisplay.color.opacity(0.1))
                     .clipShape(Capsule())
                 
-                // Fecha
                 if let date = donation.created_at {
                     Text(date, format: .dateTime.day().month())
                         .font(.caption2)
@@ -156,7 +154,6 @@ private struct AdminDonationRow: View {
                 }
             }
             
-            // Chevron
             Image(systemName: "chevron.right")
                 .font(.caption)
                 .foregroundStyle(.secondary.opacity(0.5))
@@ -164,8 +161,8 @@ private struct AdminDonationRow: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(UIColor.secondarySystemGroupedBackground))
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                .fill(.white)
+                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
     

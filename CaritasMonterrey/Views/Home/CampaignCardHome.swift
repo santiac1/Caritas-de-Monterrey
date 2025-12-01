@@ -43,7 +43,7 @@ struct CampaignCardHome: View {
                     )
             }
             
-            // Content
+            // Contenido
             VStack(alignment: .leading, spacing: 8) {
                 Text(campaign.title)
                     .font(.headline)

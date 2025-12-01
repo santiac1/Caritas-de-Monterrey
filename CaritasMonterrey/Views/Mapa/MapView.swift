@@ -2,10 +2,8 @@ import SwiftUI
 import MapKit
 import CoreLocation
 // import Auth // Asumo que esto es de tu proyecto
-// importadas las dependencias necesarias...
 
 struct MapView: View {
-    // MARK: - Propiedades de Estado
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var locationManager = CLLocationManager()
     @EnvironmentObject private var viewModel: MapaViewModel
@@ -27,9 +25,9 @@ struct MapView: View {
     @State private var activeSheet: MapSheet?
 
     var body: some View {
-        VStack { // Volvemos a VStack o simplemente Map como root si no hay más elementos
+        VStack {
             
-            // MARK: - Mapa Principal
+            // Mapa
             Map(position: $position) {
                 UserAnnotation()
 
@@ -59,8 +57,6 @@ struct MapView: View {
                     Task { await viewModel.fetchMapa() }
                 }
             }
-            // NOTA: Hemos quitado .mapControls para usar nuestros propios botones personalizados
-            
             .mapControls {
                 MapCompass()
                 MapUserLocationButton()
@@ -89,7 +85,6 @@ struct MapView: View {
         }
     }
 
-    // MARK: - Lógica de Negocio
     private func selectNearestLocation() {
         guard let userLocation = locationManager.location else { return }
         
@@ -107,10 +102,9 @@ struct MapView: View {
         }
         
         if let closest = closestLocation {
-            // Abrimos el detalle
             activeSheet = .detail(closest)
             
-            // Movemos la cámara al bazar
+            // Ajustar camara
             withAnimation {
                 position = .region(MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: closest.latitude, longitude: closest.longitude),
@@ -121,7 +115,6 @@ struct MapView: View {
     }
 }
 
-// MARK: - Componentes Visuales (BubbleLabel)
 struct BubbleAnnotationLabel: View {
     let icon: String
     var isActive: Bool = true

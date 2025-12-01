@@ -1,4 +1,3 @@
-// ViewModels/HomeViewModel.swift
 import Foundation
 import Supabase
 import Combine
@@ -44,18 +43,14 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
-    // CORRECCIÓN: Eliminamos el enum Route interno y usamos AppRoute global
-    // enum Route: Hashable { ... } <- ELIMINADO
-
     struct Promo: Identifiable, Hashable {
         let id = UUID()
         let title: String
         let assetName: String?
         let systemFallback: String
-        let route: AppRoute // <-- Usamos AppRoute
+        let route: AppRoute
     }
 
-    // UI copy
     @Published private(set) var screenTitle = "Inicio"
     @Published private(set) var headline = "Acciones rápidas"
 
@@ -73,12 +68,11 @@ final class HomeViewModel: ObservableObject {
         .init(title: "Mis donaciones",       assetName: nil, systemFallback: "gift.fill",          route: .myDonations)
     ]
 
-    // Resumen (para el Home)
+    // Resumen
     @Published private(set) var totalText = "0 donaciones"
     @Published private(set) var inProgressText = "0 en proceso"
     @Published private(set) var lastDonationText = "—"
 
-    // Permite inyectar desde fuera (por ejemplo, desde DonationsViewModel)
     func setDonations(_ donations: [Donation]) {
         self.donations = donations
         recompute()

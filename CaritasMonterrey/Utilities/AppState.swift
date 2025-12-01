@@ -12,18 +12,13 @@ final class AppState: ObservableObject {
 
     private var authTask: Task<Void, Never>?
 
-    // ✅ Rol efectivo para routing (company -> user)
     enum EffectiveRole { case user, admin }
 
-    /// Usa el perfil cargado y normaliza el rol:
-    /// - "admin" => .admin
-    /// - cualquier otro ("user", "company", nil, etc.) => .user
     var effectiveRole: EffectiveRole {
         guard let role = profile?.role.lowercased() else { return .user }
         return role == "admin" ? .admin : .user
     }
 
-    /// Helpers por si te sirven en otras vistas
     var isAdmin: Bool { effectiveRole == .admin }
     var isUser:  Bool { effectiveRole == .user }
 

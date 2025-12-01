@@ -1,7 +1,7 @@
 import SwiftUI
 import MapKit
 
-// MARK: - Vista de Detalle del Bazar
+// Detalles por bazar
 struct LocationDetailSheet: View {
     let location: Location
     var onDonarAqui: () -> Void
@@ -16,12 +16,12 @@ struct LocationDetailSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) { // Reduje el espaciado general
+                VStack(alignment: .leading, spacing: 16) {
                     
-                    // 1. VISTA DE CALLE (Ahora al principio)
+                    // Vista de calle del bazar
                     if let scene = lookAroundScene {
                         LookAroundPreview(initialScene: scene)
-                            .frame(height: 160) // Un poco más compacto
+                            .frame(height: 160)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
@@ -30,7 +30,7 @@ struct LocationDetailSheet: View {
                             .transition(.opacity)
                     }
                     
-                    // 2. DIRECCIÓN (Debajo de la vista de calle)
+                    // Dirección bazar
                     if !location.address.isEmpty {
                         Text(location.address)
                             .font(.caption) // Letra más pequeña
@@ -38,7 +38,7 @@ struct LocationDetailSheet: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     
-                    // 3. STATUS (Abierto/Cerrado)
+                    // Mostrar su estatus
                     HStack(spacing: 6) {
                         Circle()
                             .fill(isOpen ? Color.green : Color.red)
@@ -49,10 +49,9 @@ struct LocationDetailSheet: View {
                             .fontWeight(.medium)
                             .foregroundStyle(isOpen ? .green : .red)
                         
-                        Spacer() // Empuja al inicio si hubiera algo más, o solo alinea izq
+                        Spacer()
                     }
                     
-                    // 4. ARTÍCULOS ACEPTADOS (Tags más pequeños)
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Artículos aceptados")
                             .font(.headline)
@@ -67,7 +66,7 @@ struct LocationDetailSheet: View {
                         }
                     }
                     
-                    // 5. BOTÓN DE DONAR (Al final)
+                    // Acción de donación
                     Button(action: onDonarAqui) {
                         HStack {
                             if isOpen {
@@ -80,23 +79,21 @@ struct LocationDetailSheet: View {
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 2) // Padding vertical interno reducido
+                        .padding(.vertical, 2)
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .tint(isOpen ? Color("AccentColor") : Color.gray)
                     .disabled(!isOpen)
-                    .padding(.top, 8) // Separación extra antes del botón
+                    .padding(.top, 8)
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 12) // ✅ Reduje mucho el espacio superior (antes 24)
+                .padding(.top, 12) //
                 .padding(.bottom, 24)
             }
-            // --- TOOLBAR (Acciones y Título) ---
             .navigationTitle(location.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // Izquierda: Mapas
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         openInMaps()
@@ -106,7 +103,6 @@ struct LocationDetailSheet: View {
                     }
                 }
                 
-                // Derecha: Cerrar
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         dismiss()
@@ -128,14 +124,8 @@ struct LocationDetailSheet: View {
         }
     }
     
-    // CORRECCIÓN EXACTA SEGÚN EL WARNING
     private func openInMaps() {
-        // Creamos un CLLocation estándar
         let locationObj = CLLocation(latitude: location.latitude, longitude: location.longitude)
-        
-        // Usamos EXACTAMENTE el inicializador que pide el warning: init(location:address:)
-        // Pasamos nil en address ya que MapKit resolverá la dirección o usará el pin,
-        // o puedes pasar un diccionario de dirección si lo tuvieras formateado.
         let mapItem = MKMapItem(location: locationObj, address: nil)
         
         mapItem.name = location.name
@@ -152,8 +142,6 @@ struct LocationDetailSheet: View {
     }
 }
 
-// MARK: - Componentes Auxiliares
-
 struct AcceptedItemsView: View {
     let items: [Location.AcceptedItem]
     
@@ -162,9 +150,9 @@ struct AcceptedItemsView: View {
             HStack(spacing: 8) {
                 ForEach(items, id: \.name) { item in
                     Image(systemName: item.icon)
-                        .font(.body) // ✅ Más pequeño (antes title3)
+                        .font(.body)
                         .foregroundStyle(.primary)
-                        .padding(8) // ✅ Menos padding (antes 10)
+                        .padding(8)
                         .background(
                             Capsule()
                                 .fill(Color.gray.opacity(0.1))
@@ -175,7 +163,6 @@ struct AcceptedItemsView: View {
     }
 }
 
-// Extensión de modelo (sin cambios)
 extension Location {
     struct AcceptedItem: Hashable {
         let name: String

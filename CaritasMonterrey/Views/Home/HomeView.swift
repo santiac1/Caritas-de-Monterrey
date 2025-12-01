@@ -20,8 +20,8 @@ struct HomeView: View {
         NavigationStack(path: $navPath) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-
-                    // 1. Banner Principal
+                    
+                    // 1. Banner Principal (Fijo, sin carrusel)
                     BannerCard(
                         title: vm.banner.title,
                         assetName: vm.banner.assetName,
@@ -30,7 +30,7 @@ struct HomeView: View {
                         activeSheet = .donation
                     }
                     .padding(.top, 10)
-
+                    
                     // 2. Campañas Activas
                     let activeCampaigns = campaignVM.campaigns.filter { $0.isCurrentlyActive }
                     if !activeCampaigns.isEmpty {
@@ -55,7 +55,7 @@ struct HomeView: View {
                         }
                     }
 
-                    // 3. Estadísticas (en carrusel horizontal, similar a "Campañas activas")
+                    // 3. Estadísticas
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Tus estadísticas")
                             .font(.title3).bold()
@@ -70,10 +70,19 @@ struct HomeView: View {
                             .padding(.vertical, 8)
                         }
                     }
+
+                    // 4. Tarjeta "Conócenos"
+                    Button {
+                        navPath.append(AppRoute.aboutCaritas)
+                    } label: {
+                        KnowCaritasCard()
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 20)
             }
+            .background(Color(.systemGroupedBackground))
             .navigationTitle(vm.screenTitle)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -89,11 +98,13 @@ struct HomeView: View {
             }
             .onAppear {
                 Task {
-                    await vm.loadStats(for: appState.session?.user.id)
+                    if let userId = appState.session?.user.id {
+                         await vm.loadStats(for: userId)
+                    }
                     await campaignVM.loadCampaigns(activeOnly: true)
                 }
             }
-            // --- MANEJADOR DE RUTAS GLOBAL ---
+            // --- MANEJADOR DE RUTAS ---
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
                 case .map:
@@ -115,11 +126,12 @@ struct HomeView: View {
                         
                 case .profile:
                     ProfileView()
-                        // No ponemos título aquí porque ProfileView tiene el suyo propio
                 
                 case .settings:
                     SettingsView()
-                        // SettingsView tiene su propio título definido internamente
+                
+                case .aboutCaritas:
+                    AboutCaritasView()
                 
                 case .campaignDetail(let campaign):
                     CampaignDetailView(campaign: campaign)
@@ -132,7 +144,11 @@ struct HomeView: View {
                 }
             }
             .sheet(item: $activeSheet, onDismiss: {
-                Task { await vm.loadStats(for: appState.session?.user.id) }
+                Task { 
+                    if let userId = appState.session?.user.id {
+                        await vm.loadStats(for: userId) 
+                    }
+                }
             }) { item in
                 switch item {
                 case .donation:

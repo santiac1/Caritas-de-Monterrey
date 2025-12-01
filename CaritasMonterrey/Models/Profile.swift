@@ -25,7 +25,6 @@ struct Profile: Identifiable, Codable {
         case address
     }
 
-    // MARK: - Decode ("2007-11-06" ó ISO8601) -> Date?
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -39,19 +38,15 @@ struct Profile: Identifiable, Codable {
         rfc         = try? c.decode(String.self, forKey: .rfc)
         address     = try? c.decode(String.self, forKey: .address)
 
-        // birthdate puede venir como String "yyyy-MM-dd" o null
         if let s = try? c.decode(String.self, forKey: .birthdate) {
-            // Intenta yyyy-MM-dd y como fallback ISO8601 (por si cambia en el futuro)
             birthdate = DateFormatter.yyyyMMdd.date(from: s) ?? ISO8601DateFormatter().date(from: s)
         } else if let d = try? c.decode(Date.self, forKey: .birthdate) {
-            // Por si algún día viene como Date real
             birthdate = d
         } else {
             birthdate = nil
         }
     }
 
-    // MARK: - Encode Date? -> "yyyy-MM-dd" (para columna DATE)
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(id, forKey: .id)
@@ -72,7 +67,6 @@ struct Profile: Identifiable, Codable {
     }
 }
 
-// MARK: - DateFormatter helper
 extension DateFormatter {
     static let yyyyMMdd: DateFormatter = {
         let f = DateFormatter()

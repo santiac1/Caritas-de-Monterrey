@@ -3,7 +3,7 @@ import SwiftUI
 struct DonationsFilterView: View {
     @Environment(\.dismiss) private var dismiss
     
-    // Solo recibimos el orden, ya que el estado se filtra en la barra de la vista principal
+    // Solo recibir orden, lo demas innecesario
     @Binding var sortOrder: SortOrder
 
     var body: some View {
@@ -26,7 +26,7 @@ struct DonationsFilterView: View {
                 }
             }
         }
-        .presentationDetents([.height(250)]) // Altura compacta
+        .presentationDetents([.height(250)])
     }
 }
 

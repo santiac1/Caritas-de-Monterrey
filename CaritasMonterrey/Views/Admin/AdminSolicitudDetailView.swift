@@ -13,12 +13,10 @@ struct AdminSolicitudDetailView: View {
     @State private var isProcessingAction = false
     @State private var actionError: String?
     
-    // 1. CORRECCIÓN: Definimos una estructura local Identifiable para la imagen
     struct ImageItem: Identifiable {
         let id: String
     }
     
-    // 2. CORRECCIÓN: Usamos ImageItem? en lugar de String?
     @State private var selectedImage: ImageItem?
     
     init(donation: Donation) {
@@ -32,20 +30,16 @@ struct AdminSolicitudDetailView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    
-                    // MARK: - 1. Cabecera Reorganizada
                     VStack(alignment: .leading, spacing: 8) {
                     
-                        // Fila 1: Nombre (Solo y Grande)
                         Text(donation.name)
                             .font(.system(size: 28, weight: .bold))
                             .foregroundStyle(.primary)
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
                                     
-                        // Fila 2: Badge de Estado + Fecha (Separados por Spacer)
+                        // Borrar
                         HStack(alignment: .center, spacing: 12) {
-                            // Badge (Izquierda)
                             Text(donation.statusDisplay.rawValue)
                                 .font(.caption)
                                 .fontWeight(.bold)
@@ -55,9 +49,8 @@ struct AdminSolicitudDetailView: View {
                                 .background(donation.statusDisplay.color.opacity(0.1))
                                 .clipShape(Capsule())
                                                         
-                            Spacer() // ✅ Empuja la fecha a la derecha
+                            Spacer()
                                                                         
-                            // Fecha (Derecha)
                             HStack(spacing: 4) {
                                 Image(systemName: "calendar")
                                 if let created = donation.created_at {
@@ -70,13 +63,12 @@ struct AdminSolicitudDetailView: View {
                             .foregroundStyle(.secondary)
                         }
                                                             
-                        // Fila 3: ID
                         Text("ID: #\(donation.id)")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                             .padding(.top, 2)
                                                                     
-                        // Fila 4: Información del Donante (Debajo del ID)
+                        // Información de donador
                         if let donor = donation.donorName {
                             Label(donor, systemImage: "person.circle.fill")
                                 .font(.title3)
@@ -89,7 +81,6 @@ struct AdminSolicitudDetailView: View {
                     
                     Divider().padding(.horizontal, 20)
                     
-                    // MARK: - 2. Evidencia Fotográfica
                     if let images = donation.image_urls, !images.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
                             Label("Evidencia fotográfica", systemImage: "camera.fill")
@@ -114,7 +105,6 @@ struct AdminSolicitudDetailView: View {
                                     }
                                     .frame(maxWidth: .infinity)
                                     .onTapGesture {
-                                        // 3. CORRECCIÓN: Envolvemos el string en nuestra estructura ImageItem
                                         selectedImage = ImageItem(id: imageUrl)
                                     }
                                 }
@@ -127,7 +117,7 @@ struct AdminSolicitudDetailView: View {
                         }
                     }
                     
-                    // MARK: - 3. Tarjeta de Detalles
+                    //  Tarjeta detallada
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Detalles de la solicitud")
                             .font(.headline)
@@ -142,6 +132,10 @@ struct AdminSolicitudDetailView: View {
                                 title: "Necesita ayuda",
                                 value: donation.help_needed ? "Sí, recolección" : "No, entrega personal"
                             )
+                            if let bazaarName = donation.location_name, !bazaarName.isEmpty {
+                                Divider().padding(.leading, 60)
+                                DetailRow(icon: "building.2.fill", title: "Bazar", value: bazaarName)
+                            }
                             if let shipping = donation.shipping_weight, donation.help_needed {
                                 Divider().padding(.leading, 60)
                                 DetailRow(icon: "scalemass.fill", title: "Peso/Volumen", value: shipping)
@@ -174,13 +168,11 @@ struct AdminSolicitudDetailView: View {
                 .padding(.vertical, 20)
             }
             
-            // MARK: - 5. Botones de Acción Flotantes (ESTILO ORIGINAL RESTAURADO)
             VStack {
                 Spacer()
                 
-                // Lógica de botones según estado
+                // Botón de acuerdo a su estado
                 if donation.status == .accepted {
-                    // CASO: YA ACEPTADA -> Botón único
                     HStack {
                         Button {
                             Task { await markDonationAsReceived() }
@@ -197,10 +189,10 @@ struct AdminSolicitudDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                         }
-                        .buttonStyle(.glassProminent) // Estilo Glass original
-                        .tint(.blue)
+                        .buttonStyle(.glassProminent)
+                        .tint(.magentaCaritas)
                         .disabled(isProcessingAction)
-                        .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                        .shadow(color: .magentaCaritas.opacity(0.3), radius: 8, x: 0, y: 4)
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 20)
@@ -220,7 +212,7 @@ struct AdminSolicitudDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                         }
-                        .buttonStyle(.glass) // Estilo Glass original
+                        .buttonStyle(.glass)
                         .disabled(viewModel.isUpdating || isProcessingAction)
                         
                         // Botón Aprobar
@@ -239,7 +231,7 @@ struct AdminSolicitudDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                         }
-                        .buttonStyle(.glassProminent) // Estilo Glass original
+                        .buttonStyle(.glassProminent)
                         .tint(.secondaryBlue)
                         .disabled(viewModel.isUpdating || isProcessingAction)
                     }
@@ -264,7 +256,7 @@ struct AdminSolicitudDetailView: View {
         .sheet(isPresented: $viewModel.isShowingNoteSheet) {
             AdminNoteView(viewModel: viewModel)
         }
-        // 4. CORRECCIÓN: Usamos 'item' para acceder a la ID segura
+
         .fullScreenCover(item: $selectedImage) { item in
             FullScreenImageView(imageUrl: item.id)
         }
@@ -310,7 +302,6 @@ struct AdminSolicitudDetailView: View {
     }
 }
 
-// MARK: - Funciones Lógicas Independientes
 private extension AdminSolicitudDetailView {
     @MainActor
     func schedulePickup() async {
@@ -364,8 +355,6 @@ private extension AdminSolicitudDetailView {
         }
     }
 }
-
-// MARK: - Vistas Auxiliares
 
 private struct DetailRow: View {
     let icon: String

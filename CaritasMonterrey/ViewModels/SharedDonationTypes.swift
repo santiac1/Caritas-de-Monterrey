@@ -7,9 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Enums Globales
-
-/// Opciones de ordenamiento
 enum SortOrder: String, CaseIterable, Identifiable {
     case newest = "Más recientes"
     case oldest = "Más antiguas"
@@ -18,7 +15,6 @@ enum SortOrder: String, CaseIterable, Identifiable {
     var title: String { rawValue }
 }
 
-/// Filtros de estado para donaciones
 enum DonationFilter: String, CaseIterable, Identifiable {
     case all = "Todas"
     case inProcess = "En proceso"
@@ -29,7 +25,6 @@ enum DonationFilter: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String { rawValue }
 
-    // Mapeo al valor exacto de la base de datos (Supabase)
     var dbValue: String? {
         switch self {
         case .inProcess: return "in_process"

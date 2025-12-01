@@ -6,12 +6,11 @@ struct SettingsView: View {
     @StateObject private var viewModel = ProfileSettingsViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var showSuccessAlert = false
-    // Notifications toggle (simulado o real según tu lógica)
     @AppStorage("notificationsEnable") private var notificationsEnable = true
     
     var body: some View {
         Form {
-            // --- SECCIÓN 1: DATOS PERSONALES ---
+            // Datos personales
             Section {
                 HStack {
                     Image(systemName: "person.text.rectangle")
@@ -50,7 +49,7 @@ struct SettingsView: View {
                 Text("Esta información se utiliza para contactarte en caso de dudas sobre tus donaciones.")
             }
             
-            // --- SECCIÓN 2: PREFERENCIAS ---
+            // Preferencias
             Section("Preferencias") {
                 Toggle(isOn: $notificationsEnable) {
                     Label {
@@ -62,7 +61,7 @@ struct SettingsView: View {
                 }
             }
             
-            // --- SECCIÓN 3: CUENTA ---
+            // Cuenta
             Section {
                 Button(role: .destructive) {
                     Task { await appState.signOut() }
@@ -73,7 +72,6 @@ struct SettingsView: View {
                 Text("Cuenta")
             }
             
-            // --- MENSAJES DE ERROR ---
             if let error = viewModel.errorMessage {
                 Section {
                     Label(error, systemImage: "exclamationmark.triangle.fill")
@@ -101,14 +99,12 @@ struct SettingsView: View {
         .onAppear {
             viewModel.loadProfileData(appState: appState)
         }
-        // CORRECCIÓN: Actualizado para iOS 17+. Usamos closure de dos parámetros (_, _)
         .onChange(of: appState.profile?.id) { _, _ in
             viewModel.loadProfileData(appState: appState)
         }
         .alert("¡Tus datos fueron modificados correctamente!", isPresented: $showSuccessAlert) {
             Button("Aceptar") {
                 viewModel.resetSaveState()
-                // Eliminado dismiss() para mantenernos en la misma pantalla
             }
         } message: {
             Text("La información de tu perfil ha sido actualizada.")
@@ -119,7 +115,6 @@ struct SettingsView: View {
         guard let userId = appState.session?.user.id else { return }
         await viewModel.saveProfile(userId: userId)
         if viewModel.didSave {
-            // silent: true para NO mostrar pantalla de carga global (RootRouter) y evitar que se resetee la navegación
             await appState.loadProfile(for: userId, silent: true)
             viewModel.loadProfileData(appState: appState)
             showSuccessAlert = true

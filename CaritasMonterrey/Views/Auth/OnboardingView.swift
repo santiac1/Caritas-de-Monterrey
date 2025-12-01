@@ -81,7 +81,7 @@ struct OnboardingView: View {
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
 
-                    // Indicadores de página (dots)
+                    // Indicadores de página
                     HStack(spacing: 8) {
                         ForEach(0..<OnboardingPage.pages.count, id: \.self) { dot in
                             Circle()
@@ -93,7 +93,7 @@ struct OnboardingView: View {
 
                     Spacer().frame(height: 48)
 
-                    // Botón de navegación (solo botón principal, sin "Regresar")
+                    // No tiene botón de regreso
                     Button(action: advancePage) {
                         Text(currentPageData.buttonTitle)
                             .font(.headline)
@@ -116,7 +116,7 @@ struct OnboardingView: View {
     }
 }
 
-// MARK: - Vista de Aviso de Privacidad
+// Aviso de privacidad
 struct TermsAndPrivacyView: View {
     @Environment(\.dismiss) private var dismiss
     
@@ -223,7 +223,6 @@ struct TermsAndPrivacyView: View {
     }
 }
 
-// MARK: - Modelo de página
 private struct OnboardingPage: Identifiable {
     let id = UUID()
     let imageName: String

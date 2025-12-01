@@ -36,10 +36,7 @@ final class ProfileStatsViewModel: ObservableObject {
             let total = donations.count
             let inProcess = donations.filter { $0.status == .in_process }.count
             let completed = donations.filter { $0.status == .accepted }.count
-            // (Opcional) por si luego quieres mostrar también rechazadas/devueltas:
-            // let rejected = donations.filter { $0.status == .rejected }.count
-            // let returned = donations.filter { $0.status == .returned }.count
-
+            
             stats = [
                 ProfileStat(title: "Donaciones totales", value: "\(total)", systemIcon: "hands.sparkles.fill"),
                 ProfileStat(title: "En proceso", value: "\(inProcess)", systemIcon: "clock.badge.checkmark"),

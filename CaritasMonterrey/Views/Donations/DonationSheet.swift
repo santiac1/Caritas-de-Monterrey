@@ -17,8 +17,8 @@ struct DonationSheet: View {
             ScrollView {
                 VStack(spacing: 16) {
                     
-                    donationNameSection // Campo de nombre
-                    donationImageSection // Sección de imagen
+                    donationNameSection
+                    donationImageSection
                     
                     donationTypeSection
                     donationShippingSection
@@ -47,7 +47,6 @@ struct DonationSheet: View {
     }
 }
 
-// MARK: - Sección Nombre
 extension DonationSheet {
     private var donationNameSection: some View {
         GroupBox {
@@ -66,7 +65,6 @@ extension DonationSheet {
     private var donationImageSection: some View {
         GroupBox {
             VStack(alignment: .leading, spacing: 10) {
-                // 1. El PhotosPicker (botón)
                 PhotosPicker(
                     selection: $viewModel.selectedPhotoItems,
                     maxSelectionCount: 10,
@@ -85,7 +83,7 @@ extension DonationSheet {
                 
                 Divider().padding(.bottom, 8)
 
-                // 2. El área de visualización de imágenes
+                // Visualizar imagen
                 if !viewModel.selectedImages.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
@@ -111,7 +109,6 @@ extension DonationSheet {
                     .frame(height: 100)
                     
                 } else {
-                    // 3. Texto de placeholder
                     Text("No se ha seleccionado ninguna foto.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -128,10 +125,9 @@ extension DonationSheet {
     }
 }
 
-// MARK: - Tipo de donación
+// Tipo de donación
 extension DonationSheet {
     private var donationTypeSection: some View {
-        // Dentro de DonationSheet
         GroupBox {
             Menu {
                 ForEach(viewModel.availableTypes) { opt in
@@ -162,27 +158,9 @@ extension DonationSheet {
     }
 }
 
-// MARK: - Monto
-extension DonationSheet {
-    private var donationAmountSection: some View {
-        GroupBox {
-            HStack {
-                Text("$")
-                    .font(.title3).bold()
-                    .foregroundStyle(accent)
-                TextField("Monto", text: $viewModel.amount)
-                    .keyboardType(.decimalPad)
-                    .textInputAutocapitalization(.never)
-            }
-            .padding(.vertical, 4)
-        } label: {
-            Label("Monto", systemImage: "creditcard")
-                .foregroundStyle(.secondary)
-        }
-    }
-}
 
-// MARK: - Envío
+
+//Pregunta de ayudas
 extension DonationSheet {
     private var donationShippingSection: some View {
         GroupBox {
@@ -205,12 +183,27 @@ extension DonationSheet {
     }
 }
 
-// MARK: - Entrega
+// Entrega de donaciones
 extension DonationSheet {
     private var donationDeliverySection: some View {
         GroupBox {
+            if let msg = viewModel.restrictedMessage {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                    Text(msg)
+                        .font(.subheadline)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding()
+                .background(Color.orange.opacity(0.1))
+                .cornerRadius(8)
+                .padding(.bottom, 8)
+            }
+
             if !viewModel.helpNeeded {
-                // Si la lista de bazares (ahora filtrada) está vacía, mostrar aviso
+                // Aviso en caso de lista vacia
                 if viewModel.bazaars.isEmpty {
                     Text("No hay bazares activos en este momento.")
                         .font(.caption)
@@ -243,7 +236,6 @@ extension DonationSheet {
     }
 }
 
-// MARK: - Notas
 extension DonationSheet {
     private var donationNotesSection: some View {
         GroupBox {
@@ -256,7 +248,6 @@ extension DonationSheet {
     }
 }
 
-// MARK: - Errores
 extension DonationSheet {
     private var donationErrorSection: some View {
         Group {
@@ -270,7 +261,6 @@ extension DonationSheet {
     }
 }
 
-// MARK: - Toolbar
 extension DonationSheet {
     private var toolbarContent: some ToolbarContent {
         Group {
@@ -278,7 +268,6 @@ extension DonationSheet {
                 Button("Cerrar", systemImage:"xmark") { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                // CORREGIDO: Botón simple, sin anidamiento
                 Button {
                     Task {
                         viewModel.currentUserId = appState.session?.user.id
@@ -291,7 +280,6 @@ extension DonationSheet {
                     if viewModel.isSubmitting {
                         ProgressView()
                     } else {
-                        // Usamos Label en lugar de Button para el contenido visual
                         Label("Confirmar", systemImage: "checkmark")
                             .labelStyle(.titleAndIcon)
                     }

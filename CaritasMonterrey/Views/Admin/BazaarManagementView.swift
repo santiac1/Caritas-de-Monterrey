@@ -5,7 +5,7 @@ struct BazaarManagementView: View {
     @State private var deletingLocation: Location?
     @State private var isDeleteAlertPresented = false
     
-    // Estado para controlar la navegación/presentación del formulario
+    // Controlar la navegación
     @State private var selectedBazaarForForm: Location?
     @State private var isPresentingForm = false
 
@@ -58,7 +58,7 @@ struct BazaarManagementView: View {
             .listSectionSeparator(.hidden)
         }
         .scrollContentBackground(.hidden)
-        .background(Color(.systemGroupedBackground))
+        .background(Color(.secondarySystemBackground))
         .listStyle(.plain)
         .navigationTitle("Gestión de bazares")
         .toolbar {
@@ -176,7 +176,6 @@ private struct BazaarCard: View {
                         .font(.footnote).bold()
                         .foregroundStyle(.secondary)
 
-                    // filas de hasta 3 tags
                     let rows = chunk(models, by: 3)
                     VStack(alignment: .leading, spacing: 6) {
                         ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
@@ -212,8 +211,6 @@ private struct BazaarCard: View {
         }
     }
 }
-
-// MARK: - Helpers para tags
 
 private struct AcceptTagModel {
     let title: String
@@ -268,12 +265,10 @@ private struct AcceptTag: View {
         .foregroundStyle(.primary)
         .background(
             Capsule()
-                .fill(Color.primary.opacity(0.08)) // gris translúcido adaptado a Light/Dark
+                .fill(Color.primary.opacity(0.08))
         )
     }
 }
-
-// MARK: - Form
 
 private struct LocationForm: View {
     var location: Location?

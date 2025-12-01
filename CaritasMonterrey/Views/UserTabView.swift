@@ -20,9 +20,19 @@ struct UserTabView: View {
                 .environmentObject(mapaVM)
                 .tabItem { Label("Mapa", systemImage: "map.fill") }
 
-            NavigationStack { DonationsView() }
-                .environmentObject(donationsVM)
-                .tabItem { Label("Donaciones", systemImage: "heart.fill") }
+            NavigationStack { 
+                DonationsView()
+                    .navigationDestination(for: AppRoute.self) { route in
+                        switch route {
+                        case .donationDetail(let donation):
+                            DetallesDonacionView(donation: donation)
+                        default:
+                            EmptyView()
+                        }
+                    }
+            }
+            .environmentObject(donationsVM)
+            .tabItem { Label("Donaciones", systemImage: "heart.fill") }
         }
     }
 }

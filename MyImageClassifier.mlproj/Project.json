@@ -1,0 +1,29 @@
+{
+  "activityEntities" : [
+    "projectCreated",
+    [
+      {
+        "createdDate" : "2025-11-25T22:08:40Z",
+        "event" : "projectCreated",
+        "id" : "93F30D2E-B8B3-496E-A15C-BC9311E3FBA5",
+        "subtitle" : "MyImageClassifier",
+        "title" : "Project Created"
+      }
+    ]
+  ],
+  "authorName" : "Victor Valero",
+  "createdDate" : "2025-11-25T22:08:40Z",
+  "description" : "",
+  "id" : "7A2C425D-C072-462A-88DE-C81BD970EC6A",
+  "license" : "",
+  "location" : "",
+  "modifiedDate" : "2025-11-25T22:08:40Z",
+  "projectName" : "MyImageClassifier",
+  "settingsEntity" : {
+    "snapshotOnExtendTraining" : true,
+    "snapshotOnResumeTraining" : false
+  },
+  "taskType" : "imageClassifier",
+  "title" : "Image Classification",
+  "version" : "1.1"
+}

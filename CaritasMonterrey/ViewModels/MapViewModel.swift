@@ -12,11 +12,10 @@ import Combine
 
 @MainActor
 final class MapaViewModel: ObservableObject {
-    @Published var locations: [Location] = [] // Cambié mayúscula Locations -> locations (convención Swift)
+    @Published var locations: [Location] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    // Helper: Si alguna vista necesita solo los abiertos
     var activeLocations: [Location] {
         locations.filter { $0.isActive }
     }
@@ -26,7 +25,6 @@ final class MapaViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            // Traemos todos para mostrarlos en el mapa (abiertos y cerrados)
             let response = try await SupabaseManager.shared.client
                 .from("Locations")
                 .select()

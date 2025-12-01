@@ -10,7 +10,6 @@ final class CampaignViewModel: ObservableObject {
     
     private let client = SupabaseManager.shared.client
     
-    // MARK: - Load Campaigns
     func loadCampaigns(activeOnly: Bool = false) async {
         isLoading = true
         errorMessage = nil
@@ -30,13 +29,12 @@ final class CampaignViewModel: ObservableObject {
             self.campaigns = response
         } catch {
             errorMessage = "Error al cargar campañas: \(error.localizedDescription)"
-            print("❌ Error loading campaigns: \(error)")
+            print("Error al cargar \(error)")
         }
         
         isLoading = false
     }
     
-    // MARK: - Create Campaign
     func createCampaign(_ payload: CampaignPayload) async {
         isLoading = true
         errorMessage = nil
@@ -50,13 +48,12 @@ final class CampaignViewModel: ObservableObject {
             await loadCampaigns()
         } catch {
             errorMessage = "Error al crear campaña: \(error.localizedDescription)"
-            print("❌ Error creating campaign: \(error)")
+            print("Error al cargar \(error)")
         }
         
         isLoading = false
     }
     
-    // MARK: - Update Campaign
     func updateCampaign(_ id: Int, with payload: CampaignPayload) async {
         isLoading = true
         errorMessage = nil
@@ -71,13 +68,12 @@ final class CampaignViewModel: ObservableObject {
             await loadCampaigns()
         } catch {
             errorMessage = "Error al actualizar campaña: \(error.localizedDescription)"
-            print("❌ Error updating campaign: \(error)")
+            print("Error al cargar \(error)")
         }
         
         isLoading = false
     }
     
-    // MARK: - Delete Campaign
     func deleteCampaign(_ id: Int) async {
         isLoading = true
         errorMessage = nil
@@ -92,19 +88,17 @@ final class CampaignViewModel: ObservableObject {
             await loadCampaigns()
         } catch {
             errorMessage = "Error al eliminar campaña: \(error.localizedDescription)"
-            print("❌ Error deleting campaign: \(error)")
+            print("Error al cargar \(error)")
         }
         
         isLoading = false
     }
     
-    // MARK: - Upload Image
-    // MARK: - Upload Image
+    // Subir Imagen
     func uploadCampaignImage(data: Data) async throws -> String {
         let fileName = "campaign_\(UUID().uuidString).jpg"
         let storage = client.storage.from("campaign_images")
         
-        // Retry logic: 3 attempts
         var lastError: Error?
         for attempt in 1...3 {
             do {
@@ -115,14 +109,13 @@ final class CampaignViewModel: ObservableObject {
                 )
                 
                 let urlResponse = try storage.getPublicURL(path: fileName)
-                print("✅ Imagen de campaña subida (intento \(attempt)): \(urlResponse.absoluteString)")
+                print("Imagen subida (intento \(attempt)): \(urlResponse.absoluteString)")
                 return urlResponse.absoluteString
                 
             } catch {
-                print("⚠️ Error al subir imagen (intento \(attempt)): \(error.localizedDescription)")
+                print("Error al subir imagen (intento \(attempt)): \(error.localizedDescription)")
                 lastError = error
                 
-                // Wait before retrying (exponential backoff: 1s, 2s)
                 if attempt < 3 {
                     try await Task.sleep(nanoseconds: UInt64(attempt) * 1_000_000_000)
                 }

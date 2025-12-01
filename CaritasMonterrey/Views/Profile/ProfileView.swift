@@ -1,3 +1,4 @@
+//????????????
 import SwiftUI
 import Auth
 
@@ -48,7 +49,6 @@ struct ProfileView: View {
         .navigationTitle("Perfil")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                // ✅ CORRECCIÓN: Usamos AppRoute en lugar de destino directo
                 NavigationLink(value: AppRoute.settings) {
                     Image(systemName: "gearshape.fill")
                         .imageScale(.large)
@@ -59,8 +59,6 @@ struct ProfileView: View {
         .task {
             await statsViewModel.loadStats(for: appState.session?.user.id)
         }
-        // CORRECCIÓN: Actualizado para iOS 17+. Se usa un closure con dos parámetros (oldValue, newValue).
-        // Usamos '_' para ignorar el valor anterior y tomamos 'newValue'.
         .onChange(of: appState.session?.user.id) { _, newValue in
             Task {
                 await statsViewModel.loadStats(for: newValue)

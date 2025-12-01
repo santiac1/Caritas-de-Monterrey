@@ -1,8 +1,6 @@
-// Models/Donation.swift
 import Foundation
 import SwiftUI
 
-/// Estados **tal cual** los acepta la BD (CHECK constraint)
 enum DonationDBStatus: String, Codable, CaseIterable, Hashable {
     case in_process = "in_process"
     case accepted   = "accepted"
@@ -11,7 +9,6 @@ enum DonationDBStatus: String, Codable, CaseIterable, Hashable {
     case received   = "received"
 }
 
-/// Estados de **presentación** para la UI en español
 enum DonationStatusDisplay: String, CaseIterable {
     case enProceso = "En proceso"
     case completada = "Aprobada"
@@ -43,7 +40,6 @@ enum DonationStatusDisplay: String, CaseIterable {
     }
 }
 
-/// (Opcional) Tipos normalizados que mandarás a BD
 enum DonationTypeDB: String, Codable, CaseIterable {
     case monetaria, ropa, alimentos, equipo, muebles, otros
 }
@@ -52,8 +48,8 @@ struct Donation: Identifiable, Codable, Hashable {
     let id: Int
     let user_id: UUID
     var name: String
-    var type: String             // queda String si ya tienes datos; si quieres: DonationTypeDB
-    var status: DonationDBStatus // <- ahora es el enum alineado a la BD
+    var type: String
+    var status: DonationDBStatus
     var help_needed: Bool
     var shipping_weight: String?
     var pickup_address: String?
@@ -66,7 +62,6 @@ struct Donation: Identifiable, Codable, Hashable {
 
     var image_urls: [String]?
     
-    // Solo para UI
     var donorName: String? = nil
 
     var title: String { name }
@@ -80,7 +75,6 @@ struct Donation: Identifiable, Codable, Hashable {
         return formatter.string(from: created_at)
     }
 
-    /// Mapea el estado de BD -> etiqueta de UI (en español)
     var statusDisplay: DonationStatusDisplay {
         switch status {
         case .in_process:
@@ -90,7 +84,6 @@ struct Donation: Identifiable, Codable, Hashable {
         case .rejected:
             return .ayudaRechazada
         case .returned:
-            // puedes personalizarlo; por ahora lo mostramos como "En proceso"
             return .enProceso
         case .received:
             return .recibida
@@ -103,44 +96,3 @@ struct Donation: Identifiable, Codable, Hashable {
                  image_urls
         }
 }
-
-// MARK: - Mocks alineados a la BD
-extension Donation {
-    static let sampleDonations: [Donation] = [
-        Donation(
-            id: 1,
-            user_id: UUID(),
-            name: "Ropa de invierno",
-            type: "ropa",
-            status: .in_process,
-            help_needed: false,
-            shipping_weight: nil,
-            pickup_address: nil,
-            pickup_date: nil,
-            notes: nil,
-            amount: nil,
-            created_at: Date(),
-            location_name: "Bazar Emilio Carranza",
-            admin_note: nil,
-            donorName: "Carolina"
-        ),
-        Donation(
-            id: 2,
-            user_id: UUID(),
-            name: "Artículos personales",
-            type: "alimentos",
-            status: .in_process,
-            help_needed: true,
-            shipping_weight: "10kg",
-            pickup_address: "Av. Siempre Viva 123",
-            pickup_date: nil,
-            notes: nil,
-            amount: nil,
-            created_at: Date().addingTimeInterval(-200000),
-            location_name: "Bazar Cáritas Centro",
-            admin_note: nil,
-            donorName: "Luis"
-        )
-    ]
-}
-

@@ -6,16 +6,14 @@ struct RootRouterView: View {
 
     var body: some View {
         Group {
-            // 1️⃣ Si está cargando el perfil (por ejemplo al iniciar sesión)
+            // Checar perfil 
             if appState.isLoadingProfile {
                 ProgressView()
             }
 
-            // 2️⃣ Si ya hay un perfil cargado, vamos directo al Home
+            // Directo al Home
             else if appState.profile != nil {
-                // Usamos el rol efectivo normalizado desde AppState:
-                // - "admin"  -> AdminTabView
-                // - cualquier otro ("user", "company", desconocidos, etc.) -> UserTabView
+                // Usar el rol
                 switch appState.effectiveRole {
                 case .user:
                     UserTabView()
@@ -24,12 +22,11 @@ struct RootRouterView: View {
                 }
             }
 
-            // 3️⃣ Si NO hay perfil y el usuario NO ha hecho el onboarding → mostrarlo
             else if !hasCompletedOnboarding {
                 OnboardingView()
             }
 
-            // 4️⃣ Si ya completó onboarding pero no tiene sesión → ir a MainRegistro
+            // ir a MainRegistro
             else {
                 MainRegistroView()
             }

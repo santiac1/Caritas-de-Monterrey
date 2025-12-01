@@ -2,7 +2,7 @@
 //  NotificationsModel.swift
 //  CaritasMonterrey
 //
-//  Creado el 06/11/25 adaptado con datos corregidos.
+//  Creado el 06/11/25
 //
 
 import Foundation
@@ -30,7 +30,6 @@ enum NotificationCategory: String, Codable {
     }
 }
 
-// MARK: - Modelo de Notificación
 struct AppNotification: Identifiable, Codable {
     let id: UUID
     let user_id: UUID

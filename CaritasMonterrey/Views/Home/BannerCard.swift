@@ -30,7 +30,7 @@ struct BannerCard: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, minHeight: 140)
-            .background(Color.secondaryBlue) // <-- tu color de assets
+            .background(Color("SecondaryBlue")) // <-- Restaurado a color de assets
             .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)

@@ -2,19 +2,14 @@ import SwiftUI
 import AVKit
 import AVFoundation
 
-// 1. Definimos las rutas posibles fuera de la vista
-// (Asegúrate de tener definido tu enum AuthRoute en tu proyecto,
-// o defínelo aquí si falta. Asumo que ya existe en otro archivo).
-
 struct MainRegistroView: View {
-    // 2. Variable de estado para controlar toda la navegación del stack
+    //Controla navegación
     @State private var path = NavigationPath()
     
     var body: some View {
-        // 3. Vinculamos el Stack al path
+        // Vincular el stack
         NavigationStack(path: $path) {
             ZStack {
-                // --- FONDO DE VIDEO ---
                 if let _ = Bundle.main.path(forResource: "background-video", ofType: "mov") {
                     LoopingVideoPlayer(videoName: "background-video", videoType: "mov")
                         .ignoresSafeArea()
@@ -25,20 +20,15 @@ struct MainRegistroView: View {
                     Color(.systemBackground).ignoresSafeArea()
                 }
                
-                // --- CONTENIDO ---
                 VStack {
-                    // Logo
                     logoHeader
                         .padding(.top, 40)
                     
                     Spacer()
                     
-                    // Botones en la parte inferior
                     VStack(spacing: 16) {
                        
-                        // 4. Botón "Iniciar Sesión"
                         Button(action: {
-                            // Lógica aquí
                             path.append(AuthRoute.login)
                         }) {
                             Text("Iniciar Sesión")
@@ -67,7 +57,7 @@ struct MainRegistroView: View {
                     .padding(.bottom, 50)
                 }
                
-                // 5. Destino de navegación centralizado
+                // Centralizar la navegación
                 .navigationDestination(for: AuthRoute.self) { route in
                     switch route {
                     case .login:
@@ -81,9 +71,6 @@ struct MainRegistroView: View {
             }
         }
     }
-            
-    
-    // MARK: - Componentes Visuales
     
     private var logoHeader: some View {
         HStack {
@@ -105,7 +92,6 @@ struct MainRegistroView: View {
     }
 }
 
-// MARK: - Video de Fondo
 struct LoopingVideoPlayer: UIViewRepresentable {
     let videoName: String
     let videoType: String
@@ -116,8 +102,6 @@ struct LoopingVideoPlayer: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIView, context: Context) {
-        // Este método se llama cuando la vista se actualiza
-        // No necesitamos hacer nada aquí ya que el video se maneja automáticamente
     }
 }
 
@@ -127,14 +111,14 @@ class PlayerUIView: UIView {
     private var player: AVQueuePlayer?
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) no ha sido implementado")
     }
     
     init(frame: CGRect, videoName: String, videoType: String) {
         super.init(frame: frame)
         setupVideo(videoName: videoName, videoType: videoType)
         
-        // Observar notificaciones del ciclo de vida de la app
+        // Observar laS NOTIS
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(pauseVideo),
@@ -152,17 +136,12 @@ class PlayerUIView: UIView {
     
     private func setupVideo(videoName: String, videoType: String) {
         guard let path = Bundle.main.path(forResource: videoName, ofType: videoType) else {
-            print("⚠️ No se encontró el video: \(videoName).\(videoType)")
+            print("El video \(videoName).\(videoType) no ha sido encontrado")
             return
         }
         
         let url = URL(fileURLWithPath: path)
-        
-        // --- CORRECCIÓN AQUÍ ---
-        // Antes: let asset = AVAsset(url: url) -> Deprecado
-        // Ahora: Usamos AVURLAsset explícitamente
         let asset = AVURLAsset(url: url)
-        
         let item = AVPlayerItem(asset: asset)
         let queuePlayer = AVQueuePlayer(playerItem: item)
         
@@ -171,10 +150,9 @@ class PlayerUIView: UIView {
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
         
-        // Mutar el audio del video
         queuePlayer.isMuted = true
         
-        // Crear el looper para reproducir infinitamente
+        //Reprdoucción en loop
         playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: item)
         queuePlayer.play()
     }
@@ -194,7 +172,6 @@ class PlayerUIView: UIView {
     }
     
     deinit {
-        // Limpiar recursos
         NotificationCenter.default.removeObserver(self)
         playerLooper?.disableLooping()
         player?.pause()

@@ -30,7 +30,7 @@ final class NotificationsViewModel: ObservableObject {
             self.notifications = result
 
         } catch {
-            print("Error loading notifications:", error)
+            print("Error al cargar las notificaciones:", error)
         }
     }
     

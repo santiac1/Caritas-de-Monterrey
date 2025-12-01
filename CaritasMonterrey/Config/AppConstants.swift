@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AppColors {
-    static let primaryCyan = Color("PrimaryCyan")   // define en Assets
+    static let primaryCyan = Color("PrimaryCyan")
     static let secondaryBlue = Color("SecondaryBlue")
     static let lightGrayCaritas = Color("LightGrayCaritas")
     static let grayCaritas = Color("GrayCaritas")
