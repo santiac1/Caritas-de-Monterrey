@@ -2,12 +2,12 @@ import SwiftUI
 
 struct BazaarManagementView: View {
     @EnvironmentObject private var viewModel: BazaarManagementViewModel
-    @State private var isPresentingForm = false
-    @State private var editingLocation: Location?
     @State private var deletingLocation: Location?
     @State private var isDeleteAlertPresented = false
     
-    
+    // Estado para controlar la navegación/presentación del formulario
+    @State private var selectedBazaarForForm: Location?
+    @State private var isPresentingForm = false
 
     var body: some View {
         List {
@@ -15,8 +15,7 @@ struct BazaarManagementView: View {
                 BazaarCard(
                     location: location,
                     onEdit: {
-                        editingLocation = location
-                        isPresentingForm = true
+                        selectedBazaarForForm = location
                     },
                     onDelete: {
                         deletingLocation = location
@@ -34,8 +33,7 @@ struct BazaarManagementView: View {
                         Label("Eliminar bazar", systemImage: "trash")
                     }
                     Button {
-                        editingLocation = location
-                        isPresentingForm = true
+                        selectedBazaarForForm = location
                     } label: {
                         Label("Editar bazar", systemImage: "pencil")
                     }
@@ -50,8 +48,7 @@ struct BazaarManagementView: View {
                 }
                 .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     Button {
-                        editingLocation = location
-                        isPresentingForm = true
+                        selectedBazaarForForm = location
                     } label: {
                         Label("Editar", systemImage: "pencil")
                     }
@@ -67,7 +64,6 @@ struct BazaarManagementView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    editingLocation = nil
                     isPresentingForm = true
                 } label: {
                     Label("Nuevo bazar", systemImage: "plus")
@@ -77,15 +73,25 @@ struct BazaarManagementView: View {
             }
         }
         .task { await viewModel.loadLocations() }
-        .sheet(isPresented: $isPresentingForm, onDismiss: { Task { await viewModel.loadLocations() } }) {
+        .sheet(item: $selectedBazaarForForm, onDismiss: {
+            Task { await viewModel.loadLocations() }
+        }) { location in
             NavigationStack {
-                LocationForm(location: editingLocation) { payload in
+                LocationForm(location: location) { payload in
                     Task {
-                        if let editingLocation {
-                            await viewModel.updateLocation(editingLocation.id, with: payload)
-                        } else {
-                            await viewModel.createLocation(payload)
-                        }
+                        await viewModel.updateLocation(location.id, with: payload)
+                    }
+                }
+                .toolbarTitleDisplayMode(.inline)
+            }
+        }
+        .sheet(isPresented: $isPresentingForm, onDismiss: {
+            Task { await viewModel.loadLocations() }
+        }) {
+            NavigationStack {
+                LocationForm(location: nil) { payload in
+                    Task {
+                        await viewModel.createLocation(payload)
                     }
                 }
                 .toolbarTitleDisplayMode(.inline)

@@ -72,6 +72,9 @@ struct LoginView: View {
                             focusedField: $focusedField,
                             fieldValue: .email
                         )
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                        .autocorrectionDisabled()
                         .submitLabel(.next)
                         .onSubmit { focusedField = .password }
                         
@@ -87,6 +90,14 @@ struct LoginView: View {
                         .onSubmit { Task { await signIn() } }
                     }
                     .modifier(ShakeEffect(animatableData: CGFloat(shakeAttempts)))
+
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .foregroundStyle(.red)
+                            .font(.footnote)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
 
                     legalText
                     
@@ -105,7 +116,6 @@ struct LoginView: View {
                 } label: {
                     Image(systemName: "chevron.left")
                         .font(.headline)
-                        .foregroundStyle(Color("SecondaryBlue"))
                 }
             }
         }
@@ -181,7 +191,7 @@ struct LoginView: View {
             try await appState.signIn(email: email, password: password)
         } catch {
             triggerErrorAnimation()
-            errorMessage = error.localizedDescription
+            errorMessage = "La contraseña o el email son incorrectos."
         }
         
         isLoading = false
@@ -224,8 +234,30 @@ struct CustomStyledField<Field: Hashable>: View {
     var fieldValue: Field? = nil
     @Environment(\.colorScheme) private var colorScheme
     
+    // Detectar si el campo está activo
+    private var isActive: Bool {
+        if let focusedField = focusedField, let fieldValue = fieldValue {
+            return focusedField.wrappedValue == fieldValue
+        }
+        return false
+    }
+    
     private var borderColor: Color {
-        colorScheme == .dark ? Color("AccentColor") : Color("SecondaryBlue")
+        if isActive {
+            // Campo seleccionado
+            return colorScheme == .dark ? Color("PrimaryCyan") : Color("SecondaryBlue")
+        } else {
+            // Campo no seleccionado
+            return colorScheme == .dark ? Color.white : Color.black
+        }
+    }
+    
+    private var borderWidth: CGFloat {
+        isActive ? 2.5 : 1.5
+    }
+    
+    private var cornerRadius: CGFloat {
+        isActive ? 30 : 28
     }
     
     private var backgroundColor: Color {
@@ -238,7 +270,7 @@ struct CustomStyledField<Field: Hashable>: View {
     
     var body: some View {
         ZStack(alignment: .topLeading) {
-            HStack {
+            HStack(spacing: 12) {
                 if isSecure && !(showPassword?.wrappedValue ?? false) {
                     Group {
                         if let focusedField = focusedField, let fieldValue = fieldValue {
@@ -268,23 +300,32 @@ struct CustomStyledField<Field: Hashable>: View {
                     }
                 }
             }
-            .padding()
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             .frame(height: 56)
             .background(
-                RoundedRectangle(cornerRadius: 28)
+                RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(backgroundColor)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 28)
-                    .stroke(borderColor, lineWidth: 1.5)
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(borderColor, lineWidth: borderWidth)
             )
+            .animation(.easeInOut(duration: 0.2), value: isActive)
             
             Text(title)
-                .font(.caption)
+                .font(isActive ? .caption.weight(.semibold) : .caption)
                 .foregroundStyle(borderColor)
+                .padding(.horizontal, 10) // Más padding interno para cortar la línea
                 .background(labelBackgroundColor)
-                .padding(.horizontal, 1)
-                .offset(x: 20, y: -8)
+                .offset(x: 20, y: -9) // Alineado más cerca de la línea
+        }
+        // Hacer que cualquier toque dentro del borde enfoque el campo correspondiente
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if let focusedField = focusedField, let fieldValue = fieldValue {
+                focusedField.wrappedValue = fieldValue
+            }
         }
     }
 }

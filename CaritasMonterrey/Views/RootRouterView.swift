@@ -12,16 +12,15 @@ struct RootRouterView: View {
             }
 
             // 2️⃣ Si ya hay un perfil cargado, vamos directo al Home
-            else if let profile = appState.profile {
-                switch profile.role {
-                case "user":
+            else if appState.profile != nil {
+                // Usamos el rol efectivo normalizado desde AppState:
+                // - "admin"  -> AdminTabView
+                // - cualquier otro ("user", "company", desconocidos, etc.) -> UserTabView
+                switch appState.effectiveRole {
+                case .user:
                     UserTabView()
-                case "company":
-                    UserTabView()
-                case "admin":
+                case .admin:
                     AdminTabView()
-                default:
-                    LoginView()
                 }
             }
 

@@ -11,7 +11,7 @@ import Foundation
 enum AuthRoute: Hashable {
     case login
     case signup
-    case mainRegistro // ✅ Nueva ruta para la pantalla principal de registro
+    case mainRegistro 
 }
 
 // Rutas para la navegación principal
@@ -24,6 +24,7 @@ enum AppRoute: Hashable {
     case campaignDetail(Campaign) // ✅ Detalle de campaña
     case donationDetail(Donation) // ✅ Detalle de donación
     case adminDonationDetail(Donation) // ✅ Detalle de solicitud (Admin)
+    case bazaarForm(Location?) // ✅ Formulario de Bazar (nuevo o editar)
     
     // Caso especial: Acción
     case donateAction

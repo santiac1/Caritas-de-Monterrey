@@ -7,10 +7,9 @@ struct AdminTabView: View {
 
     var body: some View {
         TabView {
-            NavigationStack {
-                AdminHelpRequestsView()
-                    .environmentObject(helpRequestsVM)
-            }
+            // AdminHelpRequestsView ya tiene su propio NavigationStack interno
+            AdminHelpRequestsView()
+                .environmentObject(helpRequestsVM)
             .tabItem { Label("Solicitudes", systemImage: "tray.fill") }
 
             NavigationStack {

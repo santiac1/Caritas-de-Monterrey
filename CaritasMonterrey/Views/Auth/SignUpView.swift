@@ -6,7 +6,7 @@ struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
-    // MARK: - Lógica Original (INTACTA)
+    // MARK: - Variables de Estado
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var publicName: String = ""
@@ -17,7 +17,7 @@ struct SignUpView: View {
 
     @State private var isLoading = false
     @State private var errorMessage: String?
-    @State private var showSuccessAlert = false
+    @State private var shakeAttempts: Int = 0
     
     @State private var showPassword = false
     @FocusState private var focusedField: Field?
@@ -27,7 +27,7 @@ struct SignUpView: View {
     }
     
     private var titleColor: Color {
-        colorScheme == .dark ? Color("AccentColor") : Color("SecondaryBlue")
+        colorScheme == .dark ? Color(.white) : Color("SecondaryBlue")
     }
 
     private var isAdult: Bool {
@@ -44,10 +44,26 @@ struct SignUpView: View {
         password.count >= 8 &&
         isAdult
     }
+    
+    // Array de errores faltantes para mostrar en rojo
+    private var validationErrors: [String] {
+        var errors: [String] = []
+        if firstName.isEmpty { errors.append("Nos gustaría saber cómo te llamas.") }
+        if lastName.isEmpty { errors.append("Por favor agrega tus apellidos.") }
+        if publicName.isEmpty { errors.append("Elige cómo quieres aparecer públicamente.") }
+        if phone.isEmpty { errors.append("Necesitamos un teléfono para contactarte.") }
+        if email.isEmpty { errors.append("El correo electrónico es esencial.") }
+        if password.count < 8 { errors.append("La contraseña es muy corta (usa al menos 8 caracteres).") }
+        if !isAdult { errors.append("Lo sentimos, debes ser mayor de 18 años.") }
+        return errors
+    }
 
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
+                .onTapGesture {
+                    focusedField = nil
+                }
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
@@ -63,7 +79,6 @@ struct SignUpView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             
-                            // ⚠️ CORRECCIÓN AQUÍ: Usamos AuthRoute en lugar de destination directo
                             NavigationLink(value: AuthRoute.login) {
                                 Text("Inicia sesión")
                                     .font(.subheadline.weight(.bold))
@@ -83,7 +98,34 @@ struct SignUpView: View {
                         CustomStyledField<Field>(title: "Teléfono", text: $phone, isSecure: false, focusedField: $focusedField, fieldValue: .phone)
                             .keyboardType(.phonePad)
                         
-                        CustomDatePickerField(title: "Fecha de nacimiento", date: $birthdate)
+                        // MARK: - Date Picker Nativo
+                        ZStack(alignment: .topLeading) {
+                            HStack {
+                                DatePicker("", selection: $birthdate, displayedComponents: .date)
+                                    .datePickerStyle(.compact)
+                                    .labelsHidden()
+                                    .tint(colorScheme == .dark ? Color("PrimaryCyan") : Color("SecondaryBlue"))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal, 20)
+                            .frame(height: 56)
+                            .background(
+                                RoundedRectangle(cornerRadius: 28)
+                                    .fill(colorScheme == .dark ? Color.black : Color.white)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 28)
+                                    .stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 1.5)
+                            )
+                            
+                            // Label
+                            Text("Fecha de nacimiento")
+                                .font(.caption)
+                                .foregroundStyle(colorScheme == .dark ? Color.white : Color.black)
+                                .padding(.horizontal, 10)
+                                .background(colorScheme == .dark ? Color.black : Color.white)
+                                .offset(x: 20, y: -9)
+                        }
                         
                         CustomStyledField<Field>(
                             title: "E-mail",
@@ -104,6 +146,7 @@ struct SignUpView: View {
                             fieldValue: .password
                         )
                     }
+                    .modifier(ShakeEffect(animatableData: CGFloat(shakeAttempts)))
                     .padding(.top, 10)
 
                     // 3. Requisitos
@@ -127,11 +170,13 @@ struct SignUpView: View {
                         .animation(.easeInOut(duration: 0.3), value: focusedField)
                     }
 
-                    // Mensaje de Error
+                    // MARK: - Errores en Rojo (si intenta registrarse y falla validación)
                     if let errorMessage {
                         Text(errorMessage)
                             .foregroundStyle(.red)
                             .font(.footnote)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
                     // 4. Texto Legal
@@ -154,17 +199,21 @@ struct SignUpView: View {
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
-                        .background(Color("SecondaryBlue"))
+                        .padding(.vertical, 10)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 30))
                     }
-                    .disabled(!formIsValid || isLoading)
-                    .opacity(!formIsValid || isLoading ? 0.7 : 1)
-                    .buttonStyle(.glassProminent)
+                    .buttonStyle(.glassProminent) // Estilo aplicado al botón completo
+                    .tint(Color("SecondaryBlue"))
+                    .disabled(isLoading)
+                    .opacity(isLoading ? 0.7 : 1)
                     Spacer(minLength: 40)
                 }
                 .padding(24)
+                .contentShape(Rectangle()) // Hace que el fondo del scroll sea tapeable
+                .onTapGesture {
+                    focusedField = nil
+                }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -178,11 +227,6 @@ struct SignUpView: View {
                 }
             }
         }
-        .alert("Cuenta creada", isPresented: $showSuccessAlert) {
-            Button("Aceptar") { dismiss() }
-        } message: {
-            Text("Cuenta creada. Revisa tu email para confirmar tu cuenta.")
-        }
     }
     
     // Helper UI
@@ -193,13 +237,14 @@ struct SignUpView: View {
         }
     }
 
-    // MARK: - Registro (Lógica Original INTACTA)
+    // MARK: - Registro
     @MainActor
     private func register() async {
+        // Validar formulario y mostrar errores
         guard formIsValid else {
-            errorMessage = isAdult
-            ? "Completa todos los campos y verifica tu contraseña."
-            : "Debes ser mayor de 18 años."
+            // Unir los errores en una lista legible
+            errorMessage = "¡Vaya! Revisa estos detalles para continuar:\n" + validationErrors.map { "• \($0)" }.joined(separator: "\n")
+            triggerErrorAnimation()
             return
         }
 
@@ -207,9 +252,11 @@ struct SignUpView: View {
         errorMessage = nil
 
         do {
+            // 1. Registrar usuario en Supabase (sin asumir que devuelve sesión activa)
             let response = try await appState.signUp(email: email, password: password)
             let user = response.user
-
+            
+            // 2. Crear perfil en BD
             let payload = ProfileInsert(
                 id: user.id,
                 role: "user",
@@ -230,12 +277,25 @@ struct SignUpView: View {
                 .single()
                 .execute()
 
-            showSuccessAlert = true
+            // 3. Iniciar sesión automáticamente para abrir la app
+            // Independientemente de lo que devuelva signUp, intentamos un signIn directo.
+            try await appState.signIn(email: email, password: password)
+            
         } catch {
+            triggerErrorAnimation()
             errorMessage = error.localizedDescription
         }
 
         isLoading = false
+    }
+
+    // MARK: - Animación de error
+    private func triggerErrorAnimation() {
+        withAnimation(.default) {
+            shakeAttempts += 1
+        }
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.error)
     }
 }
 

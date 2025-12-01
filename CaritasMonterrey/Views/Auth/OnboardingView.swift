@@ -93,54 +93,20 @@ struct OnboardingView: View {
 
                     Spacer().frame(height: 48)
 
-                    // Botones de navegación
-                    Group {
-                        if currentPage == 0 {
-                            Button(action: advancePage) {
-                                Text(currentPageData.buttonTitle)
-                                    .font(.headline)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color("SecondaryBlue"))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(30)
-                            }
-                        } else if currentPageData.isLast {
-                            Button(action: advancePage) {
-                                Text(currentPageData.buttonTitle)
-                                    .font(.headline)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color("SecondaryBlue"))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(30)
-                            }
-                        } else {
-                            HStack(spacing: 16) {
-                                Button(action: goBackPage) {
-                                    Text("Regresar")
-                                        .font(.headline)
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.gray.opacity(0.2))
-                                        .foregroundColor(.primary)
-                                        .cornerRadius(30)
-                                }
-
-                                Button(action: advancePage) {
-                                    Text(currentPageData.buttonTitle)
-                                        .font(.headline)
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color("SecondaryBlue"))
-                                        .foregroundColor(.white)
-                                        .cornerRadius(30)
-                                }
-                            }
-                        }
+                    // Botón de navegación (solo botón principal, sin "Regresar")
+                    Button(action: advancePage) {
+                        Text(currentPageData.buttonTitle)
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color("SecondaryBlue"))
+                            .foregroundColor(.white)
+                            .cornerRadius(30)
                     }
                     .padding(.horizontal, 40)
                     .padding(.bottom, 50)
+                    .buttonStyle(.glassProminent)
+                    .tint(Color("SecondaryBlue"))
                 }
             }
             .sheet(isPresented: $showTermsAndPrivacy) {

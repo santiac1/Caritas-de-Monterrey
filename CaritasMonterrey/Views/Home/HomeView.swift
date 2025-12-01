@@ -55,19 +55,19 @@ struct HomeView: View {
                         }
                     }
 
-                    // 3. Estadísticas
+                    // 3. Estadísticas (en carrusel horizontal, similar a "Campañas activas")
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Tus estadísticas")
                             .font(.title3).bold()
                         
-                        LazyVGrid(
-                            columns: [GridItem(.flexible(), spacing: 14),
-                                      GridItem(.flexible(), spacing: 14)],
-                            spacing: 14
-                        ) {
-                            StatCard(title: "Donaciones", value: vm.totalText, systemIcon: "chart.bar.fill")
-                            StatCard(title: "En proceso", value: vm.inProgressText, systemIcon: "clock.badge.checkmark")
-                            StatCard(title: "Última donación", value: vm.lastDonationText, systemIcon: "calendar")
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                StatCard(title: "Donaciones", value: vm.totalText, systemIcon: "chart.bar.fill")
+                                StatCard(title: "En proceso", value: vm.inProgressText, systemIcon: "clock.badge.checkmark")
+                                StatCard(title: "Última donación", value: vm.lastDonationText, systemIcon: "calendar")
+                            }
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 8)
                         }
                     }
                 }
@@ -127,7 +127,7 @@ struct HomeView: View {
                 case .donationDetail(let donation):
                     DetallesDonacionView(donation: donation)
 
-                case .donateAction:
+                case .donateAction, .adminDonationDetail, .bazaarForm:
                     EmptyView()
                 }
             }

@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-struct Location: Codable, Identifiable {
+struct Location: Codable, Identifiable, Hashable {
     var id: Int
     var name: String
     var latitude: Double

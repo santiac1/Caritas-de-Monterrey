@@ -74,6 +74,8 @@ struct MainRegistroView: View {
                         LoginView()
                     case .signup:
                         SignUpView()
+                    case .mainRegistro:
+                        EmptyView()
                     }
                 }
             }
@@ -86,7 +88,7 @@ struct MainRegistroView: View {
     private var logoHeader: some View {
         HStack {
             Spacer()
-            if let icon = UIImage(named: "caritas") {
+            if let icon = UIImage(named: "CaritasWhite") {
                 Image(uiImage: icon)
                     .resizable()
                     .scaledToFit()

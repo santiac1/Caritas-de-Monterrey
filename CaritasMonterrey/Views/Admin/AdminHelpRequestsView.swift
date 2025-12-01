@@ -102,7 +102,7 @@ struct AdminHelpRequestsView: View {
                     SettingsView()
                 case .adminDonationDetail(let donation):
                     AdminSolicitudDetailView(donation: donation)
-                default:
+                case .bazaarForm, .donateAction, .donationDetail, .campaignDetail, .map, .myDonations, .notifications:
                     EmptyView()
                 }
             }

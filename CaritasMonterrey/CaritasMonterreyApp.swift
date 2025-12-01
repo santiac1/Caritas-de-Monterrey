@@ -16,10 +16,7 @@ struct CaritasMonterreyApp: App {
         LaunchScreen(
             config: LaunchScreenConfig(
                 backgroundColor: Color("LaunchScreenBackground"),
-                // AQUÍ ESTÁ LA MAGIA:
-                // Coordenadas (0 a 1) de dónde está la cruz "t" en tu imagen.
-                // X: 0.42 (Un poco a la izquierda del centro)
-                // Y: 0.35 (En la parte superior, donde está la cruz)
+                scaling: 7, 
                 zoomAnchor: UnitPoint(x: 0.46, y: 0.35)
             ),
             logo: {
