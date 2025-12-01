@@ -24,16 +24,6 @@
         "title" : "Data Summary"
       }
     ],
-    "dataSourceCreated",
-    [
-      {
-        "createdDate" : "2025-11-25T22:08:54Z",
-        "event" : "dataSourceCreated",
-        "id" : "7E8540FE-5C65-4443-84BF-8DA2E55E55DE",
-        "subtitle" : "images_dataset",
-        "title" : "Data Source Created"
-      }
-    ],
     "dataSourceTrainingStarted",
     [
       {
@@ -57,6 +47,16 @@
         "subtitle" : "MyImageClassifier 1",
         "title" : "Used By"
       }
+    ],
+    "dataSourceCreated",
+    [
+      {
+        "createdDate" : "2025-11-25T22:08:54Z",
+        "event" : "dataSourceCreated",
+        "id" : "7E8540FE-5C65-4443-84BF-8DA2E55E55DE",
+        "subtitle" : "images_dataset",
+        "title" : "Data Source Created"
+      }
     ]
   ],
   "createdDate" : "2025-11-25T22:08:54Z",
@@ -67,237 +67,33 @@
     "dataAnalysis" : {
       "classifierAnalysis" : {
         "details" : [
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.png",
+          [
+            "alimentos_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Jabon%20Individual%20Caseras.avif",
+          [
+            "limpieza_caja"
+          ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Milled%20Rice%20in%20Plastic%20Bag.jpg",
           [
             "alimentos_individual"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medical%20Blister%20Packaging.avif",
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Chico/images2.jpeg",
           [
-            "medicina_blister"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Individual%20Food%20Cans.avif",
-          [
-            "alimentos_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Risperdal%20Tablets.jpg",
-          [
-            "medicina_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.webp",
-          [
-            "alimentos_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Blister%20Pack%20with%20Colorful%20Capsules.jpg",
-          [
-            "medicina_blister"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Blister%20Pack%20Medicine%20Pills.webp",
-          [
-            "medicina_blister"
+            "Mueble_Chico"
           ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Medicina%20Caja%20Photo.jpeg",
           [
             "medicina_caja"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20Neutro%20Limpiadora.jpg",
-          [
-            "limpieza_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Grande/images4.jpeg",
-          [
-            "Equipo_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Chico/1467860540.jpg",
-          [
-            "Mueble_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Lirio%20Neutro%20Soap%2020g.jpg",
-          [
-            "limpieza_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Image.jpg",
-          [
-            "alimentos_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicine%20Blister%20Pack.jpg",
-          [
-            "medicina_blister"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/D_NQ_NP_915807-MLV71858777152_092023-O.webp",
-          [
-            "Mueble_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Images.jpeg",
-          [
-            "alimentos_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/24_2025-09-05.jpg",
-          [
-            "Electrodomestico_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Usada%20Ropa%20Prenda.jpg",
-          [
-            "ROPA"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Cloralex%20Floral%20Aroma.jpg",
-          [
-            "limpieza_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/images.jpeg",
-          [
-            "Electrodomestico_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/1B-640w.jpg.webp",
-          [
-            "Electrodomestico_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/txoiip2qbthc1.jpeg",
-          [
-            "Electrodomestico_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20de%20Algas.jpg",
-          [
-            "limpieza_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Donation%20Box%20Used%20Clothes.avif",
-          [
-            "ROPA"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Pill%20Box%20Illustration.jpg",
-          [
-            "medicina_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles%20Imagenes.webp",
-          [
-            "alimentos_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Liquid%20Detergent%20New%20Formula%201800.png",
-          [
-            "limpieza_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles.webp",
-          [
-            "alimentos_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/118230814-a-huge-lot-of-the-old-used-and-broken-spare-parts-from-no-name-mass-production-electric-home.jpg",
-          [
-            "Electrodomestico_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/s-l1200.jpg",
-          [
-            "Mueble_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Medicine%20Box%20Print.jpg",
-          [
-            "medicina_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Individual%20Food%20Cans.webp",
-          [
-            "alimentos_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/images3.jpeg",
-          [
-            "Equipo_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/silln-mecedora-0-781x1024.jpeg",
-          [
-            "Mueble_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicina%20Blister%20Image.jpeg",
-          [
-            "medicina_blister"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Clothing%20696x1044.jpg",
-          [
-            "ROPA"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/images8.jpeg",
-          [
-            "Equipo_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/S8-640w.jpg.webp",
-          [
-            "Electrodomestico_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Used%20Clothes.webp",
-          [
-            "ROPA"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Individual%20Food%20Cans.webp",
-          [
-            "alimentos_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/7%20Timeless%20Clothing%20Items.jpg",
-          [
-            "ROPA"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Chico/images4.jpeg",
-          [
-            "Mueble_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20Photos.jpeg",
-          [
-            "limpieza_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/images5.jpeg",
-          [
-            "Electrodomestico_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Bolsas%20de%20Arroz%20Mar%202023.webp",
-          [
-            "alimentos_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/9185NOtBVSL._AC_UF1000,1000_QL80_.jpg",
-          [
-            "Equipo_Chico"
-          ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/images6.jpeg",
-          [
-            "Electrodomestico_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Jabon%20Liquido%20para%20Ropa.jpeg",
-          [
-            "limpieza_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/D_NQ_NP_2X_789550-MLV98254072805_112025-N.webp",
           [
             "Electrodomestico_Chico"
           ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/IMG_3502.jpg.jxl",
           [
             "Electrodomestico_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.png",
-          [
-            "alimentos_individual"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Bolsas%20de%20Arroz.jpg",
-          [
-            "alimentos_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Grande/surtido-objetos-sucios-arrojados_23-2148996981.jpg.avif",
-          [
-            "Equipo_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Red%20Dress%20Sewing%20Illustration.jpg",
-          [
-            "ROPA"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes.jpg",
-          [
-            "limpieza_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Medicina%20Caja.jpg",
-          [
-            "medicina_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicine%20Capsules%20Blister.webp",
-          [
-            "medicina_blister"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20Zote%20Rosa%20400g.webp",
-          [
-            "limpieza_individual"
           ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/orozco_web_vert.jpg",
           [
@@ -307,59 +103,131 @@
           [
             "limpieza_caja"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/10de95c71088405da1d1ba2690ffd488.jpg",
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicine%20Capsules%20Blister.webp",
           [
-            "Mueble_Grande"
+            "medicina_blister"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/balon-baloncesto-wilson-nba-drv-plus-unico-7.jpg",
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/D_NQ_NP_2X_789550-MLV98254072805_112025-N.webp",
           [
-            "Equipo_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/7c7b053a6ae648ca9246f486498ab5ed.jpg",
-          [
-            "Mueble_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Individual%20Food%20Cans%20(1).avif",
-          [
-            "alimentos_caja"
+            "Electrodomestico_Chico"
           ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Food%20Cans%20Image.webp",
           [
             "alimentos_caja"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Flea%20Market%20Ropa.jpg",
-          [
-            "ROPA"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/s-l1200.webp",
-          [
-            "Equipo_Chico"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/D_NQ_NP_2X_797275-MCR93853094040_102025-T.webp",
-          [
-            "Electrodomestico_Grande"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Bolsa%20de%20Frijoles%20Images%20(1).jpeg",
-          [
-            "alimentos_caja"
-          ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Jabon%20Individual%20Caseras.avif",
-          [
-            "limpieza_caja"
-          ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/images2.jpeg",
           [
             "Electrodomestico_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Bolsas%20de%20Arroz.jpg",
+          [
+            "alimentos_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/txoiip2qbthc1.jpeg",
+          [
+            "Electrodomestico_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicina%20Blister%20Image.jpeg",
+          [
+            "medicina_blister"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Jabon%20Liquido%20para%20Ropa.jpeg",
+          [
+            "limpieza_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Grande/images4.jpeg",
+          [
+            "Equipo_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Usada%20Ropa%20Prenda.jpg",
+          [
+            "ROPA"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/118230814-a-huge-lot-of-the-old-used-and-broken-spare-parts-from-no-name-mass-production-electric-home.jpg",
+          [
+            "Electrodomestico_Chico"
           ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/images.jpeg",
           [
             "Mueble_Grande"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Arroz%20Prima%20500g%2020%20bolsas.webp",
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Image.jpg",
           [
-            "alimentos_individual"
+            "alimentos_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Chico/images4.jpeg",
+          [
+            "Mueble_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Medicina%20Caja.jpg",
+          [
+            "medicina_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/balon-baloncesto-wilson-nba-drv-plus-unico-7.jpg",
+          [
+            "Equipo_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Medicine%20Box%20Print.jpg",
+          [
+            "medicina_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/7c7b053a6ae648ca9246f486498ab5ed.jpg",
+          [
+            "Mueble_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20de%20Algas.jpg",
+          [
+            "limpieza_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/24_2025-09-05.jpg",
+          [
+            "Electrodomestico_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20Photos.jpeg",
+          [
+            "limpieza_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Donation%20Box%20Used%20Clothes.avif",
+          [
+            "ROPA"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes.jpg",
+          [
+            "limpieza_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/D_NQ_NP_915807-MLV71858777152_092023-O.webp",
+          [
+            "Mueble_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicina%20Blister.jpg",
+          [
+            "medicina_blister"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/s-l1200.jpg",
+          [
+            "Mueble_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Risperdal%20Tablets.jpg",
+          [
+            "medicina_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/S8-640w.jpg.webp",
+          [
+            "Electrodomestico_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/D_NQ_NP_2X_797275-MCR93853094040_102025-T.webp",
+          [
+            "Electrodomestico_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Used%20Clothes.webp",
+          [
+            "ROPA"
           ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/images.jpeg",
+          [
+            "Equipo_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/images3.jpeg",
           [
             "Equipo_Chico"
           ],
@@ -367,25 +235,157 @@
           [
             "alimentos_individual"
           ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Blister%20Pack%20with%20Colorful%20Capsules.jpg",
+          [
+            "medicina_blister"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medical%20Blister%20Packaging.avif",
+          [
+            "medicina_blister"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Individual%20Food%20Cans%20(1).avif",
+          [
+            "alimentos_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/1B-640w.jpg.webp",
+          [
+            "Electrodomestico_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/silln-mecedora-0-781x1024.jpeg",
+          [
+            "Mueble_Grande"
+          ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Bolsa%20de%20Frijoles%20Images.jpeg",
           [
             "alimentos_caja"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Chico/images2.jpeg",
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Homemade%20Bean%20Bag%20Images.jpeg",
+          [
+            "alimentos_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Grande/images.jpeg",
+          [
+            "Electrodomestico_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Lirio%20Neutro%20Soap%2020g.jpg",
+          [
+            "limpieza_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Electrodomestico_Chico/images5.jpeg",
+          [
+            "Electrodomestico_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Chico/1467860540.jpg",
           [
             "Mueble_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Blister%20Pack%20Medicine%20Pills.webp",
+          [
+            "medicina_blister"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/7%20Timeless%20Clothing%20Items.jpg",
+          [
+            "ROPA"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Clothing%20696x1044.jpg",
+          [
+            "ROPA"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Individual%20Food%20Cans.webp",
+          [
+            "alimentos_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Bolsa%20de%20Frijoles%20Images%20(1).jpeg",
+          [
+            "alimentos_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Individual%20Food%20Cans.avif",
+          [
+            "alimentos_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Red%20Dress%20Sewing%20Illustration.jpg",
+          [
+            "ROPA"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Liquid%20Detergent%20New%20Formula%201800.png",
+          [
+            "limpieza_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Grande/surtido-objetos-sucios-arrojados_23-2148996981.jpg.avif",
+          [
+            "Equipo_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/9185NOtBVSL._AC_UF1000,1000_QL80_.jpg",
+          [
+            "Equipo_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/s-l1200.webp",
+          [
+            "Equipo_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20Neutro%20Limpiadora.jpg",
+          [
+            "limpieza_individual"
           ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Cleaning%20Product%20Boxes%20(2).jpg",
           [
             "limpieza_caja"
           ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicine%20Blister%20Pack.jpg",
+          [
+            "medicina_blister"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Jabon%20Zote%20Rosa%20400g.webp",
+          [
+            "limpieza_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_individual/Cloralex%20Floral%20Aroma.jpg",
+          [
+            "limpieza_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Arroz%20Prima%20500g%2020%20bolsas.webp",
+          [
+            "alimentos_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Equipo_Chico/images8.jpeg",
+          [
+            "Equipo_Chico"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Individual%20Food%20Cans.webp",
+          [
+            "alimentos_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_caja/Pill%20Box%20Illustration.jpg",
+          [
+            "medicina_caja"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/Mueble_Grande/10de95c71088405da1d1ba2690ffd488.jpg",
+          [
+            "Mueble_Grande"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles%20Imagenes.webp",
+          [
+            "alimentos_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/ROPA/Flea%20Market%20Ropa.jpg",
+          [
+            "ROPA"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_caja/Bolsas%20de%20Arroz%20Mar%202023.webp",
+          [
+            "alimentos_caja"
+          ],
           "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/limpieza_caja/Jabon%20Liquido%20para%20Ropa.webp",
           [
             "limpieza_caja"
           ],
-          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/medicina_blister/Medicina%20Blister.jpg",
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Bolsa%20de%20Frijoles.webp",
           [
-            "medicina_blister"
+            "alimentos_individual"
+          ],
+          "file:///Users/victorvalero/Desktop/code%F0%9F%93%82/imagenesModeloMl/images_dataset/alimentos_individual/Homemade%20Bean%20Bag%20Image.webp",
+          [
+            "alimentos_individual"
           ]
         ],
         "labelStats" : {
@@ -406,7 +406,7 @@
       },
       "issues" : [
         {
-          "description" : "13 classes found, including alimentos_caja, alimentos_individual, medicina_blister",
+          "description" : "13 classes found, including alimentos_caja, alimentos_individual, ROPA",
           "severity" : "debug"
         },
         {
@@ -443,7 +443,7 @@
     "E72661E8-FF3D-47B9-95A9-D079AC3B3E62"
   ],
   "id" : "FE89A82E-6508-4D86-B5CE-E4ED825E1381",
-  "modifiedDate" : "2025-12-01T17:51:55Z",
+  "modifiedDate" : "2025-12-01T21:04:39Z",
   "pathType" : 0,
   "preferredFilename" : "images_dataset",
   "title" : "images_dataset",

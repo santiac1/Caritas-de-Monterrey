@@ -41,7 +41,9 @@ struct SignUpView: View {
         !publicName.isEmpty &&
         !phone.isEmpty &&
         !email.isEmpty &&
-        password.count >= 8 &&
+        password.rangeOfCharacter(from: .uppercaseLetters) != nil &&
+        password.rangeOfCharacter(from: .decimalDigits) != nil &&
+        password.rangeOfCharacter(from: .punctuationCharacters) != nil &&
         isAdult
     }
     
@@ -54,6 +56,9 @@ struct SignUpView: View {
         if phone.isEmpty { errors.append("Necesitamos un teléfono para contactarte.") }
         if email.isEmpty { errors.append("El correo electrónico es esencial.") }
         if password.count < 8 { errors.append("La contraseña es muy corta (usa al menos 8 caracteres).") }
+        if password.rangeOfCharacter(from: .uppercaseLetters) == nil { errors.append("La contraseña debe de tener al menos 1 caracter en mayusculas") }
+        if password.rangeOfCharacter(from: .decimalDigits) == nil { errors.append("La contraseña debe de tener al menos 1 numero ") }
+        if password.rangeOfCharacter(from: .punctuationCharacters) == nil { errors.append("La contraseña debe de tener al menos 1 caracter especial") }
         if !isAdult { errors.append("Lo sentimos, debes ser mayor de 18 años.") }
         return errors
     }
