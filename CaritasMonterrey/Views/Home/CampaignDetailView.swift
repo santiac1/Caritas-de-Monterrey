@@ -4,6 +4,9 @@ struct CampaignDetailView: View {
     let campaign: Campaign
     @Environment(\.dismiss) private var dismiss
     
+    @State private var showDonationSheet = false
+    @EnvironmentObject private var appState: AppState // Necesario para DonationSheet
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -76,7 +79,7 @@ struct CampaignDetailView: View {
                     // Botón de Acción (Solo si activa)
                     if campaign.isCurrentlyActive {
                         Button {
-                            // Acción de donar específica
+                            showDonationSheet = true
                         } label: {
                             HStack {
                                 Image(systemName: "heart.fill")
@@ -87,7 +90,7 @@ struct CampaignDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(Color("PrimaryCyan"))
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .clipShape(Capsule()) // Cambio a forma de píldora
                             .shadow(color: Color("PrimaryCyan").opacity(0.3), radius: 10, x: 0, y: 5)
                         }
                         .padding(.top, 10)
@@ -107,7 +110,6 @@ struct CampaignDetailView: View {
                 }
                 .padding(24)
                 .background(Color(.systemBackground))
-                // Efecto de hoja redondeada subiendo sobre la imagen
                 .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
                 .offset(y: -40)
                 .padding(.bottom, -40)
@@ -118,11 +120,17 @@ struct CampaignDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button { dismiss() } label: {
-                            Image(systemName: "chevron.left")
-                                
-                        
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+
+                    }                    
                 }
             }
+        }
+        .sheet(isPresented: $showDonationSheet) {
+            DonationSheet(viewModel: DonationSheetViewModel())
+                .environmentObject(appState)
+                .presentationDetents([.large])
         }
     }
     
@@ -220,4 +228,5 @@ struct DetailInfoCard: View {
         end_date: Date().addingTimeInterval(86400 * 30),
         is_active: true
     ))
+    .environmentObject(AppState())
 }

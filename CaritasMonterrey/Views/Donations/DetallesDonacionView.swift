@@ -4,7 +4,6 @@ struct DetallesDonacionView: View {
     let donation: Donation
     @Environment(\.dismiss) var dismiss
     
-    // 1. CORRECCIÓN: Cambiamos String? por una estructura propia que sea Identifiable
     @State private var selectedImage: ImageItem?
     
     var body: some View {
@@ -14,7 +13,6 @@ struct DetallesDonacionView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     
-                    // MARK: - 1. Cabecera Reorganizada (Igual que Admin)
                     VStack(alignment: .leading, spacing: 8) {
                     
                         // Fila 1: Nombre (Solo y Grande)
@@ -24,7 +22,6 @@ struct DetallesDonacionView: View {
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
                                     
-                        // Fila 2: Badge de Estado + Fecha (Separados por Spacer)
                         HStack(alignment: .center, spacing: 12) {
                             // Badge (Izquierda)
                             Text(donation.statusDisplay.rawValue)
@@ -36,9 +33,9 @@ struct DetallesDonacionView: View {
                                 .background(donation.statusDisplay.color.opacity(0.1))
                                 .clipShape(Capsule())
                                                         
-                            Spacer() // ✅ Empuja la fecha a la derecha
+                            Spacer() 
                                                                         
-                            // Fecha (Derecha)
+                            
                             HStack(spacing: 4) {
                                 Image(systemName: "calendar")
                                 if let created = donation.created_at {
@@ -51,15 +48,13 @@ struct DetallesDonacionView: View {
                             .foregroundStyle(.secondary)
                         }
                                                             
-                        // Fila 3: ID
                         Text("ID: #\(donation.id)")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                             .padding(.top, 2)
                                                                     
-                        // Fila 4: Información del Donante (Debajo del ID)
                         if let donor = donation.donorName {
-                            Label(donor, systemImage: "person.circle.fill")
+                            Label(donor, systemImage: "person.crop.circle.fill")
                                 .font(.title3)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 4)
@@ -70,7 +65,6 @@ struct DetallesDonacionView: View {
                     
                     Divider().padding(.horizontal, 20)
                     
-                    // MARK: - 2. Evidencia Fotográfica
                     if let images = donation.image_urls, !images.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
                             Label("Evidencia fotográfica", systemImage: "camera.fill")
@@ -101,7 +95,6 @@ struct DetallesDonacionView: View {
                                     }
                                     .frame(maxWidth: .infinity)
                                     .onTapGesture {
-                                        // 2. CORRECCIÓN: Envolvemos la URL en nuestra estructura segura
                                         selectedImage = ImageItem(id: imageUrl)
                                     }
                                 }
@@ -114,7 +107,6 @@ struct DetallesDonacionView: View {
                         }
                     }
                     
-                    // MARK: - 3. Tarjeta de Detalles
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Detalles de la donación")
                             .font(.headline)
@@ -122,19 +114,19 @@ struct DetallesDonacionView: View {
                             .padding(.horizontal, 20)
                         
                         VStack(spacing: 0) {
-                            // Fila: Tipo
+                            //  Tipo
                             DetailRow(icon: "tag.fill", title: "Tipo", value: donation.type.capitalized)
                             
                             Divider().padding(.leading, 60)
                             
-                            // Fila: Método de entrega
+                            //  Método de entrega
                             DetailRow(
                                 icon: "shippingbox.fill",
                                 title: "Método de entrega",
                                 value: donation.help_needed ? "Recolección solicitada" : "Entrega personal"
                             )
                             
-                            // Fila: Bazar
+                            //  Bazar
                             if let bazaarName = donation.location_name, !bazaarName.isEmpty {
                                 Divider().padding(.leading, 60)
                                 DetailRow(icon: "building.2.fill", title: "Bazar", value: bazaarName)
@@ -180,7 +172,6 @@ struct DetallesDonacionView: View {
                         .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
                     }
                     
-                    // MARK: - 4. Tarjeta de Nota de Administrador (SEPARADA)
                     if let adminNote = donation.admin_note, !adminNote.isEmpty {
                         VStack(alignment: .leading, spacing: 16) {
                             Text("Nota de Administrador")
@@ -216,7 +207,6 @@ struct DetallesDonacionView: View {
     }
 }
 
-// MARK: - Vistas Auxiliares (Reutilizables)
 
 private struct DetailRow: View {
     let icon: String
@@ -299,8 +289,6 @@ private struct FullScreenImageView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
-                            .font(.title2)
-                            .foregroundStyle(.white)
                     }
                 }
             }
@@ -308,7 +296,6 @@ private struct FullScreenImageView: View {
     }
 }
 
-// 4. CORRECCIÓN: Definimos una estructura pequeña para manejar el Identifiable
 // en lugar de usar "extension String: Identifiable"
 struct ImageItem: Identifiable {
     let id: String

@@ -70,7 +70,7 @@ struct AdminSolicitudDetailView: View {
                                                                     
                         // Información de donador
                         if let donor = donation.donorName {
-                            Label(donor, systemImage: "person.circle.fill")
+                            Label(donor, systemImage: "person.crop.circle.fill")
                                 .font(.title3)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 4)
@@ -427,9 +427,6 @@ private struct FullScreenImageView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
                     }
                 }
             }

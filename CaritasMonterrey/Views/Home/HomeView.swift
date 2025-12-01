@@ -87,12 +87,12 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { navPath.append(AppRoute.profile) } label: {
-                        Image(systemName: "person.crop.circle").font(.title3).foregroundStyle(.primary)
+                        Image(systemName: "person.crop.circle")
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button { navPath.append(AppRoute.notifications) } label: {
-                        Image(systemName: "bell.fill").font(.title3).foregroundStyle(.primary)
+                        Image(systemName: "bell.fill")
                     }
                 }
             }

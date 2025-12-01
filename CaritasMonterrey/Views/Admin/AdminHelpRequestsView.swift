@@ -55,8 +55,7 @@ struct AdminHelpRequestsView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink(value: AppRoute.profile) {
                         Image(systemName: "person.crop.circle")
-                            .font(.title2)
-                            .foregroundStyle(.primary)
+        
                     }
                 }
                 
