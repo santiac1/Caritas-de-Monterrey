@@ -30,8 +30,12 @@ struct AdminHelpRequestsView: View {
                     List {
                         ForEach(viewModel.donations) { donation in
                             // Navegación al detalle
-                            NavigationLink(destination: AdminSolicitudDetailView(donation: donation)) {
+                            ZStack {
                                 AdminDonationRow(donation: donation)
+                                NavigationLink(value: AppRoute.adminDonationDetail(donation)) {
+                                    EmptyView()
+                                }
+                                .opacity(0)
                             }
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
@@ -96,6 +100,8 @@ struct AdminHelpRequestsView: View {
                     ProfileView()
                 case .settings:
                     SettingsView()
+                case .adminDonationDetail(let donation):
+                    AdminSolicitudDetailView(donation: donation)
                 default:
                     EmptyView()
                 }
@@ -149,6 +155,11 @@ private struct AdminDonationRow: View {
                         .foregroundStyle(.tertiary)
                 }
             }
+            
+            // Chevron
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.secondary.opacity(0.5))
         }
         .padding()
         .background(

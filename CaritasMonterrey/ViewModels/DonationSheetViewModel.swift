@@ -22,7 +22,11 @@ final class DonationSheetViewModel: ObservableObject {
     @Published var donationName: String = ""
     @Published var notes: String = ""
     @Published var amount: String = ""            // ya no se usa (no hay monetaria)
-    @Published var helpNeeded: Bool = false
+    @Published var helpNeeded: Bool = false {
+        didSet {
+            preferPickupAtBazaar = !helpNeeded
+        }
+    }
     @Published var shippingWeight: String = ""
     @Published var pickupAddress: String = ""
 

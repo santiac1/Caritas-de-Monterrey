@@ -146,7 +146,7 @@ struct AdminSolicitudDetailView: View {
                                 Divider().padding(.leading, 60)
                                 DetailRow(icon: "scalemass.fill", title: "Peso/Volumen", value: shipping)
                             }
-                            if let pickupAddress = donation.pickup_address, !pickupAddress.isEmpty {
+                            if let pickupAddress = donation.pickup_address, !pickupAddress.isEmpty, donation.help_needed {
                                 Divider().padding(.leading, 60)
                                 DetailRow(icon: "mappin.and.ellipse", title: "Dirección", value: pickupAddress)
                             }
@@ -163,7 +163,7 @@ struct AdminSolicitudDetailView: View {
                                 DetailRow(icon: "note.text", title: "Notas", value: notes)
                             }
                         }
-                        .background(Color.white)
+                        .background(Color(UIColor.secondarySystemGroupedBackground))
                         .cornerRadius(20)
                         .padding(.horizontal, 20)
                         .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
@@ -380,7 +380,7 @@ private struct DetailRow: View {
                     .frame(width: 40, height: 40)
                
                 Image(systemName: icon)
-                    .foregroundStyle(.black.opacity(0.7))
+                    .foregroundStyle(.primary)
                     .font(.system(size: 16))
             }
             

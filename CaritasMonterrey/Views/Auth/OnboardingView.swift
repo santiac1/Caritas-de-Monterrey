@@ -7,8 +7,6 @@ import Combine
 struct OnboardingView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var currentPage = 0
-    @State private var navigateToLogin = false
-    @State private var navigateToMainRegistro = false
     @State private var showTermsAndPrivacy = false
 
     private var currentPageData: OnboardingPage {
@@ -19,7 +17,6 @@ struct OnboardingView: View {
     private func advancePage() {
         if currentPageData.isLast {
             hasCompletedOnboarding = true
-            navigateToLogin = true
         } else {
             withAnimation {
                 currentPage = min(currentPage + 1, OnboardingPage.pages.count - 1)
@@ -145,17 +142,6 @@ struct OnboardingView: View {
                     .padding(.horizontal, 40)
                     .padding(.bottom, 50)
                 }
-            }
-            // --- CORRECCIONES AQUÍ ---
-            // Reemplazamos los NavigationLink ocultos por .navigationDestination
-            
-            // 🔁 Navegación automática al login
-            .navigationDestination(isPresented: $navigateToLogin) {
-                LoginView()
-            }
-            // 🔁 Navegación automática a MainRegistro
-            .navigationDestination(isPresented: $navigateToMainRegistro) {
-                MainRegistroView()
             }
             .sheet(isPresented: $showTermsAndPrivacy) {
                 TermsAndPrivacyView()

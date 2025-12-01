@@ -10,10 +10,10 @@ import SwiftUI
 struct AppColors {
     static let primaryCyan = Color("PrimaryCyan")   // define en Assets
     static let secondaryBlue = Color("SecondaryBlue")
-    static let lightGray = Color("LightGray")
-    static let gray = Color("Gray")
-    static let magenta = Color("Magenta")
-    static let orange = Color("Orange")
+    static let lightGrayCaritas = Color("LightGrayCaritas")
+    static let grayCaritas = Color("GrayCaritas")
+    static let magentaCaritas = Color("MagentaCaritas")
+    static let orangeCaritas = Color("OrangeCaritas")
 }
 
 struct AppFonts {

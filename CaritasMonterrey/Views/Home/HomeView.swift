@@ -5,6 +5,7 @@ struct HomeView: View {
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var donationsVM: DonationsViewModel
     @EnvironmentObject private var mapaVM: MapaViewModel
+    @StateObject private var campaignVM = CampaignViewModel()
     @EnvironmentObject private var appState: AppState
 
     @State private var navPath = NavigationPath()
@@ -30,7 +31,31 @@ struct HomeView: View {
                     }
                     .padding(.top, 10)
 
-                    // 2. Estadísticas
+                    // 2. Campañas Activas
+                    let activeCampaigns = campaignVM.campaigns.filter { $0.isCurrentlyActive }
+                    if !activeCampaigns.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Campañas activas")
+                                .font(.title3).bold()
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 16) {
+                                    ForEach(activeCampaigns) { campaign in
+                                        Button {
+                                            navPath.append(AppRoute.campaignDetail(campaign))
+                                        } label: {
+                                            CampaignCardHome(campaign: campaign)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 8)
+                            }
+                        }
+                    }
+
+                    // 3. Estadísticas
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Tus estadísticas")
                             .font(.title3).bold()
@@ -51,20 +76,22 @@ struct HomeView: View {
             }
             .navigationTitle(vm.screenTitle)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { navPath.append(AppRoute.profile) } label: {
+                        Image(systemName: "person.crop.circle").font(.title3).foregroundStyle(.primary)
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button { navPath.append(AppRoute.notifications) } label: {
                         Image(systemName: "bell.fill").font(.title3).foregroundStyle(.primary)
                     }
                 }
-                ToolbarSpacer(.fixed, placement: .primaryAction)
-                ToolbarItem(placement: .primaryAction) {
-                    Button { navPath.append(AppRoute.profile) } label: {
-                        Image(systemName: "person.crop.circle").font(.title3).foregroundStyle(.primary)
-                    }
-                }
             }
             .onAppear {
-                Task { await vm.loadStats(for: appState.session?.user.id) }
+                Task {
+                    await vm.loadStats(for: appState.session?.user.id)
+                    await campaignVM.loadCampaigns(activeOnly: true)
+                }
             }
             // --- MANEJADOR DE RUTAS GLOBAL ---
             .navigationDestination(for: AppRoute.self) { route in
@@ -93,7 +120,13 @@ struct HomeView: View {
                 case .settings:
                     SettingsView()
                         // SettingsView tiene su propio título definido internamente
+                
+                case .campaignDetail(let campaign):
+                    CampaignDetailView(campaign: campaign)
                         
+                case .donationDetail(let donation):
+                    DetallesDonacionView(donation: donation)
+
                 case .donateAction:
                     EmptyView()
                 }

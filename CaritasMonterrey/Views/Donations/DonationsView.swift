@@ -32,8 +32,12 @@ struct DonationsView: View {
             } else {
                 List {
                     ForEach(filteredDonations) { donation in
-                        NavigationLink(destination: DetallesDonacionView(donation: donation)) {
+                        ZStack {
                             DonationRow(donation: donation)
+                            NavigationLink(value: AppRoute.donationDetail(donation)) {
+                                EmptyView()
+                            }
+                            .opacity(0)
                         }
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
@@ -108,6 +112,11 @@ private struct DonationRow: View {
                 .padding(.vertical, 4)
                 .background(donation.statusDisplay.color.opacity(0.1))
                 .clipShape(Capsule())
+            
+            // Chevron
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.secondary.opacity(0.5))
         }
         .padding()
         .background(

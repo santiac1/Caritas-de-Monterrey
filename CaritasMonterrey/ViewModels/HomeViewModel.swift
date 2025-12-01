@@ -61,7 +61,7 @@ final class HomeViewModel: ObservableObject {
 
     // Banner principal
     @Published private(set) var banner: Promo = .init(
-        title: "Se parte del cambio, ¡Haz una donación ahora!",
+        title: "¡Haz una donación ahora!",
         assetName: "polla_dona",
         systemFallback: "heart.circle.fill",
         route: .donateAction

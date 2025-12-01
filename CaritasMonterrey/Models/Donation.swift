@@ -14,20 +14,20 @@ enum DonationDBStatus: String, Codable, CaseIterable, Hashable {
 /// Estados de **presentación** para la UI en español
 enum DonationStatusDisplay: String, CaseIterable {
     case enProceso = "En proceso"
-    case completada = "Completada"
+    case completada = "Aprobada"
     case solicitudAyuda = "Solicitud de ayuda"
     case ayudaAprobada = "Ayuda aprobada"
-    case ayudaRechazada = "Ayuda rechazada"
+    case ayudaRechazada = "Rechazada"
     case recibida = "Recibida"
 
     var color: Color {
         switch self {
-        case .enProceso:        return Color(red: 0.40, green: 0.75, blue: 0.75)
-        case .completada:       return Color(red: 0.95, green: 0.50, blue: 0.30)
-        case .solicitudAyuda:   return .orange
+        case .enProceso:        return .primaryCyan
+        case .completada:       return .green
+        case .solicitudAyuda:   return .orangeCaritas
         case .ayudaAprobada:    return .green
         case .ayudaRechazada:   return .red
-        case .recibida:         return Color(red: 0.40, green: 0.30, blue: 0.75)
+        case .recibida:         return .magentaCaritas
         }
     }
 

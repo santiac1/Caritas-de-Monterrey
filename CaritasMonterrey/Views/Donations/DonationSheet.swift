@@ -21,6 +21,7 @@ struct DonationSheet: View {
                     donationImageSection // Sección de imagen
                     
                     donationTypeSection
+                    donationShippingSection
                     donationDeliverySection
                     donationNotesSection
                     donationErrorSection
@@ -208,12 +209,7 @@ extension DonationSheet {
 extension DonationSheet {
     private var donationDeliverySection: some View {
         GroupBox {
-            Toggle(isOn: $viewModel.preferPickupAtBazaar) {
-                Text("Entregar en bazar cercano")
-            }
-            .tint(Color("AccentColor"))
-
-            if viewModel.preferPickupAtBazaar {
+            if !viewModel.helpNeeded {
                 // Si la lista de bazares (ahora filtrada) está vacía, mostrar aviso
                 if viewModel.bazaars.isEmpty {
                     Text("No hay bazares activos en este momento.")
