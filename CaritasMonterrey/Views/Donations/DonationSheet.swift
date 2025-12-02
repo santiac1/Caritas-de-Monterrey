@@ -17,12 +17,22 @@ struct DonationSheet: View {
             ScrollView {
                 VStack(spacing: 16) {
                     
+                    // 1. Nombre
                     donationNameSection
+                    
+                    // 2. Entrega (Bazar)
+                    donationDeliverySection
+                    
+                    // 3. Tipo de donación (debajo de bazar)
+                    donationTypeSection
+                    
+                    // 4. Imagen
                     donationImageSection
                     
-                    donationTypeSection
+                    // 5. Ayuda con el envío (debajo de fotos)
                     donationShippingSection
-                    donationDeliverySection
+                    
+                    // 6. Notas y Errores
                     donationNotesSection
                     donationErrorSection
                 }
