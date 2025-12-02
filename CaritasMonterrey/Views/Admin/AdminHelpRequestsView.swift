@@ -11,7 +11,7 @@ struct AdminHelpRequestsView: View {
                 // Filtro
                 DonationsFilterBar(selection: $viewModel.currentFilter, namespace: animationNamespace)
                     .padding(.vertical, 10)
-                    .background(Color(UIColor.systemBackground))
+                    .background(Color(.secondarySystemBackground)) // Unificado con el fondo
                 
                 // Lista de solicitudes
                 if viewModel.isLoading && viewModel.donations.isEmpty {
@@ -39,6 +39,7 @@ struct AdminHelpRequestsView: View {
                             }
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                            .listRowBackground(Color.clear)
                         }
                     }
                     .listStyle(.plain)
@@ -55,7 +56,8 @@ struct AdminHelpRequestsView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink(value: AppRoute.profile) {
                         Image(systemName: "person.crop.circle")
-        
+                            .font(.title2)
+                            .foregroundStyle(.primary)
                     }
                 }
                 
@@ -111,8 +113,13 @@ struct AdminHelpRequestsView: View {
 // Donación para admin
 private struct AdminDonationRow: View {
     let donation: Donation
+    @Environment(\.colorScheme) private var scheme
     
     var body: some View {
+        // Fondo "Off-Black" en Dark Mode
+        let backgroundColor = scheme == .dark ? Color(red: 0.11, green: 0.11, blue: 0.12) : .white
+        let shadowColor = scheme == .dark ? Color.black.opacity(0.3) : Color.black.opacity(0.1)
+        
         HStack(spacing: 16) {
             ZStack {
                 Circle()
@@ -125,6 +132,7 @@ private struct AdminDonationRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(donation.name)
                     .font(.headline)
+                    .foregroundStyle(.primary)
                     .lineLimit(1)
                 
                 Text(donation.donorName ?? "Usuario desconocido")
@@ -135,7 +143,6 @@ private struct AdminDonationRow: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                // Borrar
                 // Badge de estado
                 Text(donation.statusDisplay.rawValue)
                     .font(.caption2)
@@ -160,8 +167,12 @@ private struct AdminDonationRow: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(.white)
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                .fill(backgroundColor)
+                .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(scheme == .dark ? Color.white.opacity(0.08) : Color.clear, lineWidth: 1)
         )
     }
     

@@ -15,7 +15,9 @@ struct StatCard: View {
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        let accent = scheme == .dark ? Color(.white) : Color.primaryCyan
+        let accent = scheme == .dark ? Color("PrimaryCyan") : Color.primaryCyan
+        // Fondo adaptativo: blanco en light, gris oscuro (secondarySystemBackground) en dark
+        let backgroundColor = scheme == .dark ? Color(UIColor.secondarySystemGroupedBackground) : Color.white
 
         HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
@@ -35,21 +37,26 @@ struct StatCard: View {
             Spacer(minLength: 8)
 
             Image(systemName: systemIcon)
-                .font(.system(size: 36, weight: .semibold))
+                .font(.system(size: 32, weight: .semibold)) // Reduje un poco el tamaño para balancear
                 .foregroundStyle(accent)
                 .frame(width: 36, height: 36)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, minHeight: HomeCardStyle.height, alignment: .leading)
-        .background(Color(.white))
+        .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: HomeCardStyle.cornerRadius, style: .continuous))
+        // Sombra sutil solo en light mode, en dark mode el contraste es suficiente o se usa un borde sutil
+        .shadow(color: Color.black.opacity(scheme == .dark ? 0 : 0.05), radius: 8, x: 0, y: 2)
         .contentShape(Rectangle())
     }
 }
 
 
 #Preview {
-    StatCard(title: "Resumen", value: "0 donaciones", systemIcon: "chart.bar.fill")
-        .padding()
+    ZStack {
+        Color(.systemGroupedBackground)
+        StatCard(title: "Resumen", value: "0 donaciones", systemIcon: "chart.bar.fill")
+            .padding()
+    }
 }

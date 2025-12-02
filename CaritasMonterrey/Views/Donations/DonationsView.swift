@@ -74,8 +74,13 @@ struct DonationsView: View {
 
 private struct DonationRow: View {
     let donation: Donation
+    @Environment(\.colorScheme) private var scheme
     
     var body: some View {
+        // Fondo "Off-Black" (menos intenso) en Dark Mode
+        let backgroundColor = scheme == .dark ? Color(red: 0.11, green: 0.11, blue: 0.12) : .white
+        let shadowColor = scheme == .dark ? Color.black.opacity(0.3) : Color.black.opacity(0.1)
+        
         HStack(spacing: 16) {
             ZStack {
                 Circle()
@@ -88,6 +93,7 @@ private struct DonationRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(donation.name)
                     .font(.headline)
+                    .foregroundStyle(.primary)
                     .lineLimit(1)
                 
                 Text(donation.formattedDate)
@@ -113,8 +119,13 @@ private struct DonationRow: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(.white)
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                .fill(backgroundColor)
+                .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
+        )
+        // Borde muy sutil para definición extra
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(scheme == .dark ? Color.white.opacity(0.08) : Color.clear, lineWidth: 1)
         )
     }
     

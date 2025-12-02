@@ -3,6 +3,7 @@ import SwiftUI
 import Supabase
 import Combine
 import PhotosUI
+import CoreLocation
 
 @MainActor
 final class DonationSheetViewModel: ObservableObject {
@@ -57,6 +58,7 @@ final class DonationSheetViewModel: ObservableObject {
     private let classifier = DonationClassifier()
     private var allBazaars: [Location] = []
     private var isLargeAppliance = false
+    private let locationManager = CLLocationManager()
 
     // Infra
     private let client = SupabaseManager.shared.client
@@ -115,13 +117,47 @@ final class DonationSheetViewModel: ObservableObject {
                     self.selectedBazaar = found
                     self.preferPickupAtBazaar = true
                 } else {
-                    // Seleccionar alguno disponible
-                    self.selectedBazaar = bazaars.first
+                    // Seleccionar el más cercano si hay permisos y ubicación
+                    if let userLoc = self.locationManager.location {
+                        print("DEBUG: User Location found: \(userLoc.coordinate)")
+                        let sorted = bazaars.sorted { b1, b2 in
+                            let loc1 = CLLocation(latitude: b1.latitude, longitude: b1.longitude)
+                            let loc2 = CLLocation(latitude: b2.latitude, longitude: b2.longitude)
+                            let dist1 = userLoc.distance(from: loc1)
+                            let dist2 = userLoc.distance(from: loc2)
+                            print("DEBUG: Distance to \(b1.name): \(dist1) meters")
+                            print("DEBUG: Distance to \(b2.name): \(dist2) meters")
+                            return dist1 < dist2
+                        }
+                        if let nearest = sorted.first {
+                            print("DEBUG: Nearest bazaar selected: \(nearest.name)")
+                            self.selectedBazaar = nearest
+                        }
+                    } else {
+                        print("DEBUG: User Location is NIL, defaulting to first bazaar")
+                        // Fallback al primero
+                        self.selectedBazaar = bazaars.first
+                    }
                 }
                 self.preselectedBazaar = nil
                 
             } else if selectedBazaar == nil {
-                selectedBazaar = bazaars.first
+                 // Seleccionar el más cercano si hay permisos y ubicación
+                 if let userLoc = self.locationManager.location {
+                     print("DEBUG: User Location found (case 2): \(userLoc.coordinate)")
+                     let sorted = bazaars.sorted { b1, b2 in
+                         let loc1 = CLLocation(latitude: b1.latitude, longitude: b1.longitude)
+                         let loc2 = CLLocation(latitude: b2.latitude, longitude: b2.longitude)
+                         return userLoc.distance(from: loc1) < userLoc.distance(from: loc2)
+                     }
+                     if let nearest = sorted.first {
+                         print("DEBUG: Nearest bazaar selected (case 2): \(nearest.name)")
+                         selectedBazaar = nearest
+                     }
+                 } else {
+                     print("DEBUG: User Location is NIL (case 2), defaulting to first bazaar")
+                     selectedBazaar = bazaars.first
+                 }
             }
             
             recomputeAvailableTypes()

@@ -1,10 +1,10 @@
-//????????????
 import SwiftUI
 import Auth
 
 struct ProfileView: View {
     @EnvironmentObject private var appState: AppState
     @StateObject private var statsViewModel = ProfileStatsViewModel()
+    @StateObject private var viewModel = ProfileViewModel() // ViewModel para badges
     @State private var selectedSection: ProfileSection = .badges
 
     private enum ProfileSection: String, CaseIterable, Identifiable {
@@ -13,13 +13,6 @@ struct ProfileView: View {
 
         var id: String { rawValue }
     }
-
-    private let placeholderBadges: [ProfileBadge] = [
-        ProfileBadge(icon: "🏆", title: "Donante pionero"),
-        ProfileBadge(icon: "🏅", title: "Amigo fiel"),
-        ProfileBadge(icon: "🎖️", title: "Héroe solidario"),
-        ProfileBadge(icon: "💎", title: "Apoyo destacado")
-    ]
 
     var body: some View {
         ScrollView {
@@ -57,11 +50,15 @@ struct ProfileView: View {
             }
         }
         .task {
-            await statsViewModel.loadStats(for: appState.session?.user.id)
+            if let userId = appState.session?.user.id {
+                await statsViewModel.loadStats(for: userId)
+                await viewModel.loadBadges(for: userId)
+            }
         }
-        .onChange(of: appState.session?.user.id) { _, newValue in
-            Task {
-                await statsViewModel.loadStats(for: newValue)
+        .refreshable {
+            if let userId = appState.session?.user.id {
+                await statsViewModel.loadStats(for: userId)
+                await viewModel.loadBadges(for: userId)
             }
         }
     }
@@ -87,13 +84,21 @@ struct ProfileView: View {
 
     @ViewBuilder
     private var badgesContent: some View {
-        if placeholderBadges.isEmpty {
-            Text("Aún no tienes insignias.")
+        if viewModel.isLoadingBadges {
+            HStack {
+                ProgressView()
+                Text("Cargando insignias...")
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding()
+        } else if viewModel.badges.isEmpty {
+            Text("No hay insignias disponibles en el sistema.")
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .center)
+                .padding()
         } else {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                ForEach(placeholderBadges) { badge in
+                ForEach(viewModel.badges) { badge in
                     BadgeView(badge: badge)
                 }
             }
@@ -126,28 +131,48 @@ struct ProfileView: View {
     }
 }
 
-private struct ProfileBadge: Identifiable {
-    let id = UUID()
-    let icon: String
-    let title: String
-}
-
 private struct BadgeView: View {
-    let badge: ProfileBadge
+    let badge: Badge
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        VStack(spacing: 8) {
-            Text(badge.icon)
-                .font(.system(size: 44))
-            Text(badge.title)
-                .font(.subheadline.weight(.semibold))
-                .multilineTextAlignment(.center)
+        VStack(spacing: 12) {
+            // Icono
+            ZStack {
+                Circle()
+                    .fill(badge.isEarned ? Color("PrimaryCyan").opacity(0.1) : Color.gray.opacity(0.1))
+                    .frame(width: 80, height: 80)
+                
+                Text(badge.icon_name) // Asumimos que es un Emoji por ahora, si es SF Symbol usar Image
+                    .font(.system(size: 40))
+                    .grayscale(badge.isEarned ? 0 : 1)
+                    .opacity(badge.isEarned ? 1 : 0.5)
+            }
+            
+            VStack(spacing: 4) {
+                Text(badge.name)
+                    .font(.subheadline.weight(.semibold))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(badge.isEarned ? .primary : .secondary)
+                
+                Text(badge.description)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(20)
+        .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color(.systemGray4))
+                .fill(scheme == .dark ? Color(UIColor.secondarySystemGroupedBackground) : .white)
+                .shadow(color: badge.isEarned ? Color.black.opacity(0.05) : .clear, radius: 5, x: 0, y: 2)
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(badge.isEarned ? Color("PrimaryCyan").opacity(0.3) : Color.gray.opacity(0.2), lineWidth: 1)
+        )
+        .opacity(badge.isEarned ? 1 : 0.7)
     }
 }
