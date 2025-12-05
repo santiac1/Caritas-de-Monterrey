@@ -20,12 +20,14 @@ struct AdminHelpRequestsView: View {
                     Spacer()
                 } else if let error = viewModel.errorMessage {
                     ContentUnavailableView("Error", systemImage: "exclamationmark.triangle", description: Text(error))
+                    Spacer()
                 } else if viewModel.donations.isEmpty {
                     ContentUnavailableView(
                         "Sin solicitudes",
                         systemImage: "tray",
                         description: Text("No hay solicitudes en la categoría '\(viewModel.currentFilter.title)'.")
                     )
+                    Spacer()
                 } else {
                     List {
                         ForEach(viewModel.donations) { donation in
@@ -47,6 +49,34 @@ struct AdminHelpRequestsView: View {
                         await viewModel.loadHelpRequests()
                     }
                 }
+                
+                // Search Tool
+                VStack {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        TextField("Buscar ID (ej: #55)", text: $viewModel.searchText)
+                            .keyboardType(.numbersAndPunctuation)
+                            .submitLabel(.search)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                        
+                        if !viewModel.searchText.isEmpty {
+                            Button(action: {
+                                viewModel.searchText = ""
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .padding(12)
+                    .background(Color(UIColor.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
             }
             .background(Color(.secondarySystemBackground))
             .navigationTitle("Solicitudes")
@@ -65,7 +95,7 @@ struct AdminHelpRequestsView: View {
                     Menu {
                         Picker("Orden", selection: $viewModel.currentSort) {
                             ForEach(SortOrder.allCases) { order in
-                                Label(order.title, systemImage: order == .newest ? "arrow.down" : "arrow.up")
+                            Label(order.title, systemImage: order == .newest ? "arrow.down" : "arrow.up")
                                     .tag(order)
                             }
                         }
@@ -135,9 +165,15 @@ private struct AdminDonationRow: View {
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
-                Text(donation.donorName ?? "Usuario desconocido")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 6) {
+                    Text(donation.donorName ?? "Usuario desconocido")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    Text("#\(donation.id)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
             
             Spacer()
@@ -167,12 +203,12 @@ private struct AdminDonationRow: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(backgroundColor)
-                .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
+            .fill(backgroundColor)
+            .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(scheme == .dark ? Color.white.opacity(0.08) : Color.clear, lineWidth: 1)
+            .stroke(scheme == .dark ? Color.white.opacity(0.08) : Color.clear, lineWidth: 1)
         )
     }
     

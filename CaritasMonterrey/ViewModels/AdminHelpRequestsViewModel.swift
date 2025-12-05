@@ -11,9 +11,27 @@ final class AdminHelpRequestsViewModel: ObservableObject {
     // Filtros y Ordenamiento
     @Published var currentFilter: DonationFilter = .inProcess
     @Published var currentSort: SortOrder = .newest
+    
+    // Búsqueda
+    @Published var searchText: String = ""
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        // Debounce search text to avoid too many requests
+        $searchText
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] _ in
+                Task { [weak self] in
+                    await self?.loadHelpRequests()
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     func loadHelpRequests() async {
-        if isLoading { return }
+        // If already loading, maybe we should cancel previous? 
+        // For simplicity, we'll let it run but ideally we'd use a task handle.
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -22,10 +40,20 @@ final class AdminHelpRequestsViewModel: ObservableObject {
             var query = SupabaseManager.shared.client
                 .from("Donations")
                 .select()
-
-            // Filtros condicionales
-            if let status = currentFilter.dbValue {
-                query = query.eq("status", value: status)
+            
+            // Lógica de búsqueda por ID (prioritaria)
+            // Si hay texto y parece un ID (ej: "#123" o "123")
+            let cleanedSearch = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+                .replacingOccurrences(of: "#", with: "")
+            
+            if !cleanedSearch.isEmpty, let searchId = Int(cleanedSearch) {
+                // Si buscamos por ID, ignoramos el filtro de estado para buscar en TODAS
+                query = query.eq("id", value: searchId)
+            } else {
+                // Comportamiento normal con filtros
+                if let status = currentFilter.dbValue {
+                    query = query.eq("status", value: status)
+                }
             }
 
             // Se aplica orden
@@ -54,14 +82,11 @@ final class AdminHelpRequestsViewModel: ObservableObject {
             donations = fetched.map { donation in
                 var donation = donation
                 if let profile = profiles[donation.user_id] {
-                    print("hi")
                     let fullName = [profile.firstName, profile.lastName]
                         .compactMap { $0 }
                         .joined(separator: " ")
                         .trimmingCharacters(in: .whitespaces)
                     donation.donorName = fullName.isEmpty ? profile.username : fullName
-                } else {
-                    print("no")
                 }
                 return donation
             }
