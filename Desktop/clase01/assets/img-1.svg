@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img" aria-label="Imagen 1">
+  <rect width="640" height="420" fill="#e9f2ff"/>
+  <rect x="40" y="40" width="560" height="340" rx="18" fill="#ffffff" stroke="#c7d2fe"/>
+  <circle cx="220" cy="190" r="54" fill="#93c5fd"/>
+  <path d="M120 320 L260 240 L330 300 L430 210 L520 320 Z" fill="#bfdbfe"/>
+  <text x="320" y="95" font-family="Arial, Helvetica, sans-serif" font-size="28" text-anchor="middle" fill="#1e40af">Imagen 1</text>
+</svg>
